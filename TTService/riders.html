@@ -1,0 +1,76 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+       <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />  
+ 
+         <link rel="stylesheet" type="text/css" href="css/DataTable.css"/>  
+         <link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.0/jquery.mobile-1.3.0.min.css" />
+
+        <script type="text/javascript" src="js/jquery-1.9.1.min.js"></script> 
+        <script type="text/javascript" src="js/cordova-2.2.0.js"></script> 
+        <script type="text/javascript" src="js/index.js"></script>
+        <script type="text/javascript" src="js/TTdata.js"></script>
+        <script type="text/javascript" src="js/AddRider.js"></script>
+        <script type="text/javascript" src="js/getRiders.js"></script>
+        <script type="text/javascript" src="js/getEvent.js"></script>
+        <script type="text/javascript" src="js/EventList.js"></script>
+        <script type="text/javascript" src="js/FinishLine.js"></script>
+        <script type="text/javascript" src="js/riderdetails.js"></script>
+
+        <script type="text/javascript" src="js/jquery.mobile-1.3.0.min.js"></script>
+        <script type="text/javascript" src="js/jqm.autoComplete-1.5.0a.js"></script>
+
+        <script src="js/login.js"></script>
+        <title>Time Trial</title>
+    
+</head>
+<body>
+        <div data-role="page" id="ridersPage">
+            <div data-role="header">
+<!--                <a href="#home" data-role="button" data-inline="true"  data-icon="arrow-l" data-iconpos="left">Home</a>-->
+		        <h1>Riders</h1>
+	        </div>
+<!--            <form id="Form1" data-ajax="false">-->
+                <label for="riderSearch"  style="float:left;width:33%">Rider search:</label>
+                <input type="text" name="name" id="riderSearch" value="" style="float:left;width:67%"/>
+                <ul data-role="listview" data-inset="true" style="float:right;width:67%" id="riderList"/>
+
+<!--            </form>-->
+<!--             <ul data-role="listview" data-inset="true" data-filter="true" style="float:left;width:67%" id="riderList"/>-->
+            <!-- table will be loaded into this element -->
+<!--            <p id="ridersList" style="font-family:Verdana;font-size:20px;">No riders loaded</p>-->
+        </div>
+
+        <div data-role="page" id="addRiderPage">
+            <div data-role="header">
+<!--                <a href="#home" data-role="button" data-inline="true"  data-icon="arrow-l" data-iconpos="left">Home</a>-->
+		        <h1>Add new Rider</h1>
+	        </div>
+
+            <form id="newRider"  action="javascript:AddRiderAction()" data-ajax="false">
+                <div data-role="fieldcontain" class="ui-hide-label">
+                    <label for="newRiderName" id="nameLabel"">Rider name:</label>
+                    <input type="text" name="name" id="newRiderName" value="" style="float:left;width:67%" placeholder="Rider name" />
+                    <ul id="riderSuggestions" data-role="listview" data-inset="true" style="float:right;width:67%" ></ul>
+                </div>
+                <div data-role="fieldcontain" class="ui-hide-label">
+                    <label for="newRiderClub" id="clubLabel" >Club:</label>
+                    <input type="text" name="name" id="newRiderClub" value=""  placeholder="Club" />
+                    <ul id="clubSuggestions" data-role="listview" data-inset="true" style="float:right;width:67%"></ul>
+                </div>
+                <div data-role="fieldcontain" >
+                    <label for="newRiderAge" id="ageLabel" style="width:33%">Age:</label>
+                    <input type="number" name="name" id="newRiderAge" min="12" max="99"/>
+                </div>
+                <div >
+                        <label > <input type="checkbox" name="lady" id="checkLady" class="custom"  /> Lady? </label>
+                        <label > <input type="checkbox" name="inevent" id="checkIn" class="custom"  /> InEvent? </label>
+                </div>
+                 <input type="submit" value="Enter" />
+             </form>
+            <a onclick="newRidersDone()" data-role="button">Finished adding riders</a>
+        </div>
+</body>
+</html>
