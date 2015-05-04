@@ -203,11 +203,11 @@ function DisplayEvent() {
             var r = RiderFromID(entry.RiderID);
             var rider;
             if (r == null)
-                rider = new Rider(entry.RiderID, "Rider not found", 0, 1, 0, "", notarget);
+                rider = new Rider(entry.RiderID, "Rider not found", 0, 1, 0, "", 0);
             else
                 rider = new Rider(r.ID, r.Name, r.Age, r.Category, r.ClubID, r.Email,r.Best25);
             var target = "";
-            if (rider.Best25 < notarget)
+            if (rider.hasBest25())
                 target = TimeStringH1(rider.Best25 * 1000);
 
             var cat = rider.catAbbr();

@@ -31,7 +31,6 @@ var noTimeYet =     2000000003000;   // ride has not yet happened
 var didNotFinish =  2000000002000;  // started to ride but then stopped
 var didNotStart =   2000000001000;  // entered event but didn't start
 var specialTimes =  2000000000000;  
-var notarget = 86399;               // no target time so leave as 23:59:59 for correct seeding
 var screenHeight = 0;
 var tableHeight = 0;
 var screenWidth = 0;

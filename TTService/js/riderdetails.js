@@ -40,7 +40,7 @@ function displayRider(rider,event) {
 	    $('#age').text("Age: " + userRole > 1? rider.Age : "Undisclosed");
 	    $('#inevent').text("In event?: " + inEvent(rider)?"yes":"no");
 	    //$('#time10').text(rider.time10);
-	    if (rider.Best25 < notarget) {
+	    if (rider.hasBest25()) {
 	        var best25string = TimeStringH1(rider.Best25 * 1000);
 	        $('#time25').text("Best '25' time: " + best25string);
 	    }

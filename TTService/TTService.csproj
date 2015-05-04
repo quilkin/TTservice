@@ -67,6 +67,7 @@
     <Content Include="js\bootbox.min.js" />
     <Content Include="js\bootstrap-datepicker.js" />
     <Content Include="js\bootstrap.min.js" />
+    <Content Include="js\rider.js" />
     <Content Include="res\beep_wav" />
     <Content Include="res\images\Sorting icons.psd" />
     <Content Include="copyfiles.bat" />

@@ -1,124 +1,29 @@
-﻿/// <reference path="~\js\AddClub.js" />
+﻿/// <reference path="~\js\addClub.js" />
+/// <reference path="~\js\rider.js" />
 
-/*global $,popup*/
+/*global $,popup,TTRider,Clubs,myTable*/
 
-var TTRider = (function () {
+var Riders = (function ($) {
     "use strict";
 
-    // private static
-    var nextId = 1,
+    var riders = {},
+        list = [],
         riderBeforeChange,
         ridersChanged,
         newRider,
         riderTableSettings = null,
-
-        Categories = { Senior: 1, Vet: 2, Junior: 3, Juvenile: 4, Lady: 5, LadyVet: 6 },
-        CatAbbr = ["None", "Sen", "Vet", "Jun", "Juv", "W", "WVet"];
+        editRider = null;
 
 
-    // constructor
-    var rider = function(ID, Name, Age, Cat, Clubid, Email, Best25) {
-        var id,
-            name,
-            age,
-            category,
-            clubid,
-            email,
-            best25,
-            tempID = false;
-
-        name = Name;
-        age = Age;
-        category = Cat;
-        clubID = Clubid;
-        best25 = Best25;
-        email = Email;
-        if (ID > 0) {
-            // club created with known ID from the db
-            id = ID;
-        } else {
-            // must create a temporary ID
-            // This will be replaced with a permanent ID later, when there is communication with the DB
-            id = Riders.tempID;
-            tempID = true;
-        }
-
-        this.getId = function () { return id; };
-        this.getName = function () { return name; };
-        this.getAge = function () { return age; };
-        this.setName = function (value) {
-            if (typeof value !== 'string') {
-                throw 'Club name must start with a letter';
-            }
-            if (value.length === 0) {
-                value = "Unknown rider";
-            }
-            if (value.length < 5 || value.length > 31) {
-                throw 'Rider name must be 5-31 characters long.';
-            }
-            name = value;
-        };
-
-        this.changed = false;
-    };
-
-    return {
-        VetStandardTime: function (distance) {
-            var time;
-            var ageOver40 = this.Age - 40;
-            if (this.Category === Categories.LadyVet) {
-                ageOver40 += 8; // eight years difference on standard times
-            }
-            if (ageOver40 >= 0) {
-                if (ageOver40 > VetStandard.Length) {
-                    time = VetStandard[VetStandard.Length - 1];
-                }
-                else {
-                    time = VetStandard[ageOver40];
-                }
-                // timein millisecs, allowing for 10-mile basis
-                return time * distance * 100;
-            }
-            else
-                return 0;
-        },
-        getCategory: function(age) {
-            var cat = Categories.Senior;
-            if (age < 16)
-                cat = Categories.Juvenile;
-            else if (age < 18)
-                cat = Categories.Junior;
-            else if (age >= 40)
-                cat = Categories.Vet;
-            if ($("#checkLady").prop("checked")) {
-                cat = Categories.Lady;
-                if (age >= 40)
-                    cat = Categories.LadyVet;
-            }
-            return cat;
-        },
-        catAbbr: function() {
-            return CatAbbr[category];
-        }
+    function TimePopup(result)
+    {
+        $('#riderRideTime').val(result);
     }
-}())
 
-
-tempID: function() {
-    var highest = 0;
-    // find highest ID. This will probably NOT be the length of the riders array, since SQL will allocate higher IDs 
-    for (var i in list) {
-        var r = list[i];
-        if (r.ID > highest) {
-            highest = r.ID;
-        }
-    }
-    return highest + 1;
-},
     // to be used when a new rider is required (no riders found from search)
     function noRidersFound(nRow, ssData, iStart, iEnd, aiDisplay)
     {
-        if (iStart == iEnd) {
+        if (iStart === iEnd) {
             $("#btnNewRider").show();
             $("#btnAddRider").hide();
             //$("#riderClubTable").prop("disabled", true);
@@ -136,17 +41,18 @@ tempID: function() {
         //$('input:checkbox').checkboxradio('refresh');
     }
 
-    function ChooseRider(addToEvent)
+    function chooseRider(addToEvent)
     {
-        var names = new Array();
-        $.each(ridersdata,function(index,rider) {
-            if (rider.Age == null || rider.Name=="" || rider.ClubID==0)
+        var table,names = [];
+        $.each(list, function (index, rider) {
+            if (rider.Age === null || rider.Name === "" || rider.ClubID === 0) {
                 return true; // continue;
-            if (addToEvent == false || inEvent(rider) == 0) {
-                names.push(new Array(rider.Name, getClubAbbr(rider.ClubID)));
             }
-        })
-        var table = myTable('#newRider', { "sSearch": "Select Rider:", "sZeroRecords": "" }, names, 200, [null, null], noRidersFound);
+            if (addToEvent === false || inEvent(rider) === 0) {
+                names.push([rider.Name, Clubs.getAbbr(rider.getClubID())]);
+            }
+        });
+        table = myTable('#newRider', { "sSearch": "Select Rider:", "sZeroRecords": "" }, names, 200, [null, null], noRidersFound);
     
         $('#riderClubTable').html("");
         $('#btnNewClub').hide();
@@ -154,62 +60,69 @@ tempID: function() {
         riderTableSettings = table.settings();
         $('#newRider tbody tr').on('click', function ()
         {
-            var nTds = $('td', this);
-            var newName = $(nTds[0]).text();
+            var newName,
+                nTds = $('td', this);
+
+            newName = $(nTds[0]).text();
             $('#newRiderTable').html(newName);
             // enable getting back the table (to choose a different rider) by double-clicking the chosen name
-            $('#newRiderTable').dblclick(function () {  ChooseRider(); });
+            $('#newRiderTable').dblclick(function () {  chooseRider(); });
             // place other details in form  from existing rider
-            $.each(ridersdata, function (index, rider) {
-                if (rider.Name == newName) {
+            $.each(list, function (index, rider) {
+                if (rider.Name === newName) {
                     // save details so we can see if they have been changed
-                    riderBeforeChange = new Rider(rider.ID, rider.Name,  rider.Age, rider.Category, rider.ClubID, rider.Email, rider.Best25);
-                    club.chooseRiderClub(rider.ClubID);
-                
-                    var cat = rider.Category;
-                    var age = rider.Age;
 
-                    if (rider.Best25 < notarget)
-                    {
-                        var best25 = TimeString(rider.Best25*1000);
-                        $("#riderRideTime").val(best25);
+                    var age = rider.getAge(),
+                        cat = rider.getCategory(age),
+                        id = rider.getID(),
+                        name = rider.getName(),
+                        clubID = rider.getClubID(),
+                        best25 = rider.getBest25(),
+                        email = rider.getEmail();
+
+                    riderBeforeChange = new TTRider(id, name, age, cat, clubID, email, best25);
+                    Clubs.chooseRiderClub(clubID);
+
+                    if (rider.hasBest25()) {
+                        $("#riderRideTime").val(TimeString(best25 * 1000));
                     }
-                    $("#riderAge").val(rider.Age);
-                    $("#riderEmail").val(rider.Email);
-                    if (cat == Categories.Lady || cat == Categories.LadyVet)
+                    $("#riderAge").val(age);
+                    $("#riderEmail").val(email);
+                    if (rider.isLady()) {
                         $("#checkLady").prop("checked", true);
-                    //$("#riderAge").slider("refresh");
-                    rider.Category = GetCategory(age);
+                    }
+
                     $("#checkIn").prop("checked", true);
                     $('input:checkbox').checkboxradio('refresh');
                     newRider = rider;
                     return false; //break;
                 }
-            })
+            });
         });
-
     }
-    var editRider = null;
 
-    addRider.editRider = function()
-    {
-        if (checkRole() == false)
-            return;
-        var name = $('#name').text();
-        var rider = RiderFromName(name);
-        if (rider != null) {
-            editRider = rider;
-            addRider.addRider(currentEvent.ID > 0);
+    function UpdateRiderDetails() {
+        newRider.ID = riderBeforeChange.ID;
+        newRider.changed = true;
+        var i,oldRider;
+        for (i = 0; i < list.length; i++) {
+            oldRider = list[i];
+            if (oldRider.ID === newRider.ID) {
+                list[i]= newRider;
+                break;
+            }
+            ridersChanged = true;
         }
     }
-
-    addRider.addRider = function (addToEvent) {
-        if (ridersdata.length < 2) {
+    
+    function addRider(addToEvent) {
+        if(list.length < 2) {
             popup.alert("No riders loaded, cannot autocomplete");
             return;
         }
-        if (checkRole() == false)
+        if (checkRole() === false) {
             return;
+        }
 
         newRider = null;
         riderBeforeChange = null;
@@ -220,33 +133,34 @@ tempID: function() {
             $("#checkIn").prop("checked", true);
             //$("#addRiderHelp").text("Add rider's best recent 10 or 25 time (if known)");
         }
-        //else
-        //    $("#addRiderHelp").text("Event aleady held: add rider's actual time");
+            //else
+            //    $("#addRiderHelp").text("Event aleady held: add rider's actual time");
 
         if (addToEvent == false || currentEvent.ID == 0 || currentEvent.PastEvent()) {
             $("#checkIn").prop("disabled", true);
     //        $("#lblRideTime").hide();
-     //       $("#riderRideTime").hide();
+    //       $("#riderRideTime").hide();
         }
         else {
             $("#checkIn").prop("disabled", false);
-     //       $("#lblRideTime").show();
-     //       $("#riderRideTime").show();
+    //       $("#lblRideTime").show();
+    //       $("#riderRideTime").show();
         }
         // set default values for new rider 
-        var startNumber = currentEvent.Entries.length + 1;
-        var age = 10;
-        var email = "";
-        if (editRider != null) {
-            age = editRider.Age;
-            email = editRider.Email;
-            var thistime = editRider.Best25 * 1000;
-            var entry =  getEntryFromRiderID(editRider.ID)
-            if (entry != null)
-            {
-                startNumber = entry.Number;
-                thistime = entry.Finish - entry.Start;
+        var startNumber = currentEvent.Entries.length +1,
+            age = 10,
+            email = "",
+            thistime,
+            entry;
 
+        if (editRider != null) {
+            age = editRider.getAge();
+            email = editRider.getEmail();
+            thistime = editRider.getBest25() * 1000;
+            entry = getEntryFromRiderID(editRider.getID());
+            if (entry !== null) {
+                startNumber = entry.Number;
+                thistime = entry.Finish -entry.Start;
             }
             $("#riderRideTime").val(TimeString(thistime));
             $('#btnAddRider').text("Save Editing");
@@ -256,23 +170,23 @@ tempID: function() {
         $("#checkLady").prop("checked", false);
         $('input:checkbox').checkboxradio('refresh');
 
-        if (addToEvent)
+        //if (addToEvent)
         {
             $("#riderStartNumber").show();
             $("#lblRiderStart").show();
         }
-        else
-        {
-            $("#riderStartNumber").hide();
-            $("#lblRiderStart").hide();
-        }
+        //else
+        //{
+        //    $("#riderStartNumber").hide();
+        //    $("#lblRiderStart").hide();
+        //}
 
         $("#riderAge").val(age);
         $("#riderEmail").val(email)
         $("#riderStartNumber").val(startNumber);
 
-        if (editRider == null) {
-            ChooseRider(addToEvent);
+        if (editRider === null) {
+            chooseRider(addToEvent);
         }
         else {
             riderBeforeChange = editRider;
@@ -283,102 +197,92 @@ tempID: function() {
         // adding result details to an old event
         $("#riderRideTime").show();
 
-
-
         $("#riderRideTime").timepicker({
             showSecond: true,
-            timeFormat: 'HH:mm:ss',
-            controlType: 'select',
+                timeFormat: 'HH:mm:ss',
+                controlType: 'select',
             stepHour: 1,
             stepMinute: 1,
             stepSecond: 1
         });
-             //}
-         if (currentEvent.PastEvent()) {
-             $("#lblRideTime").text("Result time:");
-     //        $("#addRiderHelp").text("Event aleady held: add rider's actual time");
-         }
-         else {
-             $("#lblRideTime").text("Recent 10 or 25 time:");
-     //        $("#addRiderHelp").text("Add rider's best recent 10 or 25 time (if known)");
-         }
 
+        if (currentEvent.PastEvent()) {
+            $("#lblRideTime").text("Result time:");
+            //        $("#addRiderHelp").text("Event aleady held: add rider's actual time");
+        }
+        else {
+            $("#lblRideTime").text("Recent 10 or 25 time:");
+            //        $("#addRiderHelp").text("Add rider's best recent 10 or 25 time (if known)");
+        }
     }
-    //function ChooseNewClub()
-    //{
-    //    // re-enable other controls
-    //    $("#btnAddRider").show();
-    //    $("#riderClubTable").prop("disabled", false);
-    //    $("#slider-age").prop("disabled", false);
-    //    $("#checkLady").prop("disabled", false);
-    //    $("#btnNewRider").hide();
-    //    newRider = new Rider(0, newName, 0, 0, 0,"",notarget);
-    //    // get rid of name selection list
-    //    $('#newRiderTable').html(newName);
+    
+    $('#btnNewRider').click(function () {
 
-    //    ChooseClub(0);
-    //    //newRider.newOne = true;
-    //}
+        var existingClub = 0,
+        newName,
+        newNameParts,
+        entry,
+        i,
+        r,
+        confirmation;
 
-    addRider.AddNewRider =  function()
-    {
-         var existingClub = 0;
-        if (newRider == null) {
+        if (newRider === null) {
             //var newName = riderTableSettings.oPreviousSearch.sSearch;
-            var newName = riderTableSettings.search();
-            var newNameParts = newName.split(' ');
+            newName = riderTableSettings.search();
+            newNameParts = newName.split(' ');
             newName = newNameParts[0].capitalize();
-            if (newNameParts[1] != null)
+            if (newNameParts[1] !== null) {
                 newName += (" " + newNameParts[1].capitalize());
+            }
 
-            for (var i in currentEvent.Entries) {
-                var entry = currentEvent.Entries[i];
-                var r = RiderFromID(entry.RiderID);
-                if (r!= null && r.Name == newName)
-                {
+            for (i=0; i < currentEvent.Entries.length; i++) {
+                entry = currentEvent.Entries[i];
+                r = RiderFromID(entry.RiderID);
+                if (r !== null && r.getName() === newName) {
                     existingClub = r.ClubID;
                     break;
                 }
             }
-            var confirmation = newName + ' : enter new rider?';
-            if (existingClub>0)
-                confirmation = newName + " ("+ getClubName(existingClub) +") is already in this event, is this the same name in a different club?";
+            confirmation = newName + ' : enter new rider?';
+            if (existingClub>0) {
+                confirmation = newName + " (" + getClubName(existingClub) + ") is already in this event, is this the same name in a different club?";
+            }
             popup.Confirm(confirmation,
-                function ()
-                {
+                function () {
                     // re-enable other controls
                     $("#btnAddRider").show();
                     $("#riderClubTable").prop("disabled", false);
                     $("#slider-age").prop("disabled", false);
                     $("#checkLady").prop("disabled", false);
                     $("#btnNewRider").hide();
-                    newRider = new Rider(0, newName, 0, 0, 0,"",notarget);
+                    newRider = new TTRider(0, newName, 0, 0, 0, "", 0);
                     // get rid of name selection list
                     $('#newRiderTable').html(newName);
 
-                    club.chooseRiderClub(0);
+                    Clubs.chooseRiderClub(0);
                     //newRider.newOne = true;
-                },
-                null);
+            }, null);
         }
-    }
+    });
 
-    function UpdateRiderDetails()
-    {
-        newRider.ID = riderBeforeChange.ID;
-        newRider.changed = true;
-        for (var i in ridersdata) {
-            var oldRider = ridersdata[i];
-            if (oldRider.ID == newRider.ID) {
-                ridersdata[i] = newRider;
-                break;
-            }
-            ridersChanged = true;
+
+    $('#addEvRider').click(function () {
+        addRider(true);
+        });
+
+    $('#editRider').click(function () {
+
+        if (checkRole() == false)
+            return;
+        var name = $('#name').text();
+        var rider = RiderFromName(name);
+        if (rider != null) {
+            editRider = rider;
+            addRider.addRider(currentEvent.ID > 0);
         }
-    }
-
-    addRider.AddRiderAction = function() {
-
+    });
+        
+    $('#btnNewRider').click(function () {
         var newR = true;
         var in_event = false;
     
@@ -430,7 +334,7 @@ tempID: function() {
         }
         else {
             //// this is a new rider, needs adding to list
-             ridersdata.push(newRider);
+             list.push(newRider);
             ridersChanged = true;
         }
 
@@ -546,21 +450,27 @@ tempID: function() {
         $('#riderRideTime').val("");
         if (editRider == null)
             AddRider(in_event);
-        else {
+            else {
             ChangePage("riderDetailsPage");
-            displayRider(newRider,in_event);
+            displayRider(newRider, in_event);
             editRider = null;
-           // history.back();
+                                // history.back();
+        }
+    });
+
+
+    return {
+        tempID: function () {
+            var highest = 0;
+            // find highest ID. This will probably NOT be the length of the riders array, since SQL will allocate higher IDs 
+            for (var i in list) {
+                var r = list[i];
+                if (r.ID > highest) {
+                    highest = r.ID;
+                }
+            }
+            return highest + 1;
         }
     }
-    function TimePopup(result)
-    {
-        $('#riderRideTime').val(result);
-        //$('#rideTimePopup').popup("close");
-    }
-
-    return addRider
 })(jQuery)
-//function newRidersDone() {
-//    history.back();
-//}
+

@@ -33,7 +33,7 @@ function DisplayRiderList() {
         var cat = CatAbbr[rider.Category];
         if (inEvent(rider)) cat += " *";
         var best25string = "";
-        if (rider.Best25 < notarget)
+        if (rider.hasBest25())
             best25string = TimeStringH1(rider.Best25 * 1000);
         riderArray.push(new Array(rider.ID, rider.Name, getClubAbbr(rider.ClubID), cat, best25string));
     })

@@ -233,7 +233,7 @@
             <div data-role="header">
 		        <h1>Entry List</h1>
 	        </div>
-            <p id="entriesTable" ">No entries loaded</p>
+            <p id="entriesTable">No entries loaded</p>
             <a onclick="EmailStartSheet()"  id="btnEmailStart" class="ui-btn ui-btn-icon-right">Email Start Sheet</a>
 
         </div>
@@ -291,7 +291,7 @@
                     <div class="ui-block-b"><input type="time" name="name" id="startTime"/></div>
                 </div>
                 <div  id="eventEnd" class="ui-grid-a">
-                    <div class="ui-block-a"><label for="endDate" id="lblEndDate" ">To Date:</label></div>
+                    <div class="ui-block-a"><label for="endDate" id="lblEndDate">To Date:</label></div>
                     <div class="ui-block-b"><input type="date" name="name" id="endDate" readonly="true"/></div>
                 </div>
                 
@@ -336,7 +336,7 @@
             <div data-role="header">
 		        <h1>Riders</h1>
 	        </div>
-            <p id="ridersTable" ">No riders loaded</p>
+            <p id="ridersTable">No riders loaded</p>
         </div>
 
         <div data-role="page" id="clubsPage">
@@ -354,8 +354,8 @@
                 <h4 id="newRiderTable" style="text-align:center; color:blue"; /> 
                 <h4 id="riderClubTable" style="text-align:center; color:green" /> 
             </div>
-            <a data-role="button" id="btnNewRider" onclick="addrider.addNewRider()">Confirm New Rider?</a>
-            <a data-role="button" id="btnNewClub" onclick="club.addNewClub()">Confirm New Club?</a>
+            <a data-role="button" id="btnNewRider">Confirm New Rider?</a>
+            <a data-role="button" id="btnNewClub">Confirm New Club?</a>
             <div class="ui-grid-a" >
                    <div class="ui-block-a"> <label for="riderAge" >Age:</label></div>
                    <div class="ui-block-b"> <input type="number" id="riderAge" value="0" min="10" max="99"/></div>
@@ -412,7 +412,7 @@
    	             </div>
             </div>
             <div class="ui-field-contain">
-                <a onclick="addRider.editRider()" data-role="button" id="A1" >Edit Rider</a>
+                <a id ="editRider" data-role="button" >Edit Rider</a>
             </div>
         </div>
 
