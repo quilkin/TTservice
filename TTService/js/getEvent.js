@@ -137,7 +137,7 @@ function SortResults() {
 }
 
 function webRequestFailed(handle, status, error) {
-    myAlert("Error ajax request: " + error);
+    popup.alert("Error ajax request: " + error);
     $("#submitButton").removeAttr("disabled");
 }
 

@@ -15,7 +15,7 @@ function checkPreAuth()
 function checkRole()
 {
     if (userRole < UserRoles.ClubAdmin) {
-        myAlert("To access this function, please request club-level authorisation by emailing 'admin@timetrials.org.uk'");
+        popup.alert("To access this function, please request club-level authorisation by emailing 'admin@timetrials.org.uk'");
         return false;
 
     }
@@ -48,13 +48,13 @@ function handleLogin()
                         $("#deviceid").html(device.model);
                     }
                 } else {
-                    myAlert("Invalid username or password");
+                    popup.alert("Invalid username or password");
                 }
                 $("#submitButton").removeAttr("disabled");
             }, true);
 
     } else {
-        myAlert("You must enter a username and password");
+        popup.alert("You must enter a username and password");
         $("#submitButton").removeAttr("disabled");
     }
     return false;
@@ -81,7 +81,7 @@ function handleSignup()
         var creds = { name: u, pw: p1, email: e, code: c };
         myJson('Signup', "POST", creds, function (res)
         {
-            myAlert(res);
+            popup.alert(res);
             $("#submitSignup").removeAttr("disabled");
             if (res.substring(0, 2) == "OK") {
                 $("#code").show();
@@ -99,7 +99,7 @@ function handleSignup()
         },true);
 
     } else {
-        myAlert("You must enter a username, password and valid email address");
+        popup.alert("You must enter a username, password and valid email address");
         $("#submitSignup").removeAttr("disabled");
     }
     return false;

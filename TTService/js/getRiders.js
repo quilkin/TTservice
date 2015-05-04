@@ -25,7 +25,7 @@ function parseCoursesJson(response)
 }
 function DisplayRiderList() {
     if (ridersdata == null) {
-        myAlert("No riders loaded!");
+        popup.alert("No riders loaded!");
         return;
     }
     var riderArray = new Array();
@@ -55,7 +55,7 @@ function DisplayRiderList() {
 function DisplayClubList()
 {
     if (clubsdata == null) {
-        myAlert("No clubs loaded!");
+        popup.alert("No clubs loaded!");
         return;
     }
     var clubs = new Array(clubsdata.length);
@@ -71,7 +71,7 @@ function GetRiderData()
 {
     if (ridersLoaded) {
         if (ridersChanged) {
-            myConfirm('This will remove changes to any riders you have added or updated - are you sure?',
+            popup.Confirm('This will remove changes to any riders you have added or updated - are you sure?',
             GetRiderData2,
             null);
         }
@@ -100,10 +100,10 @@ function RidersResponse(response)
 
         }
         var count = newID - response;
-        myAlert(count + " riders uploaded OK");
+        popup.alert(count + " riders uploaded OK");
     }
     else
-        myAlert("! No riders uploaded");
+        popup.alert("! No riders uploaded");
 }
 function ClubsResponse(response)
 {
@@ -126,10 +126,10 @@ function ClubsResponse(response)
 
         }
         var count = newID - response;
-        myAlert(count + " clubs uploaded OK");
+        popup.alert(count + " clubs uploaded OK");
     }
     else
-        myAlert("! No clubs uploaded");
+        popup.alert("! No clubs uploaded");
     //waitforClubs = false;
 }
 
@@ -144,12 +144,12 @@ function SaveRiderData(event)
         if (ridersChanged == false)
         {
             if (!event)
-                myAlert('No riders changed');
+                popup.alert('No riders changed');
             return;
         }
         else
         {
-            myConfirm(message + ' to database - are you sure?',
+            popup.Confirm(message + ' to database - are you sure?',
                 SaveRiderData2,
                 null);
         }
@@ -198,7 +198,7 @@ function SaveRiderData2()
     }
     if (changedRiders.length > 0) {
       
-        myJson("SaveChangedRiders", "POST", changedRiders, function (response) { myAlert(response); }, true);
+        myJson("SaveChangedRiders", "POST", changedRiders, function (response) { popup.alert(response); }, true);
 
     }
 

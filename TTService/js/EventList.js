@@ -24,7 +24,7 @@ function ChooseEventPage(existing)
 
     if (currentEvent != null) {
         if (currentEvent.Entries.length > 1) {
-            myConfirm('This will remove all details for existing event - are you sure?',
+            popup.Confirm('This will remove all details for existing event - are you sure?',
                 function()
                 {
                     currentEvent = null;
@@ -172,7 +172,7 @@ function AddEventAction() {
 function DisplayEvent() {
 
     if (currentEvent.Entries.length < 1) {
-        myAlert("No riders entered!");
+        popup.alert("No riders entered!");
         return;
     }
     ChangePage("entrypage");
@@ -209,9 +209,8 @@ function DisplayEvent() {
             var target = "";
             if (rider.Best25 < notarget)
                 target = TimeStringH1(rider.Best25 * 1000);
-            if (rider.Name == 'Ali White')
-                rider.Category = rider.Category; // debug line
-            var cat = CatAbbr[rider.Category];
+
+            var cat = rider.catAbbr();
             var stdTime = rider.VetStandardTime(currentEvent.Distance());
             var stdTimeStr = stdTime > 0 ? TimeStringH1(stdTime) : "";
             entrydata.push(new Array(entry.Number, rider.Name, cat, stdTimeStr, target, getClubName(rider.ClubID), TimeString(entry.Start)));
@@ -239,13 +238,13 @@ function EmailStartSheet()
 {
     if (checkRole() == false)
         return;
-    myJson("EmailStartSheet", "POST", currentEvent.ID, function (response) { myAlert(response); }, true);
+    myJson("EmailStartSheet", "POST", currentEvent.ID, function (response) { popup.alert(response); }, true);
 }
 function EmailResultSheet()
 {
     if (checkRole() == false)
         return;
-    myJson("EmailResultSheet", "POST", currentEvent.ID, function (response) { myAlert(response); }, true);
+    myJson("EmailResultSheet", "POST", currentEvent.ID, function (response) { popup.alert(response); }, true);
 }
 
 var updatingEntry;
@@ -254,7 +253,7 @@ function UpdateEventTimes()
 {
 
     if (currentEvent.Entries.length < 1) {
-        myAlert("No riders entered!");
+        popup.alert("No riders entered!");
         return;
     }
     ChangePage("timesPage");
@@ -349,7 +348,7 @@ function SaveEvent()
         return;
     // first save any new riders
     SaveRiderData(true);
-    myJson("SaveEvent", "POST", currentEvent, function (response) { myAlert(response); }, true);
+    myJson("SaveEvent", "POST", currentEvent, function (response) { popup.alert(response); }, true);
     newdata = 0;
 }
 
@@ -361,7 +360,7 @@ function SortEvent()
     // first save any new riders
     SaveRiderData(true);
     // must not be async call to ensure clubs saved before seeds call
-    myJson("SaveEvent", "POST", currentEvent, function (response) { myAlert(response); }, false);
+    myJson("SaveEvent", "POST", currentEvent, function (response) { popup.alert(response); }, false);
 
     myJson('SeedEntries', "POST", currentEvent, function (entries)
     {
@@ -435,7 +434,7 @@ function parseEventsJson(response)
         });
         if (currentEvent == null)
         {
-            myAlert("Error finding correct event");
+            popup.alert("Error finding correct event");
             return false;
         }   
         // now need to ask server for all its entries for this event
@@ -445,13 +444,13 @@ function parseEventsJson(response)
                 {
                     currentEvent.Entries[index] = e;
                 });
-               // myAlert(entries.length + " riders loaded for this event");
+               // popup.alert(entries.length + " riders loaded for this event");
                 if (currentEvent.PastEvent())
                     Results();
                 else {
-                    // myAlert("No results yet, event has not happened");
+                    // popup.alert("No results yet, event has not happened");
 
-                    myAlert(entries.length + " riders loaded for this (future) event");
+                    popup.alert(entries.length + " riders loaded for this (future) event");
                     ChangePage("home");
                 }
                 

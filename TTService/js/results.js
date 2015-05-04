@@ -4,11 +4,11 @@ function Results()
 {
  //   var size = screenHeight * 2 / 3;
     if (currentEvent.Entries.length < 1) {
-        myAlert("No event loaded, or no riders in event!");
+        popup.alert("No event loaded, or no riders in event!");
         return;
     }
     //if (currentEvent.PastEvent()==false) {
-    //    myAlert("No results yet, event has not happened");
+    //    popup.alert("No results yet, event has not happened");
     //    return;
     //}
     SortResults();

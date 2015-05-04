@@ -96,7 +96,7 @@ function FinishLine() {
         return;
 
     if (currentEvent.Entries.length < 2) {
-        myAlert("No data loaded!");
+        popup.alert("No data loaded!");
         return;
     }
     screenTimeout = 0;
@@ -129,7 +129,7 @@ function DisplayFinishTimes() {
     $("#btnFinish").html(txt);
 }
 function QueryDeleteFinishTime(ftime) {
-    myConfirm("Are you sure you want to skip this timing?",
+    popup.Confirm("Are you sure you want to skip this timing?",
         function () { DeleteFinishTime(ftime); },
         null);
 }
@@ -146,7 +146,7 @@ function DeleteFinishTime(ftime) {
 function RiderFinishing()
 {
     if (finishTimes.length >= 6) {
-        myAlert("Cannot store any more finishes, please save times");
+        popup.alert("Cannot store any more finishes, please save times");
         return;
     }
     finishTimes.push(new Date().valueOf());
@@ -180,7 +180,7 @@ function RiderFinished(riderID,ftime) {
     finishTime = ftime;
     var entry = getEntryFromRiderID(riderID);
     //if (entry.Finish / 1000 < noTimeYet / 1000) {
-    //    myConfirm("Rider has already finished; update the time?",
+    //    popup.Confirm("Rider has already finished; update the time?",
     //        DefineRiderTime(entry),
     //        BackToFinishLine);
     //}

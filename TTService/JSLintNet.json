@@ -1,0 +1,10 @@
+﻿{
+  "ignore": [],
+  "options": {
+    "predef": {},
+    "plusplus": true,
+    "white": true
+  },
+  "runOnBuild": false,
+  "cancelBuild": false
+}

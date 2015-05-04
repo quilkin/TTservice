@@ -1,76 +1,108 @@
-﻿var club = (function ($) {
+﻿/*global jQuery,popup,TTRider*/
+
+var CycleClub = (function () {
     "use strict";
 
+    // constructor
+    var club = function (ID, Name, Abbr) {
+            // private
+            var id, tempID, name, abbr;
+            if (ID > 0) {
+                // club created with known ID from the db
+                id = ID;
+            } else {
+                // must create a temporary ID
+                // This will be replaced with a permanent ID later, when there is communication with the DB
+                id = Clubs.tempID;
+                tempID = true;
+            }
 
-    var newClub,
-        clubTableSettings = null,
-        clubsdata = new Array(new Club(0, "", ""));
+            name = this.setName(Name);
+            abbr = this.setAbbr(Abbr);
 
-
-    function Club(ID, name, abbr) {
-        var i,highest,c;
-        this.Name = name;
-        this.Abbr = abbr;
-        this.ID = ID;
-        this.tempID = false;
-        if (ID > 0) {
-            // club created with known ID from the db
-            this.ID = ID;
-        } else if (clubsdata !== null && clubsdata.length > 0) {
-            // must create a temporary ID
-            // This will be replaced with a permanemt ID later, when there is communication with the DB
-            highest = 0;
-            for (i in clubsdata) {
-                c = clubsdata[i];
-                if (c.ID > highest) {
-                    highest = c.ID;
+            if (Riders.newRider !== null) {
+                Riders.newRider.ClubID = this.ID;
+            }
+            // public (this instance only)
+            this.getId = function () { return id; };
+            this.getName = function () { return name; };
+            this.getAbbr = function () { return abbr; };
+            this.setName = function (value) {
+                if (typeof value !== 'string') {
+                    throw 'Club name must start with a letter';
                 }
-            }
-            this.ID = highest + 1;
-            if (newRider !== null) {
-                newRider.ClubID = this.ID;
-            }
-            this.tempID = true;
-        }
-    }
+                if (value.length === 0) {
+                    value = "Unknown club";
+                }
+                if (value.length < 5 || value.length > 31) {
+                    throw 'Club name must be 5-31 characters long.';
+                }
+                name = value;
+            };
+            this.setAbbr = function (value) {
+                if (typeof value !== 'string') {
+                    throw 'Club name must start with a letter';
+                }
+                if (value.length === 0) {
+                    // default is first 5 chars of name
+                    value = name.substr(0, 5);
+                }
+                if (value.length < 3 || value.length > 5) {
+                    throw 'Club abbr must be 3-5 characters long.';
+                } 
+                abbr = value;
+            };
+        };
+    // public static
+    club.getNextId = function () {
+        return nextId;
+    };
 
-    function getClubID(clubname) {
-        var i, club;
-        for (i in clubsdata) {
-            club = clubsdata[i];
-            if (clubname === club.Name) {
-                return club.ID;
-            }
+    // public (shared across instances)
+    club.prototype = {
+     
+        announce: function () {
+            // not required, left in from example code
+            popup.alert('Hi there! My id is ' + this.getId() + ' and my club is "' + this.getName() + '"!\r\n' +
+                  'The next club\'s id will be ' + CycleClub.getNextId() + '!');
         }
-        return 0;
-    }
+    };
 
-    function getClubName(clubID) {
-        var club,i;
-        for (i in clubsdata) {
-            club = clubsdata[i];
-            if (clubID === club.ID) {
-                return club.Name;
-            }
-        }
-        return "unknown";
-    }
-    function getClubAbbr(clubID) {
-        var i,club;
-        for (i in clubsdata) {
-            club = clubsdata[i];
-            if (clubID === club.ID) {
-                return club.Abbr;
-            }
-        }
-        return "unknown";
-    }
+    return club;
+}());
+
+
+var Clubs = (function ($) {
+    "use strict";
+
+    var clubs = {},
+        list = [],
+        newClub,
+        i,
+        club,
+        clubTableSettings = null;
+
+    $('#btnNewClub').click(function () {
+        var newClubName = clubTableSettings.search(),
+            confirmation = newClubName + ' : enter new club?';
+        popup.Confirm(confirmation, function () {
+            // temporary club ID; real one will be provided by server later
+
+            list.push(new CycleClub(-1, newClubName, ''));
+            // will be saved when rider list is saved
+            //$("#slider-age").prop("disabled", false);
+            //$("#checkLady").prop("disabled", false);
+            $("#btnNewClub").hide();
+            // get rid of club selection list
+            $('#riderClubTable').html(newClubName);
+        }, null);
+    });
     // to be used when a new club is required (no clubs found from search)
     function noClubsFound(nRow, ssData, iStart, iEnd, aiDisplay) {
         if (iStart === iEnd) {
             $("#btnNewClub").show();
             //$("#btnAddRider").hide();
-            // $("#riderClubTable").prop("disabled", true);
+            //$("#riderClubTable").prop("disabled", true);
             //$("#slider-age").prop("disabled", true);
             //$("#checkLady").prop("disabled", true);
         } else {
@@ -90,51 +122,76 @@
             var nTds = $('td', this);
             newClub = $(nTds[0]).text();
             $('#riderClubTable').html(newClub);
-            newRider.ClubID = getClubID(newClub);
+            Riders.newRider.ClubID = Clubs.getID(newClub);
         });
 
     }
 
-    club.chooseRiderClub = function (clubID) {
-        var i, club, clubs = new Array(clubsdata.length);
-        for (i in clubsdata) {
-            club = clubsdata[i];
-            clubs[i] = [club.Name, club.Abbr];
-        }
-        if (clubID > 0) {
-            newClub = getClubName(clubID);
-            $('#riderClubTable').html(newClub);
-        } else {
-            newClub = "Club?";
-
-        }
-
-        // enable changing the club by double-clicking the club name
-        $('#riderClubTable').dblclick(function () {
-            clubTable(clubs, true);
-        });
-        if (clubID === 0) {
-            // always show club list for new rider
-            clubTable(clubs, false);
-        }
-    }
-    
-    club.addNewClub = function()
-    {
-        var newClubName = clubTableSettings.search();
-        var confirmation = newClubName + ' : enter new club?';
-        myConfirm(confirmation, function() {
-            // temporary club ID; real one will be provided by server later
-
-                clubsdata.push(new Club(-1, newClubName, newClubName.substring(0, 5)));
-            // will be saved when rider list is saved
-            //$("#slider-age").prop("disabled", false);
-            //$("#checkLady").prop("disabled", false);
-            $("#btnNewClub").hide();
-            // get rid of club selection list
-            $('#riderClubTable').html(newClubName);
+    return {
+        count: function() {
+            return list.length;
         },
-            null)
-    }
-return club
-})(jQuery)
+        tempID: function() {
+            var highest = 0;
+            // find highest ID. This will probably NOT be the length of the riders array, since SQL will allocate higher IDs 
+            for (var i in list) {
+                var r = list[i];
+                if (r.ID > highest) {
+                    highest = r.ID;
+                }
+            }
+            return highest + 1;
+        },
+        getID: function (clubname) {
+            for (i = 0; i < list.length; i++) {
+                club = list[i];
+                if (clubname === club.getName()) {
+                    return club.getId();
+                }
+            }
+            return 0;
+        },
+        getName: function (clubID) {
+            for (i = 0; i < list.length; i++) {
+                club = list[i];
+                if (clubID === club.getID) {
+                    return club.getName;
+                }
+            }
+            return "unknown";
+        },
+        getAbbr: function (clubID) {
+            for (i = 0; i < list.length; i++) {
+                club = list[i];
+                if (clubID === club.ID) {
+                    return club.getAbbr;
+                }
+            }
+            return "unknown";
+        },
+        chooseRiderClub: function (clubID) {
+            var tempclubs = new Array(list.length);
+            for (i = 0; i < list.length; i++) {
+                club = list[i];
+                tempclubs[i] = [club.Name, club.Abbr];
+            }
+            if (clubID > 0) {
+                newClub = CycleClub.getName(clubID);
+                $('#riderClubTable').html(newClub);
+            } else {
+                newClub = "Club?";
+            }
+
+            // enable changing the club by double-clicking the club name
+            $('#riderClubTable').dblclick(function () {
+                clubTable(clubs, true);
+            });
+            if (clubID === 0) {
+                // always show club list for new rider
+                clubTable(clubs, false);
+            }
+        }
+    };
+
+    //return club
+}(jQuery));

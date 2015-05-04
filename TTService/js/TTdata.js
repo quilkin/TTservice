@@ -39,6 +39,19 @@ var buttonHeight = 0;
 var realTimer;
 var newdata = 0;
 
+
+var UserRoles = { None: 0, Viewer: 1, ClubAdmin: 2, FullAdmin: 3 };
+var userRole;
+
+//some dummy objects so that intellisense knows what type these things are....
+
+var coursedata = new Array(new Course(0, 0, ""));
+var currentEvent = new Event(0, "", 0, 0, 0);
+//var ridersdata = new Array(new Rider(0, "", 0, 0, 0, ""));
+//var clubsdata = new Array(new club.Club(0, "", ""));
+//var rider = new Rider(0, "", 0, 0, 0, "");
+var entry = new Entry(0, 0, noTimeYet, noTimeYet, new Rider(0, "", 0, 0, 0, ""));
+
 function Course(ID, distance, name)
 {
     this.ID = ID;
@@ -85,64 +98,13 @@ function Event(ID, courseID, time, clubID, extraData) {
     };
 }
 
-var Categories = { Senior: 1, Vet: 2, Junior: 3, Juvenile: 4, Lady: 5, LadyVet: 6 };
-var CatAbbr = new Array("None","Sen", "Vet", "Jun", "Juv", "W", "WVet");
-var UserRoles = { None: 0, Viewer: 1, ClubAdmin: 2, FullAdmin: 3 };
-var userRole;
 
 String.prototype.capitalize = function ()
 {
     return this.charAt(0).toUpperCase() + this.slice(1);
 };
 
-function Rider(ID, name, age, cat, clubid,email,best25) {
-    this.Name = name;
-    this.Age = age;
-    this.Category = cat;
-    this.ClubID = clubid;
-    this.tempID = false;
-    this.Best25 = best25;
-    this.Email = email;
-    if (ID > 0) {
-        // rider created with known ID from the db
-        this.ID = ID;
-    }
-    else if (ridersdata!=null && ridersdata.length>0) {
-        // must create a temporary ID
-        // This will be replaced with a permanemt ID later, when there is communication with the DB
-        var highest = 0;
-        for (var i in ridersdata) {
-            var r = ridersdata[i];
-            if (r.ID > highest) {
-                highest = r.ID;
-            }
-        }
-        this.ID = highest + 1;
-        this.tempID = true;
-    }
-    this.changed = false;
 
-    this.VetStandardTime = function(distance)
-    {
-        var time;
-        var ageOver40 = this.Age - 40;
-        if (this.Category === Categories.LadyVet) {
-            ageOver40 += 8; // eight years difference on standard times
-        }
-        if (ageOver40 >= 0) {
-            if (ageOver40 > VetStandard.Length) {
-                time = VetStandard[VetStandard.Length - 1];
-            }
-            else {
-                time = VetStandard[ageOver40];
-            }
-            // timein millisecs, allowing for 10-mile basis
-            return time * distance * 100;
-        }
-        else
-            return 0;
-    }
-}
 
 // an entry for a single rider in a single event
 // start & end times in millisecs
@@ -170,16 +132,9 @@ function myJson(url, type, data, successfunc, async)
         error: webRequestFailed
     });
 }
-//some dummy objects so that intellisense knows what type these things are....
 
-var coursedata = new Array(new Course(0, 0, ""));
-var currentEvent = new Event(0,"", 0,0, 0);
-var ridersdata = new Array(new Rider(0, "", 0, 0, 0,""));
 
-var rider = new Rider(0, "", 0, 0, 0,"");
-var entry = new Entry(0, 0, noTimeYet,noTimeYet, new Rider(0, "", 0, 0, 0,""));
-
-//function myAlert(alertstr)
+//function popup.alert(alertstr)
 //{
 //    CreatePopupAlert(alertstr);
 //    //   if (navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry)/))    {

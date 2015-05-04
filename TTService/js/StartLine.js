@@ -5,7 +5,7 @@ function StartLine()
     if (checkRole() == false)
         return;
     if (currentEvent.Synched) {
-        myAlert("Cannot re-sync after any riders have finished");
+        popup.alert("Cannot re-sync after any riders have finished");
         return;
     }
     ChangePage("startLine");

@@ -1,62 +1,80 @@
-﻿"use strict";
+﻿/// <reference path="~\www\js\bootbox.min.js" />
+/*global bootbox*/
 
-var popupCount=0;
+var popup = (function () {
 
-function myPopup(title)
-{
+    "use strict";
 
-    if (popupCount > 4) {
-        alert("Too many popups");
+    var popup = {},
         popupCount = 0;
-        //return null;
+
+
+    function checkpopups() {
+        if (popupCount > 5) {
+            window.alert("Too many popups?");
+            popupCount = 0;
+        }
+        ++popupCount;
     }
-    this.$popUp = $("<div class='ui-content'/>").popup({
-        dismissible: false,
-        theme: "c",
+    popup.alert = function (alertstr, timeout) {
+        var alert, timer = null;
 
-    }).on("popupafterclose", function ()
-    {
-        $(this).remove();
-        if (popupCount > 0)--popupCount;
-    });
-    $("<h4/>", { text: title }).appendTo(this.$popUp);
-    ++popupCount;
+        checkpopups();
+        alert = bootbox.alert(alertstr);
 
-    this.addMenuItem = function (text, func, param1, param2)
-    {
-        var self = this.$popUp;
-        $("<a/>", {
-            text: text
-        }).buttonMarkup({
-            inline: true,
-            theme: "b"
-        }).on("click", function ()
-        {
-            self.popup("close");
-            if (func != null) {
-                func(param1, param2);
+        if (timeout !== null) {
+            if (timeout > 0) {
+                timer = window.setTimeout(function () { alert.modal('hide'); }, timeout * 1000);
             }
-        }).appendTo(this.$popUp);
-    }
-    this.open = function ()
-    {
-        // $popUp.popup("open").trigger("create");
-        this.$popUp.popup("open");
-    }
-}
+        }
+        alert.on('hidden.bs.modal', function (e) {
+            --popupCount;
+            window.clearTimeout(timer);
+        });
+
+    };
+
+    popup.confirm = function (message, question, yesfunc, nofunc, timeout) {
+        var confirm, timer = null;
+        checkpopups();
+        confirm = bootbox.dialog({
+            message: message,
+            title: question,
+            buttons: {
+                yes: {
+                    label: "Yes",
+                    className: "btn-success",
+                    callback: yesfunc
+                },
+                no: {
+                    label: "No",
+                    className: "btn-default",
+                    callback: nofunc
+                }
+            }
+        });
+        if (timeout !== null) {
+            if (timeout > 0) {
+                timer = window.setTimeout(function () {
+                    confirm.modal('hide');
+                    yesfunc();
+                }, timeout * 1000);
+            }
+            else {
+                timer = window.setTimeout(function () {
+                    confirm.modal('hide');
+                    nofunc();
+                }, -timeout * 1000);
+            }
+
+        }
+        confirm.on('hidden.bs.modal', function (e) {
+            --popupCount;
+            window.clearTimeout(timer);
+        });
+    };
+
+    return popup;
+}());
 
 
-function myAlert(alertstr)
-{
-    var popup = new myPopup(alertstr);
-    popup.addMenuItem('OK', null);
-    popup.open();
-}
-
-function myConfirm(question, yesfunc, nofunc)
-{
-    var popup = new myPopup(question);
-    popup.addMenuItem('yes', yesfunc);
-    popup.addMenuItem('no', nofunc);
-    popup.open();
-}
