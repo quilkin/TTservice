@@ -25,12 +25,7 @@ don't allow duplicate logins
 // use to save loaded length to check if any have been added
 var ridersLoaded = false;
 
-/// constants for 'non-real' times : all well into the future, and allows for DST corrections
 
-var noTimeYet =     2000000003000;   // ride has not yet happened
-var didNotFinish =  2000000002000;  // started to ride but then stopped
-var didNotStart =   2000000001000;  // entered event but didn't start
-var specialTimes =  2000000000000;  
 var screenHeight = 0;
 var tableHeight = 0;
 var screenWidth = 0;
@@ -157,25 +152,8 @@ function urlBase()
     }
 }
 
-function RiderFromID(riderID)
-{
-    for (var i in ridersdata) {
-        var rider = ridersdata[i];
-        if (riderID == rider.ID)
-            return rider;
-    }
-    return null;
-}
-function RiderFromName(ridername)
-{
-    for (var i in ridersdata) {
-        var rider = ridersdata[i];
-        if (ridername === rider.Name) {
-            return rider;
-        }
-    }
-    return 0;
-}
+
+
 
 function getCourseName(courseID)
 {
@@ -208,6 +186,8 @@ function getCourseID(coursename)
 }
 function getEntryFromRiderID(riderID)
 {
+    if (currentEvent == null)
+        return 0;
     for (var i in currentEvent.Entries) {
         entry = currentEvent.Entries[i];
         if (entry.RiderID === riderID) {
@@ -217,18 +197,7 @@ function getEntryFromRiderID(riderID)
     return null;
 }
 
-function inEvent(rider)
-{
-    if (currentEvent == null)
-        return 0;
-    for (var i in currentEvent.Entries) {
-        entry = currentEvent.Entries[i];
-        if (entry.RiderID === rider.ID) {
-            return rider.ID;
-        }
-    }
-    return 0;
-}
+
 
 function ChangePage(page)
 {
@@ -238,76 +207,3 @@ function ChangePage(page)
     //$("body").pagecontainer("change", "#" + page, { transition: "slide" });
     $("body").pagecontainer("change", "#" + page);
 }
-
-// vet standard times for 10 miles, in seconds
-var VetStandard =  [
-    25*60+30,
-    25*60+42,
-    25*60+54,
-    26*60+6,
-    26*60+18,
-    26*60+30,
-    26*60+42,
-    26*60+54,
-    27*60+7,
-    27*60+20,
-    27*60+33,
-    27*60+46,
-    27*60+59,
-    28*60+12,
-    28*60+25,
-    28*60+38,
-    28*60+52,
-    29*60+6,
-    29*60+20,
-    29*60+34,
-    29*60+48,
-    30*60+2,
-    30*60+16,
-    30*60+30,
-    30*60+45,
-    31*60+0,
-    31*60+15,
-    31*60+30,
-    31*60+45,
-    32*60+0,
-    32*60+15,
-    32*60+30,
-    32*60+46,
-    33*60+2,
-    33*60+18,
-    33*60+34,
-    33*60+50,
-    34*60+6,
-    34*60+22,
-    34*60+39,
-    34*60+55,
-    35*60+12,
-    35*60+29,
-    35*60+46,
-    36*60+3,
-    36*60+20,
-    36*60+37,
-    36*60+54,
-    37*60+12,
-    37*60+30,
-    37*60+48,
-    38*60+6,
-    38*60+24,
-    38*60+42,
-    39*60+1,
-    39*60+19,
-    39*60+38,
-    39*60+57,
-    40*60+16,
-    40*60+35,
-    40*60+54,
-    41*60+14,
-    41*60+33,
-    41*60+53,
-    42*60+12,
-    42*60+32,
-    42*60+53,
-    43*60+13,
-    43*60+33,
-    43*60+54];

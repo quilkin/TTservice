@@ -189,7 +189,7 @@ function DisplayEvent() {
     if (screenWidth < 500) {
         $.each(currentEvent.Entries, function (index, entry)
         {
-            var rider = RiderFromID(entry.RiderID);
+            var rider = Riders.riderFromID(entry.RiderID);
             if (rider == null)
                 rider = new Rider(entry.RiderID, "Rider not found", 0, 1, 0, "");
             entrydata.push(new Array(entry.Number, rider.Name, getClubAbbr(rider.ClubID), TimeString(entry.Start)));
@@ -200,7 +200,7 @@ function DisplayEvent() {
         // more details
         $.each(currentEvent.Entries, function (index, entry)
         {
-            var r = RiderFromID(entry.RiderID);
+            var r = Riders.riderFromID(entry.RiderID);
             var rider;
             if (r == null)
                 rider = new Rider(entry.RiderID, "Rider not found", 0, 1, 0, "", 0);
@@ -211,9 +211,9 @@ function DisplayEvent() {
                 target = TimeStringH1(rider.Best25 * 1000);
 
             var cat = rider.catAbbr();
-            var stdTime = rider.VetStandardTime(currentEvent.Distance());
+            var stdTime = rider.vetStandardTime(currentEvent.Distance());
             var stdTimeStr = stdTime > 0 ? TimeStringH1(stdTime) : "";
-            entrydata.push(new Array(entry.Number, rider.Name, cat, stdTimeStr, target, getClubName(rider.ClubID), TimeString(entry.Start)));
+            entrydata.push(new Array(entry.Number, rider.Name, cat, stdTimeStr, target, Clubs.getName(rider.ClubID), TimeString(entry.Start)));
         })
         myTable('#entries', { "search": "Find entry" }, entrydata, tableHeight, [{ "title": "#" }, { "title": "Name" }, { "title": "Cat" }, { "title": "VetStd" }, { "title": "Target" }, { "title": "Club" }, { "title": "Start" }], null);
 
@@ -262,7 +262,7 @@ function UpdateEventTimes()
 
     $.each(currentEvent.Entries, function (index, entry)
     {
-        var rider = RiderFromID(entry.RiderID);
+        var rider = Riders.riderFromID(entry.RiderID);
         if (rider == null)
             rider = new Rider(entry.RiderID, "Rider not found", 0, 1, 0, "");
         var rideTimeString;
@@ -404,7 +404,7 @@ function parseEventsJson(response)
     $.each(events, function (index, ev)
     {
         var date = new Date(ev.Time);
-        eventData.push(new Array(ev.ID, getClubName(ev.ClubID), getCourseName(ev.CourseID), DateTimeString(date)));
+        eventData.push(new Array(ev.ID, Clubs.getName(ev.ClubID), getCourseName(ev.CourseID), DateTimeString(date)));
 
     });
     currentEvent = null;
@@ -459,3 +459,64 @@ function parseEventsJson(response)
     });
 
 }
+
+
+function SortEntries() {
+
+    // compares entries and sorts in order of start, but with those already finished shifted to the end
+    currentEvent.Entries.sort(function (a, b) {
+        // time will be noTimeYet if rider hasn't started
+
+        //var aFinished = a.Finish.valueOf() / 1000 < noTimeYet / 1000;
+        //var bFinished = b.Finish.valueOf() / 1000 < noTimeYet / 1000;
+        //if (aFinished & !bFinished)
+        //    return b.Start - a.Finish.valueOf() ;
+
+        //else if (bFinished & !aFinished)
+        //    return a.Start - b.Finish.valueOf();
+        //else
+        //    if (bFinished & aFinished)
+        //        return b.Finish.valueOf() - a.Finish.valueOf();
+        //var result = 0;
+        //var aFinished = (a.Finish / 1000) < (noTimeYet / 1000);
+        //var bFinished = (b.Finish / 1000) < (noTimeYet / 1000);
+        //if (aFinished & !bFinished)
+        //    result = b.Start - a.Finish;
+        //    //return b.Finish;
+
+        //else if (bFinished & !aFinished)
+        //    result = a.Start - b.Finish;
+        //    //return a.Finish;
+        //else
+        //    if (bFinished & aFinished)
+        //        result = b.Finish - a.Finish;
+        //        //return b.Finish - a.Finish;
+        ////var result = (b.Finish.valueOf()/1000 > noTimeYet/1000) - (a.Finish.valueOf()/1000 > noTimeYet/1000);
+        ////if (result != 0)
+        ////    return result;
+        //else
+        //        result = a.Start - b.Start;
+        //return result;
+        var result = b.Finish - a.Finish;
+        if (result != 0)
+            return result;
+        return a.Number - b.Number;
+    });
+}
+function SortResults() {
+    // compares entries and sorts in order of result time, lowest first
+    currentEvent.Entries.sort(function (a, b) {
+        var result = (a.Finish - a.Start) - (b.Finish - b.Start)
+        if (result != 0)
+            return result;
+        return a.Number - b.Number;
+    });
+
+}
+
+function webRequestFailed(handle, status, error) {
+    popup.alert("Error ajax request: " + error);
+    $("#submitButton").removeAttr("disabled");
+}
+
+

@@ -68,6 +68,7 @@
     <Content Include="js\bootstrap-datepicker.js" />
     <Content Include="js\bootstrap.min.js" />
     <Content Include="js\rider.js" />
+    <Content Include="js\timesdates.js" />
     <Content Include="res\beep_wav" />
     <Content Include="res\images\Sorting icons.psd" />
     <Content Include="copyfiles.bat" />
@@ -75,10 +76,10 @@
     <Content Include="tt-app-help-2.docx" />
     <Content Include="tt-app-help.pdf" />
     <Content Include="JSLintNet.json" />
-    <None Include="Web.Debug.config">
+    <None Include="Server\Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
-    <None Include="Web.Release.config">
+    <None Include="Server\Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>
@@ -197,20 +198,20 @@
     <Content Include="res\images\yearForward_over.gif" />
     <Content Include="res\splash\default%402x~iphone.png" />
     <Content Include="res\splash\default~iphone.png" />
-    <Content Include="Service1.svc" />
-    <Content Include="Web.config" />
+    <Content Include="Server\Service1.svc" />
+    <Content Include="Server\Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="club.cs" />
-    <Compile Include="Connect.cs" />
-    <Compile Include="Event.cs" />
-    <Compile Include="IService1.cs" />
+    <Compile Include="Server\club.cs" />
+    <Compile Include="Server\Connect.cs" />
+    <Compile Include="Server\Event.cs" />
+    <Compile Include="Server\IService1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="rider.cs" />
-    <Compile Include="Service1.svc.cs">
+    <Compile Include="Server\rider.cs" />
+    <Compile Include="Server\Service1.svc.cs">
       <DependentUpon>Service1.svc</DependentUpon>
     </Compile>
-    <Compile Include="VetStandard.cs" />
+    <Compile Include="Server\VetStandard.cs" />
   </ItemGroup>
   <ItemGroup />
   <PropertyGroup>

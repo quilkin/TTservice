@@ -17,9 +17,9 @@ function Results()
     $.each(currentEvent.Entries, function (index, entry)
     {
         entry.Position = pos++;
-        var r = RiderFromID(entry.RiderID);  
+        var r = Riders.riderFromID(entry.RiderID);
         var rider = new Rider(r.ID,r.Name,r.Age,r.Category,r.ClubID,r.Email,r.Best25);
-        var stdTime = rider.VetStandardTime(currentEvent.Distance());
+        var stdTime = rider.vetStandardTime(currentEvent.Distance());
         if (stdTime > 0) {
             entry.VetOnStd = entry.Finish - entry.Start - stdTime;
         }
@@ -41,7 +41,7 @@ function Results()
         else
             rideTimeString = TimeStringH1(rideTime);
         
-        results.push(new Array(entry.Position, entry.Number, rider.Name, $is_mobile ? getClubAbbr(rider.ClubID) : getClubName(rider.ClubID), rideTimeString, TimeStringVetStd(entry.VetOnStd)));
+        results.push(new Array(entry.Position, entry.Number, rider.Name, $is_mobile ? getClubAbbr(rider.ClubID) : Clubs.getName(rider.ClubID), rideTimeString, TimeStringVetStd(entry.VetOnStd)));
 
     });
 
@@ -52,7 +52,7 @@ function Results()
     if (checkRole() == false) {
         $('#btnEmailResult').hide();
     }
-    var title = getClubName(currentEvent.ClubID) + " " + DateTimeString(currentEvent.Time) + " " + getCourseName(currentEvent.CourseID);
+    var title = Clubs.getName(currentEvent.ClubID) + " " + DateTimeString(currentEvent.Time) + " " + getCourseName(currentEvent.CourseID);
     $('#resultsTitle').text(title);
 
     var table = myTable('#results', { "sSearch": "Select Rider:" }, results, tableHeight,
@@ -86,9 +86,9 @@ function Results()
     $.each(currentEvent.Entries, function (index, entry)
     {
         //entry.Position = pos++;
-        var r = RiderFromID(entry.RiderID);
+        var r = Riders.riderFromID(entry.RiderID);
         var rider = new Rider(r.ID, r.Name, r.Age, r.Category, r.ClubID, r.Email, r.Best25);
-        var stdTime = rider.VetStandardTime(currentEvent.Distance());
+        var stdTime = rider.vetStandardTime(currentEvent.Distance());
         if (stdTime > 0) {
             entry.VetOnStd = entry.Finish - entry.Start - stdTime;
         }
@@ -115,7 +115,7 @@ function Results()
     });
 
     $('#extraresultsTable').html('<table class="display" id="extraresults"></table>');
-    var file = getClubName(currentEvent.ClubID) + " " + DateTimeString(currentEvent.Time) + " " + getCourseName(currentEvent.CourseID);
+    var file = Clubs.getName(currentEvent.ClubID) + " " + DateTimeString(currentEvent.Time) + " " + getCourseName(currentEvent.CourseID);
 
     var oTable = $('#extraresults').DataTable({
         "data": results,

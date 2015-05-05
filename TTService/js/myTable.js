@@ -4,7 +4,7 @@ function myTable(tableID, language, array, height, columns, footercallback)
 {
     var file = "Rider List";
     if (tableID == "#results" || tableID == "#entries")
-        file = getClubName(currentEvent.ClubID) + " " + DateTimeString(currentEvent.Time) + " " + getCourseName(currentEvent.CourseID);
+        file = Clubs.getName(currentEvent.ClubID) + " " + DateTimeString(currentEvent.Time) + " " + getCourseName(currentEvent.CourseID);
     var search = true;
     if (tableID == "#events" || tableID == "#results" || tableID == "#extraresults")
         search = false;

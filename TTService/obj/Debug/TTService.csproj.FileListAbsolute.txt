@@ -10,7 +10,6 @@ C:\Users\chris\Source\Repos\TTService\TTService\bin\TTService.pdb
 C:\Users\chris\Source\Repos\TTService\TTService\obj\Debug\TTService.csprojResolveAssemblyReference.cache
 C:\Users\chris\Source\Repos\TTService\TTService\obj\Debug\TTService.dll
 C:\Users\chris\Source\Repos\TTService\TTService\obj\Debug\TTService.pdb
-C:\Users\chris\Documents\GitHub\TTService\TTService\bin\TTService.dll.config
 C:\Users\chris\Documents\GitHub\TTService\TTService\bin\TTService.dll
 C:\Users\chris\Documents\GitHub\TTService\TTService\bin\TTService.pdb
 C:\Users\chris\Documents\GitHub\TTService\TTService\obj\Debug\TTService.csprojResolveAssemblyReference.cache

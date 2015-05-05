@@ -31,7 +31,7 @@ function DisplayRiderList() {
     var riderArray = new Array();
     $.each(ridersdata, function (index, rider) {
         var cat = CatAbbr[rider.Category];
-        if (inEvent(rider)) cat += " *";
+        if (rider.inEvent()) { cat += " *"; };
         var best25string = "";
         if (rider.hasBest25())
             best25string = TimeStringH1(rider.Best25 * 1000);
@@ -47,7 +47,7 @@ function DisplayRiderList() {
         var riderID = $(nTds[0]).text();
 
         ChangePage("riderDetailsPage");
-        var rider = RiderFromID(riderID);
+        var rider = Riders.riderFromID(riderID);
         displayRider(rider,false);
     });
 }

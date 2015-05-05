@@ -1,56 +1,5 @@
 "use strict";
 
-function displayRider(rider,event) {
-
-
-	//console.log(rider);
-    $('#name').text(rider.Name);
-   
-    $('#club').text("Club: " + getClubName(rider.ClubID));
-	$('#cat').text("Category: "+ rider.Category);
-	if (event) {
-	    var entry;
-	    $.each(currentEvent.Entries,function(index,e) {
-	        //for (ev in currentEvent.Entries) {
-	        if (rider.ID == e.RiderID) {
-	            entry = e;
-	            return false; // break
-	        }
-	    });
-	    if (entry != null) {
-	        $('#start').text("Start time:   " + TimeString(entry.Start));
-	        $('#number').text("Start Number: " + entry.Number);
-	        if (entry.Finish/1000 < noTimeYet/1000) {
-	            $('#time').text("Result Time:  " + TimeString(entry.Finish - entry.Start));
-	            var distance = currentEvent.Distance();
-	            var r = new Rider(rider.ID, rider.Name, rider.Age, rider.Category, rider.ClubID,rider.Email,rider.Best25);
-	            var vetStdTime = r.VetStandardTime(distance);
-	            if (vetStdTime != 0) {
-	                $('#vetstd').text("Vet Std (" + distance+ " miles): " + TimeString(vetStdTime));
-	                $('#vetonstd').text("Vet on Std:    " + TimeStringVetStd(entry.VetOnStd));
-	            }
-	        }
-	    }
-	    else {
-	        $('#start').text("Error with entry details");
-	    }
-
-	}
-	else {
-	    $('#age').text("Age: " + userRole > 1? rider.Age : "Undisclosed");
-	    $('#inevent').text("In event?: " + inEvent(rider)?"yes":"no");
-	    //$('#time10').text(rider.time10);
-	    if (rider.hasBest25()) {
-	        var best25string = TimeStringH1(rider.Best25 * 1000);
-	        $('#time25').text("Best '25' time: " + best25string);
-	    }
-	    //$('#target').text(rider.target);
-        if (userRole > 1)
-	        $('#email').text(rider.email);
-	}
-	
-}
-
 function BackToFinishLine() {
     ChangePage("finishLine");
 }
@@ -96,7 +45,7 @@ function UndoFinish(entry) {
 
 function getRiderFromGrid(riderID) {
     
-    var rider = RiderFromID(riderID);
+    var rider = Riders.riderFromID(riderID);
     var entry = getEntryFromRiderID(riderID);
     $('#rname').text(rider.Name);
     $('#rnumber').text(entry.Number);
