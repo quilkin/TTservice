@@ -69,17 +69,11 @@ namespace TTService
 
         DataTable dataLogins;
 
-       string connection = "server=www.timetrials.org.uk;database=chrisfgma5886com5778_timetrial;User ID=quilkin;Password=Iw3692eh";
-       string smtpserver = "mail.timetrials.org.uk";
-       string smtpUserName = "admin@timetrials.org.uk";
-       string smtpPassword = "icespy1643";
-       //string smtpserver = "relay.clara.net";
-
-    //    string connection = "server=localhost\\system5;database=TimeTrial;User ID=quilkin;Password=Iw3692eh";
-        //   ConnectionStringSettingsCollection settings = ConfigurationManager.ConnectionStrings;
-        //   string connection = settings[1].ConnectionString;
-         //string connection = "Server=tcp:uj6sfz8w6q.database.windows.net,1433;Database=TT;User ID=quilkin@uj6sfz8w6q;Password=Iw2863wa;Trusted_Connection=False;Encrypt=True;Connection Timeout=30";
-
+       string connection = Connections.connection;
+       string smtpserver = Connections.smtpserver;
+       string smtpUserName = Connections.smtpUserName;
+       string smtpPassword = Connections.smtpPassword;
+ 
         public static string TimeString(DateTime time)
         {
             if (time == DateTime.MinValue)
