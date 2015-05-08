@@ -105,7 +105,7 @@ function FinishLine() {
 
     detectScreenHeight(); // may have changed in browser version
     rows = Math.floor(screenHeight / buttonHeight);
-    if ($is_mobile) rows -= 4; else rows -= 3;
+    if (ttApp.isMobile()) rows -= 4; else rows -= 3;
     cols = 3;
 
     CreateButtonGrid(0);
@@ -150,7 +150,7 @@ function RiderFinishing()
         return;
     }
     finishTimes.push(new Date().valueOf());
-    if ($is_mobile) {
+    if (ttApp.isMobile()) {
         var beep = new Media("/android_asset/www/res/beep_mp3.mp3");
         beep.play();
     }
@@ -160,7 +160,7 @@ function RiderFinishing()
     DisplayFinishTimes();
     // cannot sync start time again once a rider has fiinsihed
     currentEvent.Synched = true;
-    if ($is_mobile) {
+    if (ttApp.isMobile()) {
         // keep device awake
         screenTimeout = 0;
 
@@ -194,7 +194,7 @@ function UpdateTime() {
         $(".realtime").text(TimeString(d));
 
 
-        if ($is_mobile)
+        if (ttApp.isMobile())
         {
             // extend sleep timeout to 5 minutes
             ++screenTimeout;

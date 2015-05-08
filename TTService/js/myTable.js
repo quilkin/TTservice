@@ -9,7 +9,7 @@ function myTable(tableID, language, array, height, columns, footercallback)
     if (tableID == "#events" || tableID == "#results" || tableID == "#extraresults")
         search = false;
 
-    if ($is_mobile == false && currentEvent != null && (tableID == '#riders' || tableID == '#results' || tableID == '#entries')) {
+    if (ttApp.isMobile() == false && currentEvent != null && (tableID == '#riders' || tableID == '#results' || tableID == '#entries')) {
         // use table tools for printing options
         $(tableID + 'Table').html('<table class="display" id="' + tableID.substring(1) + '"></table>');
         var oTable = $(tableID).DataTable({

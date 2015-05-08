@@ -1,4 +1,7 @@
 ﻿
+/// <reference path="~\js\timesdates.js" />
+/// <reference path="~\js\popups.js" />
+
 "use strict";
 var courses;
 var clubs;
@@ -121,7 +124,7 @@ function AddEvent()
     
     
     $("#startTime").val("08:00:00");
-    //if ($is_mobile == false)
+    //if (ttApp.isMobile() == false)
     {
         $("#startDate").datepicker({ changeYear: true, dateFormat: "dd/mm/yy" });
         $("#startTime").timepicker({
@@ -177,7 +180,7 @@ function DisplayEvent() {
     }
     ChangePage("entrypage");
 
-    if ($is_mobile) {
+    if (ttApp.isMobile()) {
         $('#btnEmailStart').hide();
     }
     if (checkRole() == false)
@@ -192,7 +195,7 @@ function DisplayEvent() {
             var rider = Riders.riderFromID(entry.RiderID);
             if (rider == null)
                 rider = new Rider(entry.RiderID, "Rider not found", 0, 1, 0, "");
-            entrydata.push(new Array(entry.Number, rider.Name, getClubAbbr(rider.ClubID), TimeString(entry.Start)));
+            entrydata.push(new Array(entry.Number, rider.Name, Clubs.getAbbr(rider.getClubID()), TimeString(entry.Start)));
         })
         myTable('#entries', { "search": "Find entry" }, entrydata, tableHeight, [{ "title": "#" }, { "title": "Name" }, { "title": "Club" }, { "title": "Start" }], null);
     }
@@ -277,7 +280,7 @@ function UpdateEventTimes()
             rideTimeString = "???";
         else
             rideTimeString = TimeStringH1(rideTime);
-        entrydata.push(new Array(entry.Number, rider.Name, getClubAbbr(rider.ClubID), rideTimeString));
+        entrydata.push([entry.Number, rider.Name, Clubs.getAbbr(rider.getClubID()), rideTimeString]);
     })
     var table = myTable('#times', { "search": "Find entry" }, entrydata, tableHeight - 100, [{ "title": "#" }, { "title": "Name" }, { "title": "Club" }, { "title": "Time" }], null);
     table.order([ [1, 'asc']]);
@@ -514,9 +517,6 @@ function SortResults() {
 
 }
 
-function webRequestFailed(handle, status, error) {
-    popup.alert("Error ajax request: " + error);
-    $("#submitButton").removeAttr("disabled");
-}
+
 
 

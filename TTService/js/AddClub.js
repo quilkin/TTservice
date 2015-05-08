@@ -20,13 +20,16 @@ var CycleClub = (function () {
             name = this.setName(Name);
             abbr = this.setAbbr(Abbr);
 
-            if (Riders.newRider !== null) {
-                Riders.newRider.ClubID = this.ID;
+            if (Riders.getNewRider() !== null) {
+                Riders.getNewRider().ClubID = this.ID;
             }
             // public (this instance only)
             this.getId = function () { return id; };
+            this.getTempId = function () { return tempID; };
             this.getName = function () { return name; };
             this.getAbbr = function () { return abbr; };
+            this.setId = function (value) { id = value; };
+            this.setTempId = function (value) { tempID = value; };
             this.setName = function (value) {
                 if (typeof value !== 'string') {
                     throw 'Club name must start with a letter';
@@ -60,12 +63,15 @@ var CycleClub = (function () {
 
     // public (shared across instances)
     club.prototype = {
-     
-        announce: function () {
-            // not required, left in from example code
-            popup.alert('Hi there! My id is ' + this.getId() + ' and my club is "' + this.getName() + '"!\r\n' +
-                  'The next club\'s id will be ' + CycleClub.getNextId() + '!');
+        checkTempIDs: function()  {
+            if (this.getTempID()) {
+                // need to change clubIDs for any new riders........
+                Riders.updateClubIDs(this.getId(), newID);
+                this.setId(newID++);
+                this.setTempID(false);
+            }
         }
+
     };
 
     return club;
@@ -75,7 +81,7 @@ var CycleClub = (function () {
 var Clubs = (function ($) {
     "use strict";
 
-    var clubs = {},
+    var Clubs = {},
         list = [],
         newClub,
         i,
@@ -127,6 +133,48 @@ var Clubs = (function ($) {
 
     }
 
+    function ClubsResponse(response) {
+        var newID, count;
+        if (response > 0) {
+            newID = response;
+            // add new IDs to existing clubs
+            $.each(list, function (index, club) {
+                club.checkTempIDs();
+                //if (club.getTempID()) {
+                //    // need to change clubIDs for any new riders........
+                //    Riders.updateClubIDs(club.getId(), newID);
+                //    club.setId(newID++);
+                //    club.tempID = false;
+                //}
+
+            });
+            count = newID - response;
+            popup.alert(count + " clubs uploaded OK");
+        }
+        else
+            popup.alert("! No clubs uploaded");
+        //waitforClubs = false;
+    }
+    
+    $('#displayClubList').click(function () {
+        if (list == null) {
+            popup.alert("No clubs loaded!");
+            return;
+        }
+        var table, tableClubs = [];
+        $.each(list, function (index, club) {
+            clubs[index] = [club.Name, club.Abbr];
+        });
+        ChangePage("clubsPage");
+        table = myTable('#clubs2', { "sSearch": "Select Club:" }, tableClubs, tableHeight, [null, null], null);
+    });
+
+    Clubs.prototype = {
+        parseJson: function(response) {
+            list = response;
+        }
+
+    }
     return {
         count: function() {
             return list.length;
@@ -189,6 +237,18 @@ var Clubs = (function ($) {
             if (clubID === 0) {
                 // always show club list for new rider
                 clubTable(clubs, false);
+            }
+        },
+        uploadNewClubs: function () {
+            var newClubs = [];
+            $.each(list, function (index, club) {
+                if (club.tempID) {
+                    newClubs.push(club);
+                }
+            });
+            if (newClubs.length > 0) {
+                // must not be async call to ensure clubs saved before riders call
+                myJson("SaveNewClubs", "POST", newClubs, ClubsResponse, false);
             }
         }
     };

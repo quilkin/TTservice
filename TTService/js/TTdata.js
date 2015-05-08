@@ -1,4 +1,4 @@
-﻿"use strict";
+﻿/*global jQuery,popup,ttTime,Riders,Clubs*/
 
 /* ToDo:
 save data to local memory
@@ -21,11 +21,47 @@ don't allow duplicate logins
 
 */
 
+var TTData = (function ($) {
+    "use strict";
 
-// use to save loaded length to check if any have been added
-var ridersLoaded = false;
+    var TTData = {};
+
+    function urlBase() {
+        if (ttApp.isMobile()) {
+            return "http://www.timetrials.org.uk/Service1.svc/";
+            // return "http://quilkin.azurewebsites.net/Service1.svc/"
+        }
+
+        //return "http://www.timetrials.org.uk/Service1.svc/";
+        return "http://localhost:60080/Service1.svc/";
+
+    }
+    function webRequestFailed(handle, status, error) {
+        popup.alert("Error ajax request: " + error);
+        $("#submitButton").removeAttr("disabled");
+    }
+
+    TTData.json = function (url, type, data, successfunc, async) {
+        var dataJson = JSON.stringify(data),
+            thisurl = urlBase() + url;
+        $.ajax({
+            type: type,
+            data: dataJson,
+            url: thisurl,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: async,
+            success: successfunc,
+            error: webRequestFailed
+        });
+    };
+    return TTData;
 
 
+}(jQuery));
+
+
+    "use strict";
 var screenHeight = 0;
 var tableHeight = 0;
 var screenWidth = 0;
@@ -43,8 +79,9 @@ var coursedata = new Array(new Course(0, 0, ""));
 var currentEvent = new Event(0, "", 0, 0, 0);
 //var ridersdata = new Array(new Rider(0, "", 0, 0, 0, ""));
 //var clubsdata = new Array(new club.Club(0, "", ""));
-//var rider = new Rider(0, "", 0, 0, 0, "");
-var entry = new Entry(0, 0, noTimeYet, noTimeYet, new Rider(0, "", 0, 0, 0, ""));
+//var rider = new TTRider(0, "", 0, 0, 0, "", ttTime.noTimeYet());
+
+var entry = new Entry(0, 0, ttTime.noTimeYet(), ttTime.noTimeYet(), new TTRider(0, "", 0, 0, 0, "", ttTime.noTimeYet()));
 
 function Course(ID, distance, name)
 {
@@ -111,46 +148,6 @@ function Entry(number, start, finish, riderID) {
     this.VetOnStd = 0;
 }
 
-function myJson(url, type, data, successfunc, async)
-{
-    var dataJson = JSON.stringify(data);
-    var thisurl = urlBase() + url;
-    $.ajax({
-        type: type,
-        data: dataJson,
-        url: thisurl,
-        contentType: "application/json; charset=utf-8",
-        dataType: "json",
-        async: async,
-        success: successfunc,
-        error: webRequestFailed
-    });
-}
-
-
-//function popup.alert(alertstr)
-//{
-//    CreatePopupAlert(alertstr);
-//    //   if (navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry)/))    {
-//    //if ($is_mobile) {
-//    //    navigator.notification.alert(alertstr);
-//    //}
-//    //else
-//    //     alert(alertstr);
-
-//} 
-
-function urlBase()
-{
-    if ($is_mobile) {
-        return "http://www.timetrials.org.uk/Service1.svc/";
-        // return "http://quilkin.azurewebsites.net/Service1.svc/"
-    }
-    else {
-        return "http://www.timetrials.org.uk/Service1.svc/";
-        //return "http://localhost:60080/Service1.svc/";
-    }
-}
 
 
 

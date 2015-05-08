@@ -41,12 +41,12 @@ function Results()
         else
             rideTimeString = TimeStringH1(rideTime);
         
-        results.push(new Array(entry.Position, entry.Number, rider.Name, $is_mobile ? getClubAbbr(rider.ClubID) : Clubs.getName(rider.ClubID), rideTimeString, TimeStringVetStd(entry.VetOnStd)));
+        results.push(new Array(entry.Position, entry.Number, rider.Name, ttApp.isMobile() ? Clubs.getAbbr(rider.getClubID()) : Clubs.getName(rider.ClubID), rideTimeString, TimeStringVetStd(entry.VetOnStd)));
 
     });
 
     ChangePage("resultpage");
-    if ($is_mobile) {
+    if (ttApp.isMobile()) {
         $('#btnEmailResult').hide();
     }
     if (checkRole() == false) {
@@ -110,7 +110,7 @@ function Results()
         else
             rideTimeString = TimeStringH1(rideTime);
 
-        results.push(new Array(getClubAbbr(rider.ClubID), entry.Number, rider.Name, rideTimeString, TimeStringVetStd(entry.VetOnStd)));
+        results.push([Clubs.getAbbr(rider.getClubID()), entry.Number, rider.Name, rideTimeString, TimeStringVetStd(entry.VetOnStd)]);
 
     });
 

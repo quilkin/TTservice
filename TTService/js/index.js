@@ -16,109 +16,139 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-function myInit()
-{
-    
-    if (navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry)/))
-        $is_mobile = true;
-    //if ($is_mobile)
-    //    power = require('powerManagement.js');
-    realTimer = setInterval(function () { UpdateTime() }, 1000);
-    $.ajaxSetup({ cache: false });
 
-    $(document).on("popupafterclose", ".ui-popup", function ()
-    {
-        $(this).remove();
+(function () {
+    "use strict";
+
+    function onPause() {
+        // TODO: This application has been suspended. Save application state here.
+    }
+
+    function onResume() {
+        // TODO: This application has been reactivated. Restore application state here.
+    }
+    function onDeviceReady() {
+        // Handle the Cordova pause and resume events
+        document.addEventListener('pause', onPause.bind(this), false);
+        document.addEventListener('resume', onResume.bind(this), false);
+        window.addEventListener('load', function () { FastClick.attach(document.body); }, false);
+        ttApp.receivedEvent('deviceready');
+        $.ajaxSetup({ cache: false });
+      
+        ttTime.log(device.platform + ": " + device.model);
+        ttApp.setMobile(true);
+        // needs doing again
+        //bleApp.detectScreenHeight();
+
+        ttApp.SetPlatform(device.platform);
+    }
+
+    document.addEventListener('deviceready', onDeviceReady.bind(this), false);
+
+
+    $(document).ready(function () {
+
+        ttApp.init();
+        
+        $(document).ajaxStart(function () {
+            $('<div class="loader" id="loading"><img id="loading-image" src="images/page-loader.gif" alt="waiting..." /></div>')
+        .prependTo('body');
+        });
+
+        $(document).ajaxStop(function () {
+            // $('.loader').hide();
+            $('.loader').remove();
+        });
+        $(document).bind("mobileinit", function () {
+            $.mobile.page.prototype.options.addBackBtn = true;
+            $.mobile.defaultPageTransition = 'none';
+            $.mobile.pushStateEnabled = false;
+        });
+        document.body.style.backgroundColor = "#FFD700";
     });
 
 
-    deviceReadyLogin();
+})();
 
-}
-//function onBatteryStatus(info) {
-//    alert("Level: " + info.level + " isPlugged: " + info.isPlugged);
-//}
 
-var $is_mobile = false;
-var app = {
+
+var ttApp = (function () {
+    "use strict";
+
+    var ttApp = {},
+    ismobile,
+    platform;
     
-    initMobile: function () {
-   //     this.bindEvents();
-        $is_mobile = false;
-        myInit();
+    return {
+        init: function() {
+            //ismobile = false;
+            //if (navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry)/))
+            //    is_mobile = true;
+            //if (ttApp.isMobile())
+            //    power = require('powerManagement.js');
+            realTimer = setInterval(function () { UpdateTime() }, 1000);
+            $.ajaxSetup({ cache: false });
 
-    },
-    initNonMobile: function ()
-    {
-        if ($is_mobile)
-            // already done in deviceready
-            return;
-   //     this.bindEvents();
-        myInit();
+            $(document).on("popupafterclose", ".ui-popup", function ()
+            {
+                $(this).remove();
+            });
 
-    },
-    // Bind Event Listeners
-    //
-    // Bind any events that are required on startup. Common events are:
-    // 'load', 'deviceready', 'offline', and 'online'.
-    bindEvents: function() {
-        document.addEventListener('deviceready', this.onDeviceReady, false);
-    },
+            deviceReadyLogin();
 
-    // deviceready Event Handler
-    //
-    // The scope of 'this' is the event. In order to call the 'receivedEvent'
-    // function, we must explicity call 'app.receivedEvent(...);'
-    onDeviceReady: function() {
-        app.receivedEvent('deviceready');
-        $.ajaxSetup({ cache: false });
-      
-        alert("onDeviceReady");
- 
-    },
-   // Update DOM on a Received Event
-    receivedEvent: function(id) {
-        var parentElement = document.getElementById(id);
-        var listeningElement = parentElement.querySelector('.listening');
-        var receivedElement = parentElement.querySelector('.received');
+        },
 
-        listeningElement.setAttribute('style', 'display:none;');
-        receivedElement.setAttribute('style', 'display:block;');
+        //initMobile: function () {
+        //    //     this.bindEvents();
+        //    ismobile = false;
+        //    myInit();
 
+        //},
+        //initNonMobile: function ()
+        //{
+        //    if (ismobile)
+        //        // already done in deviceready
+        //        return;
+        //    //     this.bindEvents();
+        //    myInit();
 
-        //$.ajaxSetup({ cache: false });
+        //},
+        setPlatform: function (x) { platform = x; },
+        getPlatform: function () {
+            return (platform === undefined ? '' : platform);
+        },
+        isMobile: function () { return ismobile; },
+        setMobile: function (x) { ismobile = x; },
+        tableHeight: function () {
+            var tableHeight, screenHeight;
+            //bleApp.detectScreenHeight = function () {
+            if (ismobile) {
+                screenHeight = $(window).height();
+                tableHeight = screenHeight - 175;
+                //screenWidth = $(window).width();
+                //    this.screenWidth = screen.availWidth;
+            }
+            else {
+                screenHeight = $(window).height();
+                tableHeight = screenHeight - 175;
+                //screenWidth = $(window).width();
+                //    this.tableHeight = window.innerHeight - 175;
+                //    this.screenHeight = window.innerHeight;
+                //    this.screenWidth = window.innerWidth;
+            }
+            return tableHeight; 
+        },
+
+        // Update DOM on a Received Event
+        receivedEvent: function(id) {
+            var parentElement = document.getElementById(id);
+            var listeningElement = parentElement.querySelector('.listening');
+            var receivedElement = parentElement.querySelector('.received');
+
+            listeningElement.setAttribute('style', 'display:none;');
+            receivedElement.setAttribute('style', 'display:block;');
+
+        }
     }
 
-};
-
-function detectScreenHeight()
-{
-    if ($is_mobile) {
-        screenHeight = $.mobile.getScreenHeight();
-        tableHeight = screenHeight - 100;
-        screenWidth = screen.availWidth;
-    }
-    else{
-        tableHeight = window.innerHeight - 175;
-        screenHeight = window.innerHeight ;
-        screenWidth = window.innerWidth;
-    }
-
-
-};
-
-$(document).ready(function ()
-{
- //   $is_mobile = false;
-
- //   if ($.mobile.media('screen and (max-width: 800px)'))
-
-//    if ($('#mediatest').css('display') == 'none') {
-//        $is_mobile = true;
- //   }
-    detectScreenHeight();
-    document.body.style.backgroundColor = "#FFD700";
-});
-
-
-
+}());

@@ -1,6 +1,6 @@
 ﻿/*global jQuery*/
 
-var Popup = (function ($) {
+var popup = (function ($) {
 
     "use strict";
 
@@ -8,7 +8,7 @@ var Popup = (function ($) {
         $popUp,
 
     // constructor
-        Pop = function (title) {
+        pop = function (title) {
 
             if (popupCount > 4) {
                 this.alert("Too many popups");
@@ -26,34 +26,39 @@ var Popup = (function ($) {
             $("<h4/>", { text: title }).appendTo($popUp);
             ++popupCount;
         };
-
-    this.addMenuItem = function (text, func, param1, param2) {
-        var self = $popUp;
-        $("<a/>", {
-            text: text
-        }).buttonMarkup({
-            inline: true,
-            theme: "b"
-        }).on("click", function () {
-            self.popup("close");
-            if (func !== null) {
-                func(param1, param2);
-            }
-        }).appendTo($popUp);
-    };
-    this.open = function () {
-        // $popUp.popup("open").trigger("create");
-        $popUp.popup("open");
-    };
-    this.alert = function (alertstr) {
-        var popup = new Pop(alertstr);
+    pop.alert = function (alertstr) {
+        var popup = new pop(alertstr);
         popup.addMenuItem('OK', null);
         popup.open();
     };
-    this.confirm = function (question, yesfunc, nofunc) {
-        var popup = new Pop(question);
+    pop.confirm = function (question, yesfunc, nofunc) {
+        var popup = new pop(question);
         popup.addMenuItem('yes', yesfunc);
         popup.addMenuItem('no', nofunc);
         popup.open();
     };
+
+    pop.prototype = {
+        addMenuItem: function (text, func, param1, param2) {
+            var self = $popUp;
+            $("<a/>", {
+                text: text
+            }).buttonMarkup({
+                inline: true,
+                theme: "b"
+            }).on("click", function () {
+                self.popup("close");
+                if (func !== null) {
+                    func(param1, param2);
+                }
+            }).appendTo($popUp);
+        },
+        open: function () {
+            // $popUp.popup("open").trigger("create");
+            $popUp.popup("open");
+        },
+
+
+    }
+    return pop;
 }(jQuery));

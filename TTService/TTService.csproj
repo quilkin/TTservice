@@ -76,10 +76,10 @@
     <Content Include="tt-app-help-2.docx" />
     <Content Include="tt-app-help.pdf" />
     <Content Include="JSLintNet.json" />
-    <None Include="Server\Web.Debug.config">
+    <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
-    <None Include="Server\Web.Release.config">
+    <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>
@@ -131,7 +131,6 @@
     <Content Include="js\fastclick.js" />
     <Content Include="js\FinishLine.js" />
     <Content Include="js\getEvent.js" />
-    <Content Include="js\getRiders.js" />
     <Content Include="js\index.js" />
     <Content Include="js\jquery-1.11.1.min.js" />
     <Content Include="js\jquery-ui-timepicker-addon.js" />
@@ -198,8 +197,8 @@
     <Content Include="res\images\yearForward_over.gif" />
     <Content Include="res\splash\default%402x~iphone.png" />
     <Content Include="res\splash\default~iphone.png" />
-    <Content Include="Server\Service1.svc" />
-    <Content Include="Server\Web.config" />
+    <Content Include="Service1.svc" />
+    <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Server\club.cs" />
@@ -208,7 +207,7 @@
     <Compile Include="Server\IService1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Server\rider.cs" />
-    <Compile Include="Server\Service1.svc.cs">
+    <Compile Include="Service1.svc.cs">
       <DependentUpon>Service1.svc</DependentUpon>
     </Compile>
     <Compile Include="Server\VetStandard.cs" />

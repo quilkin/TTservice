@@ -139,7 +139,8 @@ var TTRider = (function ($) {
             this.changed = false;
         };
 
-    return {
+    // public (shared across instances)
+    rider.prototype = {
         vetStandardTime: function (distance) {
             var time,
                 ageOver40 = this.getAge() - 40;
@@ -248,5 +249,6 @@ var TTRider = (function ($) {
         }
 
     };
+    return rider;
 }(jQuery));
 

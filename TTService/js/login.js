@@ -33,7 +33,7 @@ function handleLogin()
 
     if (u != '' && p != '') {
         var creds = { name: u, pw: p, email: "", code: 0 };
-        myJson('Login', "POST", creds, function (res)
+        TTData.json('Login', "POST", creds, function (res)
             {
                 if (res > 0) {
                     userRole = res;
@@ -42,9 +42,9 @@ function handleLogin()
                     //store
                     window.localStorage["username"] = u;
                     window.localStorage["password"] = p;
-                    GetRiderData();
+                    Riders.getRiderData();
                     ChangePage("home");
-                    if ($is_mobile) {
+                    if (ttApp.isMobile()) {
                         $("#deviceid").html(device.model);
                     }
                 } else {
@@ -91,7 +91,7 @@ function handleSignup()
             {
                 userRole = UserRoles.Viewer;
                 //$(".adminonly").prop("disabled", true);
-                GetRiderData();
+                Riders.getRiderData();
                 ChangePage("home");
 
                 //window.addEventListener("batterystatus", onBatteryStatus, false);
@@ -126,7 +126,7 @@ function deviceReadyLogin()
   //      }
   //  });
     ChangePage("loginPage");
-    if ($is_mobile) {
+    if (ttApp.isMobile()) {
         $('#note1').hide();
         $('#note2').hide();
     }
