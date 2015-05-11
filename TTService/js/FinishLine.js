@@ -100,11 +100,11 @@ function FinishLine() {
         return;
     }
     screenTimeout = 0;
-    SortEntries();
+    event.SortEntries();
     buttonHeight = $('#finLine').height() * 3;  // allow for spaces between buttons
 
-    detectScreenHeight(); // may have changed in browser version
-    rows = Math.floor(screenHeight / buttonHeight);
+    //detectScreenHeight(); // may have changed in browser version
+    rows = Math.floor(ttApp.screenHeight / buttonHeight);
     if (ttApp.isMobile()) rows -= 4; else rows -= 3;
     cols = 3;
 
@@ -173,7 +173,7 @@ function DefineRiderTime(entry)
     // remove this time from stored list of finish times
     DeleteFinishTime(finishTime);
     // and redraw grid of rider numbers
-    SortEntries();
+    event.SortEntries();
     CreateButtonGrid(0);
 }
 function RiderFinished(riderID,ftime) {
@@ -189,23 +189,5 @@ function RiderFinished(riderID,ftime) {
 
 }
 
-function UpdateTime() {
-        var d = new Date();
-        $(".realtime").text(TimeString(d));
 
-
-        if (ttApp.isMobile())
-        {
-            // extend sleep timeout to 5 minutes
-            ++screenTimeout;
-
-            if (screenTimeout == 1)
-                chrome.power.requestKeepAwake("display");
-
-            if (screenTimeout == 300)
-                chrome.power.releaseKeepAwake();
-
-        }
-
-}
 

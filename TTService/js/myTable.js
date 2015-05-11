@@ -42,10 +42,11 @@ function myTable(tableID, language, array, height, columns, footercallback)
             "scrollCollapse": true,
             "data": array,
             "columns": columns,
-            "footerCallback": footercallback,
             "columnDefs": [
                     { "width": "2%", "targets": 0 }
-            ]
+            ],
+            "footerCallback": footercallback
+
 
 
         });

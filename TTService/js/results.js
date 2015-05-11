@@ -7,11 +7,11 @@ function Results()
         popup.alert("No event loaded, or no riders in event!");
         return;
     }
-    //if (currentEvent.PastEvent()==false) {
+    //if (currentEvent.pastEvent()==false) {
     //    popup.alert("No results yet, event has not happened");
     //    return;
     //}
-    SortResults();
+    event.SortResults();
     var pos = 1;
     var results = new Array();
     $.each(currentEvent.Entries, function (index, entry)
@@ -19,7 +19,7 @@ function Results()
         entry.Position = pos++;
         var r = Riders.riderFromID(entry.RiderID);
         var rider = new Rider(r.ID,r.Name,r.Age,r.Category,r.ClubID,r.Email,r.Best25);
-        var stdTime = rider.vetStandardTime(currentEvent.Distance());
+        var stdTime = rider.vetStandardTime(currentEvent.distance());
         if (stdTime > 0) {
             entry.VetOnStd = entry.Finish - entry.Start - stdTime;
         }
@@ -68,7 +68,7 @@ function Results()
     {
         var nTds = $('td', this);
         var name = $(nTds[2]).text();
-        var rider = RiderFromName(name);
+        var rider = Riders.RiderFromName(name);
 
          ChangePage("riderDetailsPage");
 
@@ -88,7 +88,7 @@ function Results()
         //entry.Position = pos++;
         var r = Riders.riderFromID(entry.RiderID);
         var rider = new Rider(r.ID, r.Name, r.Age, r.Category, r.ClubID, r.Email, r.Best25);
-        var stdTime = rider.vetStandardTime(currentEvent.Distance());
+        var stdTime = rider.vetStandardTime(currentEvent.distance());
         if (stdTime > 0) {
             entry.VetOnStd = entry.Finish - entry.Start - stdTime;
         }

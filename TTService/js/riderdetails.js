@@ -5,7 +5,7 @@ function BackToFinishLine() {
 }
 function CancelFinished() {
     ChangePage("finishLine");
-    SortEntries();
+    event.SortEntries();
     CreateButtonGrid(0);
 }
 function ConfirmFinishTime(riderID)
@@ -39,7 +39,7 @@ function ConfirmFinishTime(riderID)
 
 function UndoFinish(entry) {
     entry.Finish = noTimeYet;
-    SortEntries();
+    event.SortEntries();
     CreateButtonGrid(0);
 }
 

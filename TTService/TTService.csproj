@@ -67,6 +67,8 @@
     <Content Include="js\bootbox.min.js" />
     <Content Include="js\bootstrap-datepicker.js" />
     <Content Include="js\bootstrap.min.js" />
+    <Content Include="js\entry-course.js" />
+    <Content Include="js\jquery-ui-timepicker-addon.js" />
     <Content Include="js\rider.js" />
     <Content Include="js\timesdates.js" />
     <Content Include="res\beep_wav" />
@@ -130,15 +132,11 @@
     <Content Include="js\EventList.js" />
     <Content Include="js\fastclick.js" />
     <Content Include="js\FinishLine.js" />
-    <Content Include="js\getEvent.js" />
     <Content Include="js\index.js" />
     <Content Include="js\jquery-1.11.1.min.js" />
-    <Content Include="js\jquery-ui-timepicker-addon.js" />
-    <Content Include="js\jquery-ui-timepicker-addon.min.js" />
     <Content Include="js\jquery-ui.min.js" />
     <Content Include="js\jquery.dataTables.min.js" />
     <Content Include="js\jquery.mobile-1.4.3.min.js" />
-    <Content Include="js\jQuery.ui.datepicker.js" />
     <Content Include="js\login.js" />
     <Content Include="js\myTable.js" />
     <Content Include="js\popups.js" />
@@ -146,7 +144,6 @@
     <Content Include="js\results.js" />
     <Content Include="js\riderdetails.js" />
     <Content Include="js\StartLine.js" />
-    <Content Include="js\TableTools.min.js" />
     <Content Include="js\TTdata.js" />
     <Content Include="res\beep_mp3.mp3" />
     <Content Include="res\beep_wav.wav" />

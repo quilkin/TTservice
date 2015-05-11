@@ -219,7 +219,7 @@ var TTRider = (function ($) {
                     $('#number').text("Start Number: " + entry.Number);
                     if (entry.Finish / 1000 < ttTime.noTimeYet() / 1000) {
                         $('#time').text("Result Time:  " + ttTime.timeString(entry.Finish - entry.Start));
-                        distance = currentEvent.Distance();
+                        distance = currentEvent.distance();
                         //var r = new Rider(rider.ID, rider.Name, rider.Age, rider.Category, rider.ClubID,rider.Email,rider.Best25);
                         vetStdTime = this.vetStandardTime(distance);
                         if (vetStdTime !== 0) {

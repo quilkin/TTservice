@@ -77,8 +77,23 @@ var ttApp = (function () {
 
     var ttApp = {},
     ismobile,
+    realTimer,
     platform;
     
+    function UpdateTime() {
+        var d = new Date();
+        $(".realtime").text(ttTime.timeString(d));
+
+        if (ismobile) {
+            // extend sleep timeout to 5 minutes
+            ++screenTimeout;
+            if (screenTimeout == 1)
+                chrome.power.requestKeepAwake("display");
+            if (screenTimeout == 300)
+                chrome.power.releaseKeepAwake();
+        }
+    }
+
     return {
         init: function() {
             //ismobile = false;
@@ -94,7 +109,7 @@ var ttApp = (function () {
                 $(this).remove();
             });
 
-            deviceReadyLogin();
+            login.deviceReady();
 
         },
 
@@ -121,22 +136,26 @@ var ttApp = (function () {
         setMobile: function (x) { ismobile = x; },
         tableHeight: function () {
             var tableHeight, screenHeight;
-            //bleApp.detectScreenHeight = function () {
+
             if (ismobile) {
                 screenHeight = $(window).height();
                 tableHeight = screenHeight - 175;
-                //screenWidth = $(window).width();
-                //    this.screenWidth = screen.availWidth;
             }
             else {
                 screenHeight = $(window).height();
                 tableHeight = screenHeight - 175;
-                //screenWidth = $(window).width();
-                //    this.tableHeight = window.innerHeight - 175;
-                //    this.screenHeight = window.innerHeight;
-                //    this.screenWidth = window.innerWidth;
             }
             return tableHeight; 
+        },
+        screenWidth: function () {
+            var screenWidth;
+            if (ismobile) {
+                screenWidth = $(window).width();
+            }
+            else {
+                screenWidth = $(window).width();
+            }
+            return screenWidth;
         },
 
         // Update DOM on a Received Event

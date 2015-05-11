@@ -26,7 +26,7 @@ var CycleClub = (function () {
             // public (this instance only)
             this.getId = function () { return id; };
             this.getTempId = function () { return tempID; };
-            this.getName = function () { return name; };
+            //this.getName = function () { return name; };
             this.getAbbr = function () { return abbr; };
             this.setId = function (value) { id = value; };
             this.setTempId = function (value) { tempID = value; };
@@ -70,7 +70,8 @@ var CycleClub = (function () {
                 this.setId(newID++);
                 this.setTempID(false);
             }
-        }
+        },
+        getName: function () { return name; }
 
     };
 
@@ -81,13 +82,40 @@ var CycleClub = (function () {
 var Clubs = (function ($) {
     "use strict";
 
-    var Clubs = {},
+    var clubs = {},
         list = [],
         newClub,
         i,
         club,
         clubTableSettings = null;
 
+    clubs.parseJson = function (response) {
+        list = response;
+    };
+
+    clubs.populateList = function (plist) {
+        $.each(list, function (index, club) {
+            plist.push([club.Name]);
+        })
+    };
+    clubs.getID = function (clubname) {
+        for (i = 0; i < list.length; i++) {
+            club = list[i];
+            if (clubname === club.Name) {
+                return club.ID;
+            }
+        }
+        return 0;
+    };
+    clubs.getName = function (clubID) {
+        for (i = 0; i < list.length; i++) {
+            club = list[i];
+            if (clubID === club.getID) {
+                return club.getName;
+            }
+        }
+        return "unknown";
+    };
     $('#btnNewClub').click(function () {
         var newClubName = clubTableSettings.search(),
             confirmation = newClubName + ' : enter new club?';
@@ -169,16 +197,17 @@ var Clubs = (function ($) {
         table = myTable('#clubs2', { "sSearch": "Select Club:" }, tableClubs, tableHeight, [null, null], null);
     });
 
-    Clubs.prototype = {
-        parseJson: function(response) {
-            list = response;
-        }
+    clubs.prototype = {
 
-    }
-    return {
+
+
         count: function() {
             return list.length;
         },
+        parseJson: function(response) {
+            list = response;
+        },
+        getList: function() { return list; },
         tempID: function() {
             var highest = 0;
             // find highest ID. This will probably NOT be the length of the riders array, since SQL will allocate higher IDs 
@@ -190,24 +219,8 @@ var Clubs = (function ($) {
             }
             return highest + 1;
         },
-        getID: function (clubname) {
-            for (i = 0; i < list.length; i++) {
-                club = list[i];
-                if (clubname === club.getName()) {
-                    return club.getId();
-                }
-            }
-            return 0;
-        },
-        getName: function (clubID) {
-            for (i = 0; i < list.length; i++) {
-                club = list[i];
-                if (clubID === club.getID) {
-                    return club.getName;
-                }
-            }
-            return "unknown";
-        },
+
+
         getAbbr: function (clubID) {
             for (i = 0; i < list.length; i++) {
                 club = list[i];
@@ -253,5 +266,5 @@ var Clubs = (function ($) {
         }
     };
 
-    //return club
+    return clubs
 }(jQuery));
