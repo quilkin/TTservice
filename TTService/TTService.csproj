@@ -68,6 +68,7 @@
     <Content Include="js\bootstrap-datepicker.js" />
     <Content Include="js\bootstrap.min.js" />
     <Content Include="js\entry-course.js" />
+    <Content Include="js\event.js" />
     <Content Include="js\jquery-ui-timepicker-addon.js" />
     <Content Include="js\rider.js" />
     <Content Include="js\timesdates.js" />

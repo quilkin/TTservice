@@ -110,8 +110,8 @@ var Clubs = (function ($) {
     clubs.getName = function (clubID) {
         for (i = 0; i < list.length; i++) {
             club = list[i];
-            if (clubID === club.getID) {
-                return club.getName;
+            if (clubID === club.ID) {
+                return club.Name;
             }
         }
         return "unknown";

@@ -101,7 +101,9 @@ var ttApp = (function () {
             //    is_mobile = true;
             //if (ttApp.isMobile())
             //    power = require('powerManagement.js');
-            realTimer = setInterval(function () { UpdateTime() }, 1000);
+
+            // remove this line while debugging!!!!
+           // realTimer = setInterval(function () { UpdateTime() }, 1000);
             $.ajaxSetup({ cache: false });
 
             $(document).on("popupafterclose", ".ui-popup", function ()
@@ -157,7 +159,8 @@ var ttApp = (function () {
             }
             return screenWidth;
         },
-
+        setEvent: function (value) { event = value; },
+        currentEvent: function() { return event;},
         // Update DOM on a Received Event
         receivedEvent: function(id) {
             var parentElement = document.getElementById(id);
