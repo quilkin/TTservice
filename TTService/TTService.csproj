@@ -142,7 +142,6 @@
     <Content Include="js\myTable.js" />
     <Content Include="js\popups.js" />
     <Content Include="js\powerManagement.js" />
-    <Content Include="js\results.js" />
     <Content Include="js\riderdetails.js" />
     <Content Include="js\StartLine.js" />
     <Content Include="js\TTdata.js" />

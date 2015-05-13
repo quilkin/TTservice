@@ -1,15 +1,18 @@
-﻿"use strict";
+﻿/// <reference path="~\js\EventList.js" />
+
+"use strict";
 
 function myTable(tableID, language, array, height, columns, footercallback)
 {
     var file = "Rider List";
+    var event = EventList.currentEvent;
     if (tableID == "#results" || tableID == "#entries")
-        file = Clubs.getName(currentEvent.ClubID) + " " + DateTimeString(currentEvent.Time) + " " + getCourseName(currentEvent.CourseID);
+        file = Clubs.getName(event.ClubID) + " " + ttTime.dateTimeString(event.Time) + " " + Course.getName(event.CourseID);
     var search = true;
     if (tableID == "#events" || tableID == "#results" || tableID == "#extraresults")
         search = false;
 
-    if (ttApp.isMobile() == false && currentEvent != null && (tableID == '#riders' || tableID == '#results' || tableID == '#entries')) {
+    if (ttApp.isMobile() == false && event != null && (tableID == '#riders' || tableID == '#results' || tableID == '#entries')) {
         // use table tools for printing options
         $(tableID + 'Table').html('<table class="display" id="' + tableID.substring(1) + '"></table>');
         var oTable = $(tableID).DataTable({
@@ -57,61 +60,82 @@ function myTable(tableID, language, array, height, columns, footercallback)
     return oTable;
 }
 
-// stuff for jquerymobile tables
+function resultsTableRiders(results) {
+    var table = myTable('#results', { "sSearch": "Select Rider:" }, results, ttApp.tableHeight(),
+        [{ "sTitle": "" },
+          { "sTitle": "no:" },
+          { "sTitle": "name" },
+          { "sTitle": "club" },
+          { "sTitle": "time" },
+          { "sTitle": "vet+" }],
+         null);
 
-//// make a simpler array for autocomplete to handle
-//// if screen is big enough, include club name in list
-//names = new Array(ridersdata.length);
-//for (var i = 0; i < ridersdata.length; i++) {
-//    var rider = ridersdata[i];
-//    if (screenWidth > 500) 
-//        names[i] = new Array(rider.Name, rider.Club);
-//    else
-//        names[i] = new Array(rider.Name);
-//}
-//$("#riderSearch").autocomplete({
-//    target: $("#riderList"),
-//    source: names,
-//    callback: function (e) {
-//        // change to relevant rider's page
-//        var a = $(e.currentTarget); // access the selected item
-//        var riderText = a.text();
-//        var rider;
-//        ChangePage("riderDetailsPage");
-//        for (var r in ridersdata) {
-//            rider = ridersdata[r];
-//            if (riderText.indexOf(rider.Name)==0)
-//                break;
-//        }
-//        displayRider(rider,false);
-//    },
-//    labelHTML: function (rider)
-//    {
-//        if (screenWidth > 400)
-//            return rider[0] + '<span class="ui-li-count">' + rider[1] + '</span></li>';
-//        else
-//            return rider[0] + '</li>';
+    $('#results tbody tr').on('click', function () {
+        var nTds, name, rider;
+        nTds = $('td', this);
+        name = $(nTds[2]).text();
+        rider = Riders.riderFromName(name);
 
-//    },
-//    //minLength: 0
-//    onFocus: true,
-//    onMouseUp: true
-//});
+        ChangePage("riderDetailsPage");
 
-//$('#entryList').empty();
-//$.each(entries, function (index, entry)
-//{
-//    var date = new Date(entry[1]);
-//    var htmlstr = '<li data-name="' + entry.RiderID  +'">' +
-//           '<h1><span style="color:red">' + entry[2] + '</span>' + ': ' + entry[0] + '</h1>' +
-//           '<span class="ui-li-count">' + TimeString(date) + '</span></li>';
-//    $('#entryList').append(htmlstr);
-//});
-//$('#entryList').delegate('li', 'click', function ()
-//{
-//    var id = $(this).attr('data-name');
-//    var newpage = "#riderDetailsPage";
-//    $.mobile.changePage(newpage);
-//    var rider = getRiderFromID(id);
-//    displayRider(rider,true);
-//});
+        rider.displayRider(true);
+    });
+}
+
+function resultsTableSummary(results,file) {
+
+    $('#extraresultsTable').html('<table class="display" id="extraresults"></table>');
+
+    var oTable = $('#extraresults').DataTable({
+        "data": results,
+        "scrollY": 300,
+        "paging": false,
+        "filter": false,
+        "columns":
+          [
+          { "title": "no:" },
+          { "title": "name" },
+          { "title": "club" },
+          { "title": "time" },
+          { "title": "vet+" }],
+        "tableTools": {
+            "sSwfPath": "copy_csv_xls_pdf.swf",
+            "aButtons": ["copy", { "sExtends": "pdf", "sTitle": file }]
+        },
+        "drawCallback": function (oSettings) {
+            if (oSettings.aiDisplay.length == 0) {
+                return;
+            }
+
+            var nTrs = $('#extraresults tbody tr');
+            var iCol = nTrs[0].getElementsByTagName('td');
+            var iColspan = iCol.length;
+            var sLastGroup = "";
+            for (var i = 0 ; i < nTrs.length ; i++) {
+                var iDisplayIndex = oSettings._iDisplayStart + i;
+                var sGroup = oSettings.aoData[oSettings.aiDisplay[iDisplayIndex]]._aData[0];
+                if (sGroup != sLastGroup) {
+                    var nGroup = document.createElement('tr');
+                    var nCell = document.createElement('td');
+                    //ncell.colSpan = iColspan;
+                    nCell.colSpan = 100;
+                    nCell.className = "group";
+                    nCell.innerHTML = sGroup;
+                    nGroup.appendChild(nCell);
+                    nTrs[i].parentNode.insertBefore(nGroup, nTrs[i]);
+                    sLastGroup = sGroup;
+                }
+            }
+        },
+
+
+        "aoColumnDefs": [
+            { "bVisible": false, "aTargets": [0] }
+        ],
+        "aaSortingFixed": [[0, 'asc']],
+        "aaSorting": [[1, 'asc']],
+        //  "sDom": 'lfr<"giveHeight"t>ip'
+        "sDom": 'T<"clear"><"top"f>rt<"bottom"l>'
+    });
+
+}

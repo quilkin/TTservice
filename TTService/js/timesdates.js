@@ -32,10 +32,12 @@ var ttTime = (function () {
             //return [time.getFullYear(), pad2(time.getMonth() + 1), pad2(time.getDate())].join('-');
             return dateString(time);
         },
-        timeString: function (time) {
+        timeString: function (t) {
+            var time = new Date(t);
             return timeStringSecs(time);
         },
-        dateTimeString: function (time) {
+        dateTimeString: function (t) {
+            var time = new Date(t);
             return dateString(time) + " " + timeString(time);
         },
         timeStringH1: function(t)

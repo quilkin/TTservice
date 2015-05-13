@@ -116,6 +116,15 @@ var Clubs = (function ($) {
         }
         return "unknown";
     };
+    clubs.getAbbr = function (clubID) {
+        for (i = 0; i < list.length; i++) {
+            club = list[i];
+            if (clubID === club.ID) {
+                return club.Abbr;
+            }
+        }
+        return "unknown";
+    };
     $('#btnNewClub').click(function () {
         var newClubName = clubTableSettings.search(),
             confirmation = newClubName + ' : enter new club?';

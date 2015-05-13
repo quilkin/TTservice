@@ -65,7 +65,7 @@ var EventList = (function ($) {
                 event.loadEntries(entries);
                 // popup.alert(entries.length + " riders loaded for this event");
                 if (event.pastEvent()) {
-                    Results();
+                    event.results();
                 }
                 else {
                     // popup.alert("No results yet, event has not happened");
@@ -74,7 +74,6 @@ var EventList = (function ($) {
                 }
             },
             true);
-            event.loadEntries(eventID);
         });
     }
 

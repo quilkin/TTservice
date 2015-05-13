@@ -100,7 +100,7 @@ function FinishLine() {
         return;
     }
     screenTimeout = 0;
-    event.SortEntries();
+    event.sortEntries();
     buttonHeight = $('#finLine').height() * 3;  // allow for spaces between buttons
 
     //detectScreenHeight(); // may have changed in browser version
@@ -173,7 +173,7 @@ function DefineRiderTime(entry)
     // remove this time from stored list of finish times
     DeleteFinishTime(finishTime);
     // and redraw grid of rider numbers
-    event.SortEntries();
+    event.sortEntries();
     CreateButtonGrid(0);
 }
 function RiderFinished(riderID,ftime) {
