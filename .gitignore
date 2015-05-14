@@ -1,6 +1,7 @@
 # database connection credentials
 
 Connect.cs
+*.zip
 
 # Windows image file caches
 Thumbs.db

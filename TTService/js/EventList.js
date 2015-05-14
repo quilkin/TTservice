@@ -138,7 +138,7 @@ var EventList = (function ($) {
 
         if (event !== null) {
             if (event.entries.length > 1) {
-                popup.Confirm('This will remove all details for existing event - are you sure?',
+                popup.confirm('This will remove all details for existing event - are you sure?',
                     function () {
                         event = null;
                         ChangePage('addEventPage');

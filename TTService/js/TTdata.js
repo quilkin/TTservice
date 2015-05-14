@@ -80,18 +80,7 @@ var TTData = (function ($) {
 //    return 0;
 //}
 
-function getEntryFromRiderID(riderID)
-{
-    if (currentEvent == null)
-        return 0;
-    for (var i in currentEvent.Entries) {
-        entry = currentEvent.Entries[i];
-        if (entry.RiderID === riderID) {
-            return entry;
-        }
-    }
-    return null;
-}
+
 
 function ChangePage(page)
 {

@@ -136,6 +136,7 @@ var TTRider = (function ($) {
             };
             this.setAge = function (value) { age = value; };
             this.setEmail = function (value) { email = value; };
+            this.setClubID = function (value) { clubid = value; };
             this.changed = false;
         };
 
@@ -198,18 +199,19 @@ var TTRider = (function ($) {
             return 0;
         },
         displayRider: function (event) {
-            var entry,
+            var entry = null,
                 distance,
                 vetStdTime,
-                best25string;
+                best25string,
+                self = this;
 
             $('#name').text(this.getName());
             $('#club').text("Club: " + Clubs.getName(this.getClubID()));
             $('#cat').text("Category: " + this.getCategory());
             if (event) {
-                $.each(currentEvent.Entries, function (index, e) {
+                $.each(EventList.currentEvent().getEntries(), function (index, e) {
                     //for (ev in currentEvent.Entries) {
-                    if (this.getId === e.RiderID) {
+                    if (self.getId() === e.RiderID) {
                         entry = e;
                         return false; // break
                     }
@@ -219,7 +221,7 @@ var TTRider = (function ($) {
                     $('#number').text("Start Number: " + entry.Number);
                     if (entry.Finish / 1000 < ttTime.noTimeYet() / 1000) {
                         $('#time').text("Result Time:  " + ttTime.timeString(entry.Finish - entry.Start));
-                        distance = currentEvent.distance();
+                        distance = EventList.currentEvent().distance();
                         //var r = new Rider(rider.ID, rider.Name, rider.Age, rider.Category, rider.ClubID,rider.Email,rider.Best25);
                         vetStdTime = this.vetStandardTime(distance);
                         if (vetStdTime !== 0) {

@@ -17,16 +17,16 @@ var CycleClub = (function () {
                 tempID = true;
             }
 
-            name = this.setName(Name);
-            abbr = this.setAbbr(Abbr);
+            name = Name;
+            abbr = Abbr;
 
             if (Riders.getNewRider() !== null) {
-                Riders.getNewRider().ClubID = this.ID;
+                Riders.getNewRider().setClubID(ID);
             }
             // public (this instance only)
             this.getId = function () { return id; };
             this.getTempId = function () { return tempID; };
-            //this.getName = function () { return name; };
+            this.getName = function () { return name; };
             this.getAbbr = function () { return abbr; };
             this.setId = function (value) { id = value; };
             this.setTempId = function (value) { tempID = value; };
@@ -44,7 +44,7 @@ var CycleClub = (function () {
             };
             this.setAbbr = function (value) {
                 if (typeof value !== 'string') {
-                    throw 'Club name must start with a letter';
+                    throw 'Club abbr must start with a letter';
                 }
                 if (value.length === 0) {
                     // default is first 5 chars of name
@@ -62,17 +62,13 @@ var CycleClub = (function () {
     };
 
     // public (shared across instances)
-    club.prototype = {
-        checkTempIDs: function()  {
-            if (this.getTempID()) {
-                // need to change clubIDs for any new riders........
-                Riders.updateClubIDs(this.getId(), newID);
-                this.setId(newID++);
-                this.setTempID(false);
-            }
-        },
-        getName: function () { return name; }
-
+    club.prototype.checkTempIDs = function()  {
+        if (this.getTempID()) {
+            // need to change clubIDs for any new riders........
+            Riders.updateClubIDs(this.getId(), newID);
+            this.setId(newID++);
+            this.setTempID(false);
+        }
     };
 
     return club;
@@ -91,18 +87,24 @@ var Clubs = (function ($) {
 
     clubs.parseJson = function (response) {
         list = response;
+        var club;
+        $.each(list, function (index, e) {
+            // convert json list into list of club objects
+            club = new CycleClub(e.ID, e.Name, e.Abbr);
+            list[index] = club;
+        })
     };
 
     clubs.populateList = function (plist) {
         $.each(list, function (index, club) {
-            plist.push([club.Name]);
+            plist.push([club.getName()]);
         })
     };
     clubs.getID = function (clubname) {
         for (i = 0; i < list.length; i++) {
             club = list[i];
-            if (clubname === club.Name) {
-                return club.ID;
+            if (clubname === club.getName()) {
+                return club.getId();
             }
         }
         return 0;
@@ -110,8 +112,8 @@ var Clubs = (function ($) {
     clubs.getName = function (clubID) {
         for (i = 0; i < list.length; i++) {
             club = list[i];
-            if (clubID === club.ID) {
-                return club.Name;
+            if (clubID === club.getId()) {
+                return club.getName();
             }
         }
         return "unknown";
@@ -119,8 +121,8 @@ var Clubs = (function ($) {
     clubs.getAbbr = function (clubID) {
         for (i = 0; i < list.length; i++) {
             club = list[i];
-            if (clubID === club.ID) {
-                return club.Abbr;
+            if (clubID === club.getId()) {
+                return club.getAbbr();
             }
         }
         return "unknown";
