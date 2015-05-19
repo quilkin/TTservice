@@ -172,64 +172,156 @@ var Event = (function ($) {
             file = Clubs.getName(this.ClubID) + " " + ttTime.dateTimeString(this.Time) + " " + Course.getName(this.CourseID);
             resultsTableSummary(results, file);
         };
+        this.displayEvent = function () {
+            var r, rider,
+                entrydata = [],
+                target, cat,
+                stdTime, stdTimeStr;
 
-        
-    }
-
-
-    function updateEventTimes() {
-
-        if (this.entries.length < 1) {
-            popup.alert("No riders entered!");
-            return;
-        }
-        ChangePage("timesPage");
-
-        var entrydata = [],
-            rider, rideTime, rideTimeString,
-            table;
-
-        $.each(this.entries, function (index, entry) {
-            rider = Riders.riderFromID(entry.RiderID);
-            if (rider === null) {
-                rider = new TTRider(entry.RiderID, "Rider not found", 0, 1, 0, "");
+            if (this.entries.length < 1) {
+                popup.alert("No riders entered!");
+                return;
             }
 
-            rideTime = entry.Finish - entry.Start;
-            if (entry.Finish / 1000 === ttTime.didNotStart() / 1000) {
-                rideTimeString = "DNS";
+            ChangePage("entrypage");
+
+            if (ttApp.isMobile()) {
+                $('#btnEmailStart').hide();
             }
-            else if (entry.Finish / 1000 === ttTime.didNotFinish() / 1000) {
-                rideTimeString = "DNF";
+            if (login.checkRole() === false) {
+                $('#btnEmailStart').hide();
             }
-            else if (entry.Finish >= ttTime.specialTimes()) {
-                rideTimeString = "???";
+
+            if (ttApp.screenWidth() < 500) {
+                $.each(this.entries, function (index, entry) {
+                    rider = Riders.riderFromID(entry.RiderID);
+                    if (rider === null) {
+                        rider = new TTRider(entry.RiderID, "Rider not found", 0, 1, 0, "");
+                    }
+                    entrydata.push([entry.Number, rider.Name, Clubs.getAbbr(rider.getClubID()), ttTime.timeString(entry.Start)]);
+                });
+                myTable('#entries', { "search": "Find entry" }, entrydata, ttApp.tableHeight(), [{ "title": "#" }, { "title": "Name" }, { "title": "Club" }, { "title": "Start" }], null);
             }
             else {
-                rideTimeString = ttTime.timeStringH1(rideTime);
+                // more details
+                var self = this;
+                $.each(this.entries, function (index, entry) {
+                    rider = Riders.riderFromID(entry.RiderID);
+
+                    if (rider === null) {
+                        rider = new TTRider(entry.RiderID, "Rider not found", 0, 1, 0, "", 0);
+                    }
+
+                    target = "";
+                    if (rider.hasBest25()) {
+                        target = ttTime.timeStringH1(rider.getBest25() * 1000);
+                    }
+
+                    cat = rider.catAbbr();
+                    stdTime = rider.vetStandardTime(self.distance());
+                    stdTimeStr = stdTime > 0 ? ttTime.timeStringH1(stdTime) : "";
+                    entrydata.push([entry.Number, rider.getName(), cat, stdTimeStr, target, Clubs.getName(rider.getClubID()), ttTime.timeString(entry.Start)]);
+                });
+                myTable('#entries', { "search": "Find entry" }, entrydata, ttApp.tableHeight(), [{ "title": "#" }, { "title": "Name" }, { "title": "Cat" }, { "title": "VetStd" }, { "title": "Target" }, { "title": "Club" }, { "title": "Start" }], null);
+
             }
-            entrydata.push([entry.Number, rider.Name, Clubs.getAbbr(rider.getClubID()), rideTimeString]);
-        });
-        table = myTable('#times', { "search": "Find entry" }, entrydata, ttApp.tableHeight() - 100, [{ "title": "#" }, { "title": "Name" }, { "title": "Club" }, { "title": "Time" }], null);
-        table.order([[1, 'asc']]);
-        $("#riderTime").timepicker({
-            showSecond: true,
-            timeFormat: 'HH:mm:ss',
-            controlType: 'select',
-            stepHour: 1,
-            stepMinute: 1,
-            stepSecond: 1
-        });
-        $('#times tbody tr').on('click', function () {
-            var nTds = $('td', this),
-                name = $(nTds[1]).text(),
-                time = $(nTds[3]).text();
-            updatingEntry = $(nTds[0]).text();
 
-            $('#riderTime').val(time);
-            $('#riderTimeLabel').text(name);
-        });
+            // *********** ToDo: allow deletion of entries but only if event hasn't happened
+            $('#entries tbody tr').on('click', function () {
+                var nTds = $('td', this),
+                    name = $(nTds[1]).text();
+                ChangePage("riderDetailsPage");
 
+                rider = Riders.riderFromName(name);
+                rider.displayRider(true);
+            });
+        };
+        this.updateEventTimes = function () {
+
+            if (this.entries.length < 1) {
+                popup.alert("No riders entered!");
+                return;
+            }
+            ChangePage("timesPage");
+
+            var entrydata = [],
+                rider, rideTime, rideTimeString,
+                table;
+
+            $.each(this.entries, function (index, entry) {
+                rider = Riders.riderFromID(entry.RiderID);
+                if (rider === null) {
+                    rider = new TTRider(entry.RiderID, "Rider not found", 0, 1, 0, "");
+                }
+
+                rideTime = entry.Finish - entry.Start;
+                if (entry.Finish / 1000 === ttTime.didNotStart() / 1000) {
+                    rideTimeString = "DNS";
+                }
+                else if (entry.Finish / 1000 === ttTime.didNotFinish() / 1000) {
+                    rideTimeString = "DNF";
+                }
+                else if (entry.Finish >= ttTime.specialTimes()) {
+                    rideTimeString = "???";
+                }
+                else {
+                    rideTimeString = ttTime.timeStringH1(rideTime);
+                }
+                entrydata.push([entry.Number, rider.getName(), Clubs.getAbbr(rider.getClubID()), rideTimeString]);
+            });
+            table = myTable('#times', { "search": "Find entry" }, entrydata, ttApp.tableHeight() - 100, [{ "title": "#" }, { "title": "Name" }, { "title": "Club" }, { "title": "Time" }], null);
+            table.order([[1, 'asc']]);
+            $("#riderTime").timepicker({
+                showSecond: true,
+                timeFormat: 'HH:mm:ss',
+                controlType: 'select',
+                stepHour: 1,
+                stepMinute: 1,
+                stepSecond: 1
+            });
+            $('#times tbody tr').on('click', function () {
+                var nTds = $('td', this),
+                    name = $(nTds[1]).text(),
+                    time = $(nTds[3]).text();
+                updatingEntry = parseInt($(nTds[0]).text(),10);
+
+                $('#riderTime').val(time);
+                $('#riderTimeLabel').text(name);
+            });
+        };
+        this.saveRiderTime = function () {
+            var endTime = ttTime.noTimeYet(),
+                startTime, rideTimeS, rideTimeD,
+                self = this;
+
+            startTime = this.Time + 1000 * 60 * updatingEntry;
+            rideTimeS = $('#riderTime').val();
+            if ($('#riderTime').val() === 'DNS') {
+                endTime = ttTime.didNotStart();
+            }
+            else if ($('#riderTime').val() === 'DNF') {
+                endTime = ttTime.didNotFinish();
+            }
+            else {
+                rideTimeD = ttTime.timeFromString(rideTimeS);
+                endTime = startTime + rideTimeD.valueOf();
+
+            }
+            if (endTime === null || isNaN(endTime)) {
+                // not yet finished or time unknown
+                endTime = ttTime.noTimeYet();
+            }
+
+            $.each(this.entries, function (index, e) {
+                //for (ev in currentEvent.Entries) {
+                if (updatingEntry === e.Number) {
+                    e.Finish = endTime;
+                    self.updateEventTimes();
+                    return false; // break
+                }
+            });
+            //newdata = 1;
+        };
     }
 
     function saveEvent() {
@@ -242,12 +334,12 @@ var Event = (function ($) {
         //newdata = 0;
     }
 
-    $('#displayEvent').click(function () {
-        event.displayEvent();
-    });
-    $('#updateEventTimes').click(function () {
-        updateEventTimes();
-    });
+    //$('#displayEvent').click(function () {
+    //    displayEvent();
+    //});
+    //$('#updateEventTimes').click(function () {
+    //    updateEventTimes();
+    //});
 
     $('#btnEmailStart').click(function () {
         if (login.checkRole() === false) {
@@ -262,39 +354,7 @@ var Event = (function ($) {
         }
         TTData.json("EmailResultSheet", "POST", this.ID, function (response) { popup.alert(response); }, true);
     });
-    // save an updated rider's time
-    $('#saveRiderTime').click(function () {
-        var endTime = ttTime.noTimeYet(),
-            startTime, rideTimeS, rideTimeD;
-
-        startTime = this.Time + 1000 * 60 * updatingEntry;
-        rideTimeS = $('#riderTime').val();
-        if ($('#riderTime').val() === 'DNS') {
-            endTime = ttTime.didNotStart();
-        }
-        else if ($('#riderTime').val() === 'DNF') {
-            endTime = ttTime.didNotFinish();
-        }
-        else {
-            rideTimeD = ttTime.timeFromString(rideTimeS);
-            endTime = startTime + rideTimeD.valueOf();
-
-        }
-        if (endTime === null || isNaN(endTime)) {
-            // not yet finished or time unknown
-            endTime = ttTime.noTimeYet();
-        }
-
-        $.each(currentEvent.Entries, function (index, e) {
-            //for (ev in currentEvent.Entries) {
-            if (updatingEntry === e.Number) {
-                e.Finish = endTime;
-                updateEventTimes();
-                return false; // break
-            }
-        });
-        //newdata = 1;
-    });
+   
     $('#dns').click(function () {
         $('#riderTime').val('DNS');
     });
@@ -351,69 +411,7 @@ var Event = (function ($) {
         }, true);
     });
 
-    event.displayEvent = function () {
-        var r, rider,
-            entrydata = [],
-            target, cat,
-            stdTime, stdTimeStr;
-
-        if (this.entries.length < 1) {
-            popup.alert("No riders entered!");
-            return;
-        }
-
-        ChangePage("entrypage");
-
-        if (ttApp.isMobile()) {
-            $('#btnEmailStart').hide();
-        }
-        if (login.checkRole() === false) {
-            $('#btnEmailStart').hide();
-        }
-
-        if (ttApp.screenWidth() < 500) {
-            $.each(this.entries, function (index, entry) {
-                rider = Riders.riderFromID(entry.RiderID);
-                if (rider === null) {
-                    rider = new TTRider(entry.RiderID, "Rider not found", 0, 1, 0, "");
-                }
-                entrydata.push([entry.Number, rider.Name, Clubs.getAbbr(rider.getClubID()), ttTime.timeString(entry.Start)]);
-            });
-            myTable('#entries', { "search": "Find entry" }, entrydata, ttApp.tableHeight(), [{ "title": "#" }, { "title": "Name" }, { "title": "Club" }, { "title": "Start" }], null);
-        }
-        else {
-            // more details
-            $.each(this.entries, function (index, entry) {
-                rider = Riders.riderFromID(entry.RiderID);
-
-                if (rider === null) {
-                    rider = new TTRider(entry.RiderID, "Rider not found", 0, 1, 0, "", 0);
-                }
-
-                target = "";
-                if (rider.hasBest25()) {
-                    target = ttTime.timeStringH1(rider.Best25 * 1000);
-                }
-
-                cat = rider.catAbbr();
-                stdTime = rider.vetStandardTime(event.distance());
-                stdTimeStr = stdTime > 0 ? ttTime.timeStringH1(stdTime) : "";
-                entrydata.push([entry.Number, rider.Name, cat, stdTimeStr, target, Clubs.getName(rider.ClubID), ttTime.timeString(entry.Start)]);
-            });
-            myTable('#entries', { "search": "Find entry" }, entrydata, ttApp.tableHeight(), [{ "title": "#" }, { "title": "Name" }, { "title": "Cat" }, { "title": "VetStd" }, { "title": "Target" }, { "title": "Club" }, { "title": "Start" }], null);
-
-        }
-
-        // *********** ToDo: allow deletion of entries but only if event hasn't happened
-        $('#entries tbody tr').on('click', function () {
-            var nTds = $('td', this),
-                name = $(nTds[1]).text();
-            ChangePage("riderDetailsPage");
-
-            rider = Riders.riderFromName(name);
-            rider.displayRider(true);
-        });
-    };
+   
     event.sortEntries = function () {
 
         // compares entries and sorts in order of start, but with those already finished shifted to the end

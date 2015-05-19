@@ -72,7 +72,7 @@ var EventList = (function ($) {
                     popup.alert(entries.length + " riders loaded for this (future) event");
                     ChangePage("home");
                 }
-            },
+             },
             true);
         });
     }
@@ -169,7 +169,23 @@ var EventList = (function ($) {
     $('#eventSubmit').click(function () {
         addEventAction();
     });
-
+    $('#displayEvent').click(function () {
+        if (event == null) {
+            popup.alert("No event loaded");
+            return;
+        }
+        event.displayEvent();
+    });
+    $('#updateEventTimes').click(function () {
+        if (event == null) {
+            popup.alert("No event loaded");
+            return;
+        }
+        event.updateEventTimes();
+    });
+    $('#saveRiderTime').click(function () {
+        event.saveRiderTime();
+    });
     $('#chooseEventClub').click(function () {
         clubTable = myTable('#clubs', { "search": "Select Club:" }, clubsList, 200, [null], null);
         $('#clubs tbody tr').on('click', function () {

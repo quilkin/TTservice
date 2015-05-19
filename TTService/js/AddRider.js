@@ -135,7 +135,11 @@ var Riders = (function ($) {
             email = "",
             thistime,
             entry = null;
-            
+        
+        if (event.pastEvent()) {
+            popup.alert("Cannot add rider to past event");
+            return;
+        }
         if (addToEvent) {
             startNumber = event.getEntries().length + 1;
         }
