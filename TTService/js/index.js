@@ -65,6 +65,13 @@
             $.mobile.pushStateEnabled = false;
         });
         document.body.style.backgroundColor = "#FFD700";
+
+        $('#getRiderData').click(function () {
+            Riders.getRiderData();
+        });
+        $('#saveRiderData').click(function () {
+            Riders.saveRiderData();
+        });
     });
 
 

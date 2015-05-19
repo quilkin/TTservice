@@ -14,7 +14,7 @@ var EventList = (function ($) {
     "use strict";
     var coursesList = [],
         clubsList = [],
-        clubTable, courseTable, eventTable,
+        clubTable = null, courseTable = null, eventTable = null,
         event = null;
 
 

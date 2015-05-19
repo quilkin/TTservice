@@ -1,4 +1,6 @@
-﻿/*global jQuery,popup,TTRider*/
+﻿/// <reference path="~\js\AddRider.js" />
+
+/*global jQuery,popup,TTRider*/
 
 var CycleClub = (function () {
     "use strict";
@@ -202,11 +204,24 @@ var Clubs = (function ($) {
         }
         var table, tableClubs = [];
         $.each(list, function (index, club) {
-            clubs[index] = [club.Name, club.Abbr];
+            tableClubs[index] = [club.getName(), club.getAbbr()];
         });
         ChangePage("clubsPage");
-        table = myTable('#clubs2', { "sSearch": "Select Club:" }, tableClubs, tableHeight, [null, null], null);
+        table = myTable('#clubs2', { "sSearch": "Select Club:" }, tableClubs, ttApp.tableHeight(), [null, null], null);
     });
+
+    clubs.uploadNewClubs = function () {
+        var newClubs = [];
+        $.each(list, function (index, club) {
+            if (club.getTempId()) {
+                newClubs.push(club);
+            }
+        });
+        if (newClubs.length > 0) {
+            // must not be async call to ensure clubs saved before riders call
+            TTData.json("SaveNewClubs", "POST", newClubs, ClubsResponse, false);
+        }
+    };
 
     clubs.prototype = {
 
@@ -262,19 +277,8 @@ var Clubs = (function ($) {
                 // always show club list for new rider
                 clubTable(clubs, false);
             }
-        },
-        uploadNewClubs: function () {
-            var newClubs = [];
-            $.each(list, function (index, club) {
-                if (club.tempID) {
-                    newClubs.push(club);
-                }
-            });
-            if (newClubs.length > 0) {
-                // must not be async call to ensure clubs saved before riders call
-                myJson("SaveNewClubs", "POST", newClubs, ClubsResponse, false);
-            }
         }
+
     };
 
     return clubs

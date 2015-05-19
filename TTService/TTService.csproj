@@ -143,7 +143,6 @@
     <Content Include="js\popups.js" />
     <Content Include="js\powerManagement.js" />
     <Content Include="js\riderdetails.js" />
-    <Content Include="js\StartLine.js" />
     <Content Include="js\TTdata.js" />
     <Content Include="res\beep_mp3.mp3" />
     <Content Include="res\beep_wav.wav" />

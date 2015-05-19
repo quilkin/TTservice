@@ -2,6 +2,7 @@
 /// <reference path="~\js\rider.js" />
 /// <reference path="~\js\timesdates.js" />
 /// <reference path="~\js\popups.js" />
+/// <reference path="~\js\ttData.js" />
 
 /*global $,popup,TTRider,Clubs,myTable,currentEvent,TTData,ttTime,Course,EventList*/
 
@@ -124,15 +125,20 @@ var Riders = (function ($) {
         }
     }
 
+
+
     function addRider(addToEvent) {
         // set default values for new rider 
         var event = EventList.currentEvent(),
-            startNumber = event.getEntries().length + 1,
+            startNumber,
             age = 10,
             email = "",
             thistime,
-            entry;
+            entry = null;
             
+        if (addToEvent) {
+            startNumber = event.getEntries().length + 1;
+        }
         if (list.length < 2) {
             popup.alert("No riders loaded, cannot autocomplete");
             return;
@@ -169,7 +175,9 @@ var Riders = (function ($) {
             age = editRider.getAge();
             email = editRider.getEmail();
             thistime = editRider.getBest25() * 1000;
-            entry = event.getEntryFromRiderID(editRider.getId());
+            if (addToEvent) {
+                entry = event.getEntryFromRiderID(editRider.getId());
+            }
             if (entry !== null) {
                 startNumber = entry.Number;
                 thistime = entry.Finish - entry.Start;
@@ -216,7 +224,7 @@ var Riders = (function ($) {
             stepSecond: 1
         });
 
-        if (event.pastEvent()) {
+        if (event !== null && event.pastEvent()) {
             $("#lblRideTime").text("Result time:");
             //        $("#addRiderHelp").text("Event aleady held: add rider's actual time");
         }
@@ -255,6 +263,16 @@ var Riders = (function ($) {
         }
         return null;
     }
+    function fromID(riderID) {
+        var i, rider;
+        for (i = 0; i < list.length; i++) {
+            rider = list[i];
+            if (riderID === rider.getId()) {
+                return rider;
+            }
+        }
+        return null;
+    }
 
     $('#displayRiderList').click(function () {
         var table, best25string,
@@ -277,7 +295,7 @@ var Riders = (function ($) {
             if (rider.hasBest25()) {
                 best25string = ttTime.timeStringH1(rider.getBest25() * 1000);
             }
-            riderArray.push([rider.getID(), rider.getName(), Clubs.getAbbr(rider.getClubID()), cat, best25string]);
+            riderArray.push([rider.getId(), rider.getName(), Clubs.getAbbr(rider.getClubID()), cat, best25string]);
         });
 
         ChangePage("ridersPage");
@@ -286,10 +304,10 @@ var Riders = (function ($) {
         table.order([[1, 'asc'], [0, 'asc']]);
         $('#riders tbody tr').on('click', function () {
             nTds = $('td', this);
-            riderID = $(nTds[0]).text();
+            riderID = parseInt($(nTds[0]).text(),10);
 
             ChangePage("riderDetailsPage");
-            rider = Riders.riderFromID(riderID);
+            rider = fromID(riderID);
             rider.displayRider(false);
         });
     });
@@ -323,7 +341,7 @@ var Riders = (function ($) {
         // now upload the new riders.These will have a temporary ID  when uploaded, but post will return first new permanent ID
         
         if (newRiders.length > 0) {
-            ttData.json("SaveNewRiders", "POST", newRiders, ridersResponse, true);
+            TTData.json("SaveNewRiders", "POST", newRiders, ridersResponse, true);
         }
         // now upload changed riders
         
@@ -333,7 +351,7 @@ var Riders = (function ($) {
             }
         });
         if (changedRiders.length > 0) {
-            myJson("SaveChangedRiders", "POST", changedRiders, function (response) { popup.alert(response); }, true);
+            TTData.json("SaveChangedRiders", "POST", changedRiders, function (response) { popup.alert(response); }, true);
         }
     }
     $('#btnNewRider').click(function () {
@@ -358,7 +376,7 @@ var Riders = (function ($) {
 
             for (i = 0; i < event.getEntries().length; i++) {
                 entry = event.getEntries()[i];
-                rider = Riders.riderFromID(entry.RiderID);
+                rider = fromID(entry.RiderID);
                 if (rider !== null && rider.getName() === newName) {
                     existingClub = rider.ClubID;
                     break;
@@ -407,9 +425,7 @@ var Riders = (function ($) {
     });
 
 
-
-
-    $('#btnNewRider').click(function () {
+    $('#btnAddRider').click(function () {
         var in_event = false,
             startNumber,
             i,
@@ -418,6 +434,7 @@ var Riders = (function ($) {
             rider,
             age = $("#riderAge").val(),
             startTime,
+            currentTime,
             endTime,
             rideTimeD,
             rideTimeS,
@@ -495,7 +512,7 @@ var Riders = (function ($) {
                     for (i = 0; i < event.getEntries().length; i++) {
                         entry = event.getEntries()[i];
                         if (entry.Number === startNumber && entry.RiderID !== newRider.ID) {
-                            rider = Riders.riderFromID(entry.RiderID);
+                            rider = fromID(entry.RiderID);
                             if (popup.confirm("Start number already used by " + rider.Name + ". Do you want to re-allocate that one?")) {
                                 entry.Number = event.getEntries().length + 1;
                                 break;
@@ -599,29 +616,7 @@ var Riders = (function ($) {
 
 
 
-    Riders.saveRiderData = function(event) {
-        if (checkRole() === false) {
-            return;
-        }
 
-        var message = event ? "Save event and rider updates" : "Save new & changed riders";
-        if (ridersLoaded) {
-
-            if (ridersChanged === false)
-            {
-                if (!event) {
-                    popup.alert('No riders changed');
-                }
-                return;
-            }
-
-            popup.confirm(message + ' to database - are you sure?',
-                saveRiderData2,
-                null);
-
-        }
-        saveRiderData2();
-    };
 
 
     Riders.prototype = {
@@ -639,13 +634,6 @@ var Riders = (function ($) {
         }
     };
 
-    $('#saveRiderData').click(function () {
-        saveRiderData();
-    });
-
-    $('#getRiderData').click(function () {
-        getRiderData();
-    });
     return {
         getRiderData: function(){
             if (ridersLoaded) {
@@ -656,6 +644,29 @@ var Riders = (function ($) {
                 }
             }
             getRiderData2();
+        },
+        saveRiderData: function(event) {
+            if (login.checkRole() === false) {
+                return;
+            }
+
+            var message = event ? "Save event and rider updates" : "Save new & changed riders";
+            if (ridersLoaded) {
+
+                if (ridersChanged === false)
+                {
+                    if (!event) {
+                        popup.alert('No riders changed');
+                    }
+                    return;
+                }
+
+                popup.confirm(message + ' to database - are you sure?',
+                    saveRiderData2,
+                    null);
+
+            }
+            saveRiderData2();
         },
         getNewRider : function() { return newRider; },
         tempID: function () {
@@ -673,15 +684,11 @@ var Riders = (function ($) {
             return fromName(ridername);
         },
         riderFromID: function (riderID) {
-            var i, rider;
-            for (i = 0; i < list.length; i++) {
-                rider = list[i];
-                if (riderID === rider.getId()) {
-                    return rider;
-                }
-            }
-            return null;
+            return fromID(riderID);
         }
+
     };
+
+
 }(jQuery));
 
