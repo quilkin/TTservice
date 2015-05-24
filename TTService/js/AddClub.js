@@ -1,5 +1,4 @@
-﻿/// <reference path="~\js\AddRider.js" />
-
+﻿
 /*global jQuery,popup,TTRider*/
 
 var CycleClub = (function () {
@@ -206,7 +205,7 @@ var Clubs = (function ($) {
         $.each(list, function (index, club) {
             tableClubs[index] = [club.getName(), club.getAbbr()];
         });
-        ChangePage("clubsPage");
+        ttApp.changePage("clubsPage");
         table = myTable('#clubs2', { "sSearch": "Select Club:" }, tableClubs, ttApp.tableHeight(), [null, null], null);
     });
 

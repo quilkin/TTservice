@@ -1,5 +1,3 @@
-/// <reference path="~\js\AddRider.js" />
-/// <reference path="~\js\timesdates.js" />
 /*global jQuery,popup,ttTime,Riders,Clubs*/
 
 var TTRider = (function ($) {
@@ -254,6 +252,13 @@ var TTRider = (function ($) {
         }
 
     };
+    $('#dns').click(function () {
+        $('#riderTime').val('DNS');
+    });
+
+    $('#dnf').click(function () {
+        $('#riderTime').val('DNF');
+    });
     return rider;
 }(jQuery));
 

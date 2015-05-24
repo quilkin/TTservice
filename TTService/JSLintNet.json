@@ -2,6 +2,7 @@
   "ignore": [],
   "options": {
     "predef": {},
+    "bitwise": true,
     "plusplus": true,
     "white": true
   },

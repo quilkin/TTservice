@@ -1,12 +1,4 @@
-﻿/// <reference path="~\js\timesdates.js" />
-/// <reference path="~\js\popups.js" />
-/// <reference path="~\js\login.js" />
-/// <reference path="~\js\TTdata.js" />
-/// <reference path="~\js\AddRider.js" />
-/// <reference path="~\js\index.js" />
-/// <reference path="~\js\entry-course.js" />
-
-/*global jQuery,popup,Clubs,Course,TTData,ttTime,login,TTRider,Riders,ttApp*/
+﻿/*global jQuery,popup,Clubs,Course,TTData,ttTime,login,TTRider,Riders,ttApp*/
 
 var Event = (function ($) {
     "use strict";
@@ -17,7 +9,7 @@ var Event = (function ($) {
         this.CourseID = courseID;
         this.ClubID = clubID;
         this.Time = time;
-        this.entries = [];
+        this.Entries = [];
         this.ID = ID;
         this.OddData = extraData;
         this.Synched = false;
@@ -36,11 +28,11 @@ var Event = (function ($) {
             $.each(entries, function (index, e) {
                 // convert json list into list of entry objects
                 entry = new Entry(e.Number, e.Start, e.Finish, e.RiderID);
-                self.entries.push(entry);
+                self.Entries.push(entry);
             })
         };
         this.getEntries = function () {
-            return this.entries;
+            return this.Entries;
         }
         this.getTime = function () {
             return this.Time;
@@ -54,7 +46,7 @@ var Event = (function ($) {
             //if (event == null)
             //    return 0;
             var entry = null;
-            $.each(this.entries, function (index, e) {
+            $.each(this.Entries, function (index, e) {
                 if (e.getRiderID() === riderID) {
                     entry = e;
                     return false;
@@ -70,13 +62,13 @@ var Event = (function ($) {
         //};
         this.results = function () {
 
-            if (this.entries.length < 1) {
+            if (this.Entries.length < 1) {
                 popup.alert("No event loaded, or no riders in event!");
                 return;
             }
 
             // compares entries and sorts in order of result time, lowest first
-            this.entries.sort(function (a, b) {
+            this.Entries.sort(function (a, b) {
                 var result = (a.Finish - a.Start) - (b.Finish - b.Start);
                 if (result !== 0) {
                     return result;
@@ -89,7 +81,7 @@ var Event = (function ($) {
                 self = this,
                 title, table, file;
 
-            $.each(this.entries, function (index, entry) {
+            $.each(this.Entries, function (index, entry) {
                 entry.setPosition(pos++);
                 var rider = Riders.riderFromID(entry.getRiderID()),
                     //rider = new TTRider(r.ID, r.Name, r.Age, r.Category, r.ClubID, r.Email, r.Best25),
@@ -124,7 +116,7 @@ var Event = (function ($) {
 
             });
 
-            ChangePage("resultpage");
+            ttApp.changePage("resultpage");
             if (ttApp.isMobile()) {
                 $('#btnEmailResult').hide();
             }
@@ -137,7 +129,7 @@ var Event = (function ($) {
             resultsTableRiders(results);
 
             results = [];
-            $.each(this.entries, function (index, entry) {
+            $.each(this.Entries, function (index, entry) {
                 //entry.Position = pos++;
                 var rider = Riders.riderFromID(entry.RiderID),
                     // rider = new TTRider(r.ID, r.Name, r.Age, r.Category, r.ClubID, r.Email, r.Best25),
@@ -178,12 +170,12 @@ var Event = (function ($) {
                 target, cat,
                 stdTime, stdTimeStr;
 
-            if (this.entries.length < 1) {
+            if (this.Entries.length < 1) {
                 popup.alert("No riders entered!");
                 return;
             }
 
-            ChangePage("entrypage");
+            ttApp.changePage("entrypage");
 
             if (ttApp.isMobile()) {
                 $('#btnEmailStart').hide();
@@ -193,7 +185,7 @@ var Event = (function ($) {
             }
 
             if (ttApp.screenWidth() < 500) {
-                $.each(this.entries, function (index, entry) {
+                $.each(this.Entries, function (index, entry) {
                     rider = Riders.riderFromID(entry.RiderID);
                     if (rider === null) {
                         rider = new TTRider(entry.RiderID, "Rider not found", 0, 1, 0, "");
@@ -205,7 +197,7 @@ var Event = (function ($) {
             else {
                 // more details
                 var self = this;
-                $.each(this.entries, function (index, entry) {
+                $.each(this.Entries, function (index, entry) {
                     rider = Riders.riderFromID(entry.RiderID);
 
                     if (rider === null) {
@@ -230,7 +222,7 @@ var Event = (function ($) {
             $('#entries tbody tr').on('click', function () {
                 var nTds = $('td', this),
                     name = $(nTds[1]).text();
-                ChangePage("riderDetailsPage");
+                ttApp.changePage("riderDetailsPage");
 
                 rider = Riders.riderFromName(name);
                 rider.displayRider(true);
@@ -238,17 +230,17 @@ var Event = (function ($) {
         };
         this.updateEventTimes = function () {
 
-            if (this.entries.length < 1) {
+            if (this.Entries.length < 1) {
                 popup.alert("No riders entered!");
                 return;
             }
-            ChangePage("timesPage");
+            ttApp.changePage("timesPage");
 
             var entrydata = [],
                 rider, rideTime, rideTimeString,
                 table;
 
-            $.each(this.entries, function (index, entry) {
+            $.each(this.Entries, function (index, entry) {
                 rider = Riders.riderFromID(entry.RiderID);
                 if (rider === null) {
                     rider = new TTRider(entry.RiderID, "Rider not found", 0, 1, 0, "");
@@ -312,7 +304,7 @@ var Event = (function ($) {
                 endTime = ttTime.noTimeYet();
             }
 
-            $.each(this.entries, function (index, e) {
+            $.each(this.Entries, function (index, e) {
                 //for (ev in currentEvent.Entries) {
                 if (updatingEntry === e.Number) {
                     e.Finish = endTime;
@@ -322,108 +314,80 @@ var Event = (function ($) {
             });
             //newdata = 1;
         };
-    }
-
-    function saveEvent() {
-        if (login.checkRole() === false) {
-            return;
-        }
-        // first save any new riders
-        Riders.saveRiderData(true);
-        TTData.json("SaveEvent", "POST", this, function (response) { popup.alert(response); }, true);
-        //newdata = 0;
-    }
-
-    //$('#displayEvent').click(function () {
-    //    displayEvent();
-    //});
-    //$('#updateEventTimes').click(function () {
-    //    updateEventTimes();
-    //});
-
-    $('#btnEmailStart').click(function () {
-        if (login.checkRole() === false) {
-            return;
-        }
-        TTData.json("EmailStartSheet", "POST", this.ID, function (response) { popup.alert(response); }, true);
-    });
-
-    $('#btnEmailResults').click(function () {
-        if (login.checkRole() === false) {
-            return;
-        }
-        TTData.json("EmailResultSheet", "POST", this.ID, function (response) { popup.alert(response); }, true);
-    });
-   
-    $('#dns').click(function () {
-        $('#riderTime').val('DNS');
-    });
-
-    $('#dnf').click(function () {
-        $('#riderTime').val('DNF');
-    });
-
-    $('#startLine').click(function () {
-        if(login.checkRole() == false)
-            return;
-        if (this.Synched) {
-            popup.alert("Cannot re-sync after any riders have finished");
-            return;
-        }
-        ChangePage("startLine");
-
-    });
-    $('#btnSyncStart').click(function () {
-        // adjust start time to match another stopwatch
-        var d = new Date();
-        // timediff will be positive if event started 'late'
-        var timediff = d.valueOf() - this.Time;
-        currentEvent.Time = d.valueOf();
-            // now need to adjust start times of all entrants
-        $.each(this.entries, function (index, entry)  {
-            entry.Start += timediff;
-        });
-        $("#finish")[0].play();
-        ChangePage("onTheDay");
-    });
-    $('#saveEvent1').click(function () {
-        saveEvent();
-    });
-
-    $('#saveEvent2').click(function () {
-        saveEvent();
-    });
-    $('#sortEvent').click(function () {
-        //var evID = currentEvent.ID;
-        if (login.checkRole() === false) {
-            return;
-        }
-        // first save any new riders
-        Riders.saveRiderData(true);
-        // must not be async call to ensure clubs saved before seeds call
-        TTData.json("SaveEvent", "POST", this, function (response) { popup.alert(response); }, false);
-
-        TTData.json('SeedEntries', "POST", this, function (entries) {
-            $.each(entries, function (index, e) {
-                this.entries[index] = e;
-            });
-            displayEvent();
-        }, true);
-    });
-
-   
-    event.sortEntries = function () {
-
-        // compares entries and sorts in order of start, but with those already finished shifted to the end
-        this.entries.sort(function (a, b) {
-
-            var result = b.Finish - a.Finish;
-            if (result !== 0) {
-                return result;
+        this.sortEvent = function () {
+            //var evID = currentEvent.ID;
+            var self = this;
+            if (login.checkRole() === false) {
+                return;
             }
-            return a.Number - b.Number;
-        });
-    };
+            // first save any new riders
+            Riders.saveRiderData(true);
+            // must not be async call to ensure clubs saved before seeds call
+            TTData.json("SaveEvent", "POST", this, function (response) { popup.alert(response); }, false);
+
+            TTData.json('SeedEntries', "POST", this, function (entries) {
+                $.each(entries, function (index, e) {
+                    self.Entries[index] = e;
+                });
+                self.displayEvent();
+            }, true);
+        };
+        this.saveEvent = function () {
+            if (login.checkRole() === false) {
+                return;
+            }
+            // first save any new riders
+            Riders.saveRiderData(true);
+            TTData.json("SaveEvent", "POST", this, function (response) { popup.alert(response); }, true);
+            //newdata = 0;
+        };
+        this.emailStart = function () {
+            if (login.checkRole() === false) {
+                return;
+            }
+            TTData.json("EmailStartSheet", "POST", this.ID, function (response) { popup.alert(response); }, true);
+        };
+        this.emailResults = function () {
+            if (login.checkRole() === false) {
+                return;
+            }
+            TTData.json("EmailResultSheet", "POST", this.ID, function (response) { popup.alert(response); }, true);
+        };
+        this.startLine = function () {
+            if (login.checkRole() == false)
+                return;
+            if (this.Synched) {
+                popup.alert("Cannot re-sync after any riders have finished");
+                return;
+            }
+            ttApp.changePage("startLine");
+        };
+        this.syncStart = function () {
+            // adjust start time to match another stopwatch
+            var d = new Date();
+            // timediff will be positive if event started 'late'
+            var timediff = d.valueOf() - this.Time;
+            this.Time = d.valueOf();
+            // now need to adjust start times of all entrants
+            $.each(this.Entries, function (index, entry) {
+                entry.Start += timediff;
+            });
+            $("#finish")[0].play();
+            ttApp.changePage("onTheDay");
+        },
+        this.sortEntries = function () {
+
+            // compares entries and sorts in order of start, but with those already finished shifted to the end
+            this.Entries.sort(function (a, b) {
+
+                var result = b.Finish - a.Finish;
+                if (result !== 0) {
+                    return result;
+                }
+                return a.Number - b.Number;
+            });
+         };
+    }
 
 
     

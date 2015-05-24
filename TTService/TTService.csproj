@@ -19,6 +19,7 @@
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -64,9 +65,6 @@
     <Content Include="config.xml" />
     <Content Include="copy_csv_xls_pdf.swf" />
     <Content Include="index.html" />
-    <Content Include="js\bootbox.min.js" />
-    <Content Include="js\bootstrap-datepicker.js" />
-    <Content Include="js\bootstrap.min.js" />
     <Content Include="js\entry-course.js" />
     <Content Include="js\event.js" />
     <Content Include="js\jquery-ui-timepicker-addon.js" />
@@ -79,6 +77,7 @@
     <Content Include="tt-app-help-2.docx" />
     <Content Include="tt-app-help.pdf" />
     <Content Include="JSLintNet.json" />
+    <None Include="_references.js" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -142,7 +141,6 @@
     <Content Include="js\myTable.js" />
     <Content Include="js\popups.js" />
     <Content Include="js\powerManagement.js" />
-    <Content Include="js\riderdetails.js" />
     <Content Include="js\TTdata.js" />
     <Content Include="res\beep_mp3.mp3" />
     <Content Include="res\beep_wav.wav" />

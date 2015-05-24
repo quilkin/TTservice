@@ -95,13 +95,11 @@ var Entry = (function () {
         this.setVet = function (value) {
             this.VetOnStd = value;
         };
+        this.sequence = -1; // used in button grid; see FinishLine for use
     };
     //entry.getRiderID = function () {
     //    return this.RiderID;
     //};
     return entry;
 }());
-
-
-
 

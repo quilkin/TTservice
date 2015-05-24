@@ -1,10 +1,4 @@
-﻿/// <reference path="~\js\addClub.js" />
-/// <reference path="~\js\rider.js" />
-/// <reference path="~\js\timesdates.js" />
-/// <reference path="~\js\popups.js" />
-/// <reference path="~\js\ttData.js" />
-
-/*global $,popup,TTRider,Clubs,myTable,currentEvent,TTData,ttTime,Course,EventList*/
+﻿/*global $,popup,TTRider,Clubs,myTable,currentEvent,TTData,ttTime,Course,EventList*/
 
 var Riders = (function ($) {
     "use strict";
@@ -154,7 +148,7 @@ var Riders = (function ($) {
         newRider = null;
         riderBeforeChange = null;
 
-        ChangePage("addRiderPage");
+        ttApp.changePage("addRiderPage");
         if (addToEvent && event !== null) {
             $("#addRiderTitle").text(editRider === null ? "Add rider to event" : "Edit rider");
             $("#checkIn").prop("checked", true);
@@ -302,7 +296,7 @@ var Riders = (function ($) {
             riderArray.push([rider.getId(), rider.getName(), Clubs.getAbbr(rider.getClubID()), cat, best25string]);
         });
 
-        ChangePage("ridersPage");
+        ttApp.changePage("ridersPage");
 
         table = myTable('#riders', { "sSearch": "Select Rider:" }, riderArray, ttApp.tableHeight(), [{ "sTitle": "ID" }, { "sTitle": "Name" }, { "sTitle": "Club" }, { "sTitle": "Cat." }, { "sTitle": "Best 25" }], null);
         table.order([[1, 'asc'], [0, 'asc']]);
@@ -310,7 +304,7 @@ var Riders = (function ($) {
             nTds = $('td', this);
             riderID = parseInt($(nTds[0]).text(),10);
 
-            ChangePage("riderDetailsPage");
+            ttApp.changePage("riderDetailsPage");
             rider = fromID(riderID);
             rider.displayRider(false);
         });
@@ -611,7 +605,7 @@ var Riders = (function ($) {
             addRider(in_event);
         }
         else {
-            ChangePage("riderDetailsPage");
+            ttApp.changePage("riderDetailsPage");
             newRider.displayRider(in_event);
             editRider = null;
             // history.back();

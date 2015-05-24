@@ -82,11 +82,4 @@ var TTData = (function ($) {
 
 
 
-function ChangePage(page)
-{
-    //$.mobile.changePage("#" + page);
-    //ChangePage("" + page);
 
-    //$("body").pagecontainer("change", "#" + page, { transition: "slide" });
-    $("body").pagecontainer("change", "#" + page);
-}

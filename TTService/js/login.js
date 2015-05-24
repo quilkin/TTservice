@@ -29,7 +29,7 @@ var login = (function ($) {
                         window.localStorage.username = u;
                         window.localStorage.password = p;
                         Riders.getRiderData();
-                        ChangePage("home");
+                        ttApp.changePage("home");
                         //if (ttApp.isMobile()) {
                         //    $("#deviceid").html(device.model);
                         //}
@@ -58,7 +58,7 @@ var login = (function ($) {
     }
     
     $('#newSignup').click(function () {
-        ChangePage("signupPage");
+        ttApp.changePage("signupPage");
         $("#code").hide();
         $("#lblCode").hide();
     });
@@ -90,7 +90,7 @@ var login = (function ($) {
                     userRole = UserRoles.Viewer;
                     //$(".adminonly").prop("disabled", true);
                     Riders.getRiderData();
-                    ChangePage("home");
+                    ttApp.changePage("home");
 
                     //window.addEventListener("batterystatus", onBatteryStatus, false);
                 }
@@ -120,7 +120,7 @@ var login = (function ($) {
             checkPreAuth();
         });
 
-        ChangePage("loginPage");
+        ttApp.changePage("loginPage");
         if (ttApp.isMobile()) {
             $('#note1').hide();
             $('#note2').hide();

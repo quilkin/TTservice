@@ -1,13 +1,4 @@
-﻿/// <reference path="~\js\timesdates.js" />
-/// <reference path="~\js\entry-course.js" />
-/// <reference path="~\js\event.js" />
-/// <reference path="~\js\popups.js" />
-/// <reference path="~\js\AddClub.js" />
-/// <reference path="~\js\login.js" />
-/// <reference path="~\js\TTdata.js" />
-/// <reference path="~\js\AddRider.js" />
-/// <reference path="~\js\index.js" />
-
+﻿
 /*global jQuery,popup,Clubs,Course,TTData,ttTime,login,Rider,Riders,Event*/
 
 var EventList = (function ($) {
@@ -15,7 +6,7 @@ var EventList = (function ($) {
     var coursesList = [],
         clubsList = [],
         clubTable = null, courseTable = null, eventTable = null,
-        event = null;
+        event = new Event(0,0,0,0,0);       // just to help with intellisense...
 
 
     function parseEvents(response) {
@@ -70,7 +61,7 @@ var EventList = (function ($) {
                 else {
                     // popup.alert("No results yet, event has not happened");
                     popup.alert(entries.length + " riders loaded for this (future) event");
-                    ChangePage("home");
+                    ttApp.changePage("home");
                 }
              },
             true);
@@ -112,7 +103,7 @@ var EventList = (function ($) {
         timemillisec = datetime.valueOf();
         event = new Event(0, Course.getID(coursename), timemillisec, Clubs.getID(club), 0);
 
-        ChangePage("home");
+        ttApp.changePage("home");
     }
     function chooseEventPage(existing) {
         while (clubsList.length > 0) {
@@ -137,11 +128,11 @@ var EventList = (function ($) {
         }
 
         if (event !== null) {
-            if (event.entries.length > 1) {
+            if (event.Entries.length > 1) {
                 popup.confirm('This will remove all details for existing event - are you sure?',
                     function () {
                         event = null;
-                        ChangePage('addEventPage');
+                        ttApp.changePage('addEventPage');
 
                         if (clubTable !== null) {
                             $('#chooseEventClub').text("Club");
@@ -159,33 +150,66 @@ var EventList = (function ($) {
                     null);
             }
             else {
-                ChangePage('addEventPage');
+                ttApp.changePage('addEventPage');
             }
         }
         else {
-            ChangePage('addEventPage');
+            ttApp.changePage('addEventPage');
         }
+    }
+
+    function exists() {
+        if (event == null) {
+            popup.alert("No event loaded");
+            return false;
+        }
+        return true;
     }
     $('#eventSubmit').click(function () {
         addEventAction();
     });
     $('#displayEvent').click(function () {
-        if (event == null) {
-            popup.alert("No event loaded");
-            return;
-        }
-        event.displayEvent();
+        if (exists())
+            event.displayEvent();
     });
     $('#updateEventTimes').click(function () {
-        if (event == null) {
-            popup.alert("No event loaded");
-            return;
-        }
-        event.updateEventTimes();
+        if (exists())
+            event.updateEventTimes();
     });
+    $('#sortEvent').click(function () {
+        if (exists())
+            event.sortEvent();
+    });
+    $('#saveEvent1').click(function () {
+        if (exists())
+            event.saveEvent();
+    });
+
+    $('#saveEvent2').click(function () {
+        if (exists())
+            event.saveEvent();
+    });
+
+    $('#btnEmailStart').click(function () {
+        event.emailStart();
+    });
+
+    $('#btnEmailResults').click(function () {
+        event.emailResults();
+    });
+
+    $('#startLine').click(function () {
+        event.startLine();
+    });
+
+    $('#btnSyncStart').click(function () {
+        event.syncStart();
+    });
+
     $('#saveRiderTime').click(function () {
         event.saveRiderTime();
     });
+
     $('#chooseEventClub').click(function () {
         clubTable = myTable('#clubs', { "search": "Select Club:" }, clubsList, 200, [null], null);
         $('#clubs tbody tr').on('click', function () {

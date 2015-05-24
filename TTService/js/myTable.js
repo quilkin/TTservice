@@ -1,5 +1,4 @@
-﻿/// <reference path="~\js\EventList.js" />
-
+﻿
 "use strict";
 
 function myTable(tableID, language, array, height, columns, footercallback)
@@ -76,7 +75,7 @@ function resultsTableRiders(results) {
         name = $(nTds[2]).text();
         rider = Riders.riderFromName(name);
 
-        ChangePage("riderDetailsPage");
+        ttApp.changePage("riderDetailsPage");
 
         rider.displayRider(true);
     });

@@ -85,6 +85,7 @@ var ttApp = (function () {
     var ttApp = {},
     ismobile,
     realTimer,
+    screenTimeout,
     platform;
     
     function UpdateTime() {
@@ -144,27 +145,29 @@ var ttApp = (function () {
         isMobile: function () { return ismobile; },
         setMobile: function (x) { ismobile = x; },
         tableHeight: function () {
-            var tableHeight, screenHeight;
-
             if (ismobile) {
-                screenHeight = $(window).height();
-                tableHeight = screenHeight - 175;
+                return $(window).height() - 175;
             }
             else {
-                screenHeight = $(window).height();
-                tableHeight = screenHeight - 175;
+                return $(window).height() - 175;
             }
-            return tableHeight; 
+        },
+        screenHeight: function () {
+            if (ismobile) {
+                return  $(window).height();
+            }
+            else {
+                return  $(window).height();
+            }
         },
         screenWidth: function () {
-            var screenWidth;
+
             if (ismobile) {
-                screenWidth = $(window).width();
+               return  $(window).width();
             }
             else {
-                screenWidth = $(window).width();
+                return $(window).width();
             }
-            return screenWidth;
         },
         setEvent: function (value) { event = value; },
         currentEvent: function() { return event;},
@@ -177,7 +180,14 @@ var ttApp = (function () {
             listeningElement.setAttribute('style', 'display:none;');
             receivedElement.setAttribute('style', 'display:block;');
 
-        }
+        },
+        changePage: function(page) {
+            //$.mobile.changePage("#" + page);
+            //ttApp.changePage("" + page);
+            //$("body").pagecontainer("change", "#" + page, { transition: "slide" });
+            $("body").pagecontainer("change", "#" + page);
+        },
+        resetScreenTimeout: function () { screenTimeout = 0;}
     }
 
 }());
