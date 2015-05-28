@@ -66,12 +66,11 @@
         });
         document.body.style.backgroundColor = "#FFD700";
 
-        $('#getRiderData').click(function () {
-            Riders.getRiderData();
-        });
-        $('#saveRiderData').click(function () {
-            Riders.saveRiderData();
-        });
+        $('#getRiderData').click(function () {   Riders.getRiderData();    });
+        $('#saveRiderData').click(function () {  Riders.saveRiderData();   });
+        $('#manage').click(function () { ttApp.changePage('eventManage'); });
+        $('#theday').click(function () { ttApp.changePage('onTheDay'); });
+        $('#ridersclubs').click(function () { ttApp.changePage('ridersClubs'); });
     });
 
 
@@ -95,12 +94,15 @@ var ttApp = (function () {
         if (ismobile) {
             // extend sleep timeout to 5 minutes
             ++screenTimeout;
-            if (screenTimeout == 1)
+            if (screenTimeout == 1) {
                 chrome.power.requestKeepAwake("display");
-            if (screenTimeout == 300)
+            }
+            if (screenTimeout == 300) {
                 chrome.power.releaseKeepAwake();
+            }
         }
     }
+
 
     return {
         init: function() {

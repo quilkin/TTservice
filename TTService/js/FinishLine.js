@@ -72,13 +72,14 @@ var finishLine = (function ($) {
             //htmlline += '<p class="ui-btn" onclick="queryDeleteFinishTime(' + t + ')" data-icon="delete" data-iconpos="notext">delete this timing</p></div>';
             htmlline += '<p class="ui-btn" id="qdelete' + index + '" data-icon="delete" data-iconpos="notext">delete this timing</p></div>';
             $('#fTimes').append(htmlline);
-            $('#riderFinishPage').on('click',"#finished" + index,(function () { riderFinished(riderID, t); }));
-            $("#qdelete" + index).click(function () { queryDeleteFinishTime(t); });
+            $("#finished" + index).off();
+            $('#fTimes').off('click', "#finished" + index).on('click', "#finished" + index, (function () { riderFinished(riderID, t); }));
+            $('#fTimes').off('click', "#qdelete" + index).on('click', "#qdelete" + index, (function () { queryDeleteFinishTime(t); }));
 
         });
         htmlline = '<div data-role="controlgroup" data-type="horizontal">';
         htmlline += '<p class="ui-btn" id="cancelFinished">Cancel</p></div>';
-        $("#riderFinishPage").on('click','#cancelFinished',(function () { cancelFinished(); }));
+        $("#fTimes").on('click', '#cancelFinished', (function () { cancelFinished(); }));
         $('#fTimes').append(htmlline);
         $('#fTimes').trigger('create');
 
@@ -121,6 +122,7 @@ var finishLine = (function ($) {
         }
     }
 
+    var debugCount = 0;
     function createButtonGrid(gridSequence) {
         // create an array of buttons, one for each entry, in a paged fashion
         var row = 0,
@@ -157,7 +159,7 @@ var finishLine = (function ($) {
             $('#buttonArray').append(htmlline);
             $("#buttonArray").on('click', "#createGrid0" , (function () { createButtonGrid(0); }));
         }
-
+        console.log('createButtonGrid: ' + debugCount++);
         $.each(event.Entries, function (index, entry) {
             var caption;
 
@@ -185,10 +187,10 @@ var finishLine = (function ($) {
                     caption = '(' + caption + ')';
                 }
 
-                // htmlline = '<div class="ui-block-xx"><button type="button" onclick="finishLine.getRiderFromGrid(' + entry.RiderID + ')">' + caption + '</button></div>';
+                //htmlline = '<div class="ui-block-xx"><button type="button" onclick="finishLine.getRiderFromGrid(' + entry.RiderID + ')">' + caption + '</button></div>';
                 htmlline = '<div class="ui-block-xx"><button type="button" id="getGridRider' + index + '">' + caption + '</button></div>';
                 //$("#getGridRider" + index).click(function () { getRiderFromGrid(entry.RiderID); });
-                $("#buttonArray").on('click',"#getGridRider" + index,(function () { getRiderFromGrid(entry.RiderID); }));
+                $("#buttonArray").off('click',"#getGridRider" + index).on('click',"#getGridRider" + index,(function () { getRiderFromGrid(entry.RiderID); }));
 
                 switch (col) {
                     // arrange buttons in columns - see jquerymobile 'ui-block'

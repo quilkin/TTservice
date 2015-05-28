@@ -18,6 +18,5 @@
 /// <reference path="js/popups.js" />
 /// <reference path="js/powerManagement.js" />
 /// <reference path="js/rider.js" />
-/// <reference path="js/riderdetails.js" />
 /// <reference path="js/timesdates.js" />
 /// <reference path="js/TTdata.js" />
