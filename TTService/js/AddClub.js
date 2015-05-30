@@ -97,6 +97,9 @@ var Clubs = (function ($) {
     };
 
     clubs.populateList = function (plist) {
+        while (plist.length > 0) {
+            plist.pop();
+        }
         $.each(list, function (index, club) {
             plist.push([club.getName()]);
         })

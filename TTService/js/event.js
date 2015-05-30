@@ -360,7 +360,7 @@ var Event = (function ($) {
                 popup.alert("Cannot re-sync after any riders have finished");
                 return;
             }
-            ttApp.changePage("startLine");
+            ttApp.changePage("startLinePage");
         };
         this.syncStart = function () {
             // adjust start time to match another stopwatch

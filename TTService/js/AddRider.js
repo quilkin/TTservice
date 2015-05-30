@@ -50,11 +50,11 @@ var Riders = (function ($) {
     function chooseRider(addToEvent) {
         var table, names = [];
         $.each(list, function (index, rider) {
-            if (rider.Age === null || rider.Name === "" || rider.ClubID === 0) {
+            if (rider.getAge() === null || rider.getName() === "" || rider.getClubID() === 0) {
                 return true; // continue;
             }
             if (addToEvent === false || rider.inEvent() === 0) {
-                names.push([rider.Name, Clubs.getAbbr(rider.getClubID())]);
+                names.push([rider.getName(), Clubs.getAbbr(rider.getClubID())]);
             }
         });
         table = myTable('#newRider', { "sSearch": "Select Rider:", "sZeroRecords": "" }, names, 200, [null, null], noRidersFound);
@@ -73,7 +73,7 @@ var Riders = (function ($) {
             $('#newRiderTable').dblclick(function () { chooseRider(); });
             // place other details in form  from existing rider
             $.each(list, function (index, rider) {
-                if (rider.Name === newName) {
+                if (rider.getName() === newName) {
                     // save details so we can see if they have been changed
 
                     var age = rider.getAge(),

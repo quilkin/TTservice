@@ -1,5 +1,5 @@
 ﻿
-/*global jQuery,popup,Clubs,Course,TTData,ttTime,login,Rider,Riders,Event*/
+/*global jQuery,popup,Clubs,Course,TTData,ttTime,login,Rider,Riders,Event,ttApp*/
 
 var EventList = (function ($) {
     "use strict";
@@ -80,8 +80,8 @@ var EventList = (function ($) {
         clubID = Clubs.getID($("#chooseEventClub").text());
         courseID = Course.getID($("#chooseEventCourse").text());
 
-        fromdate = $("#startDate").val();
-        todate = $("#endDate").val();
+        fromdate = $("#fromDate").val();
+        todate = $("#toDate").val();
         fromtime = fromdate.Length > 0 ? Date.parse(fromdate) : new Date(2000, 1);
         totime = todate.Length > 0 ? Date.parse(todate) : new Date(2037, 1);
         datemillisec = fromtime.valueOf();
@@ -94,10 +94,10 @@ var EventList = (function ($) {
     function addEventAction() {
         var datetime,
             timemillisec,
-            coursename = $("#chooseEventCourse").text(),
-            club = $("#chooseEventClub").text(),
-            date = $("#startDate").val().split('/'),
-            time = $("#startTime").val().split(':');
+            coursename = $("#chooseNewEventCourse").text(),
+            club = $("#chooseNewEventClub").text(),
+            date = $("#startDate").text().split('/'),
+            time = $("#startTime").text().split(':');
 
         datetime = new Date(date[2], date[1] - 1, date[0], time[0], time[1], 0, 0);
         timemillisec = datetime.valueOf();
@@ -105,61 +105,9 @@ var EventList = (function ($) {
 
         ttApp.changePage("home");
     }
-    function chooseEventPage(existing) {
-        while (clubsList.length > 0) {
-            clubsList.pop();
-        }
-        while (coursesList.length > 0) {
-            coursesList.pop();
-        }
-        Course.populateList(coursesList);
-        Clubs.populateList(clubsList);
-
-
-        if (existing) {
-            coursesList.push(["(Any course)"]);
-            clubsList.push(["(Any club)"]);
-            $("#eventSubmit").unbind('click');
-            $("#eventSubmit").click(loadEventAction);
-        }
-        else {
-            $("#eventSubmit").unbind('click');
-            $("#eventSubmit").click(addEventAction);
-        }
-
-        if (event !== null) {
-            if (event.Entries.length > 1) {
-                popup.confirm('This will remove all details for existing event - are you sure?',
-                    function () {
-                        event = null;
-                        ttApp.changePage('addEventPage');
-
-                        if (clubTable !== null) {
-                            $('#chooseEventClub').text("Club");
-                            clubTable.destroy(true);
-                        }
-                        if (courseTable !== null) {
-                            $('#chooseEventCourse').text("Course");
-                            courseTable.destroy(true);
-                        }
-                        if (eventTable !== null) {
-                            $("#eventSubmit").text("Search for event");
-                            eventTable.destroy(true);
-                        }
-                    },
-                    null);
-            }
-            else {
-                ttApp.changePage('addEventPage');
-            }
-        }
-        else {
-            ttApp.changePage('addEventPage');
-        }
-    }
-
+    
     function exists() {
-        if (event == null) {
+        if (event === null) {
             popup.alert("No event loaded");
             return false;
         }
@@ -168,26 +116,34 @@ var EventList = (function ($) {
     $('#eventSubmit').click(function () {
         addEventAction();
     });
+    $('#eventSearch').click(function () {
+        loadEventAction();
+    });
     $('#displayEvent').click(function () {
-        if (exists())
+        if (exists()) {
             event.displayEvent();
+        }
     });
     $('#updateEventTimes').click(function () {
-        if (exists())
+        if (exists()) {
             event.updateEventTimes();
+        }
     });
     $('#sortEvent').click(function () {
-        if (exists())
+        if (exists()) {
             event.sortEvent();
+        }
     });
     $('#saveEvent1').click(function () {
-        if (exists())
+        if (exists()) {
             event.saveEvent();
+        }
     });
 
     $('#saveEvent2').click(function () {
-        if (exists())
+        if (exists()) {
             event.saveEvent();
+        }
     });
 
     $('#btnEmailStart').click(function () {
@@ -209,80 +165,152 @@ var EventList = (function ($) {
     $('#saveRiderTime').click(function () {
         event.saveRiderTime();
     });
+    $('#showResults').click(function () {
+        event.results();
+    });
 
-    $('#chooseEventClub').click(function () {
+
+    function chooseClub(element) {
         clubTable = myTable('#clubs', { "search": "Select Club:" }, clubsList, 200, [null], null);
         $('#clubs tbody tr').on('click', function () {
             // add the club name to the button for reference
             var nTds, club;
             nTds = $('td', this);
             club = $(nTds[0]).text();
-            $('#chooseEventClub').text(club);
+            element.text(club);
             clubTable.destroy(true);
         });
-    });
-
-    $('#chooseEventCourse').click(function () {
+    }
+    function chooseCourse(element) {
         courseTable = myTable('#courses', { "search": "Select Course:" }, coursesList, 200, [null], null);
         $('#courses tbody tr').on('click', function () {
             var nTds, course;
             nTds = $('td', this);
             course = $(nTds[0]).text();
-            $('#chooseEventCourse').text(course);
+            element.text(course);
             courseTable.destroy(true);
         });
+    }
+
+    $('#chooseNewEventClub').click(function () { chooseClub($('#chooseNewEventClub')); });
+    $('#chooseEventClub').click(function () { chooseClub($('#chooseEventClub')); });
+    $('#chooseNewEventCourse').click(function () { chooseCourse($('#chooseNewEventCourse')); });
+    $('#chooseEventCourse').click(function () { chooseCourse($('#chooseEventCourse')); });
+
+    $("#startTime").timepicker({
+        timeFormat: 'HH:mm:ss',
+        controlType: 'select',
+        stepHour: 1,
+        stepMinute: 15,
+        onSelect: function (result, i) {
+            $("#btnStartTime").text(result);
+        }
+    });
+    $("#startDate").datepicker({
+        changeYear: true,
+        dateFormat: "dd/mm/yy",
+        onSelect: function (result, i) {
+            $("#btnStartDate").text(result);
+        }
+    });
+    $("#fromDate").datepicker({
+        changeYear: true,
+        dateFormat: "dd/mm/yy",
+        onSelect: function (result, i) {
+            $("#btnFromDate").text("between " + result);
+        }
+    });
+    $("#toDate").datepicker({
+        changeYear: true,
+        dateFormat: "dd/mm/yy",
+        onSelect: function (result, i) {
+            $("#btnToDate").text("and " + result);
+        }
+    });
+
+    $("#btnStartTime").click(function () {
+        $("#startTime").timepicker('show');
+    });
+    $("#btnStartDate").click(function () {
+        $("#startDate").datepicker('show');
+    });
+    $("#btnFromDate").click(function () {
+        $("#fromDate").datepicker('show');
+    });
+    $("#btnToDate").click(function () {
+        $("#toDate").datepicker('show');
     });
 
     $('#loadEvent').click(function () {
 
-        chooseEventPage(true);
+        Course.populateList(coursesList);
+        Clubs.populateList(clubsList);
 
-        $("#eventSubmit").text("Search for event");
-        $("#eventTitle").text("Load existing Event");
-        $("#eventTime").hide();
-        $("#endDate").hide();
-        $("#eventTime").hide();
-        $("#eventStart").hide();
-        $("#eventEnd").hide();
-        $("#lblEndDate").show();
-        $("#endDate").show();
-        $("#eventsTable").show();
-        $("#LblSearch").show();
+        coursesList.push(["(Any course)"]);
+        clubsList.push(["(Any club)"]);
+        $("#toDate").text(new Date());
+        $("#loadEventTables").append('<p id="coursesTable"/> <p id="clubsTable"/>');
 
+        if (event !== null && event.Entries.length > 1) {
+            popup.confirm('This will remove all details for existing event - are you sure?',
+                function () {
+                    event = null;
+                    ttApp.changePage('loadEventPage');
+
+                    if (clubTable !== null) {
+                        $('#chooseEventClub').text("Club");
+                        clubTable.destroy(true);
+                    }
+                    if (courseTable !== null) {
+                        $('#chooseEventCourse').text("Course");
+                        courseTable.destroy(true);
+                    }
+                    if (eventTable !== null) {
+                        eventTable.destroy(true);
+                    }
+                },
+                null);
+        }
+        else {
+            ttApp.changePage('loadEventPage');
+        }
+         
+        //$("#eventsTable").show();
     });
 
     $('#addEvent').click(function () {
         if (login.checkRole() === false) {
             return;
         }
-        chooseEventPage(false);
-        $("#eventSubmit").text("Done");
-        $("#eventTitle").text("Create new Event");
-        $("#eventTime").show();
-        $("#eventStart").show();
-        $("#selectParams").hide();
-        $("#lblEndDate").hide();
-        $("#endDate").hide();
-        $("#eventsTable").hide();
-        $("#LblSearch").hide();
+        Course.populateList(coursesList);
+        Clubs.populateList(clubsList);
 
-        $("#startTime").val("08:00:00");
-        $("#startDate").datepicker({ changeYear: true, dateFormat: "dd/mm/yy" });
-        $("#startTime").timepicker({
-            timeFormat: 'HH:mm:ss',
-            controlType: 'select',
-            stepHour: 1,
-            stepMinute: 15
-        });
+        $("#addEventTables").append('<p id="coursesTable"/> <p id="clubsTable"/>');
+        $("#btnEventTime").text("08:00:00");
 
-        //newdata = 1;
+        if (event !== null && event.Entries.length > 1) {
+            popup.confirm('This will remove all details for existing event - are you sure?',
+                function () {
+                    event = null;
+                    ttApp.changePage('addEventPage');
+
+                    if (clubTable !== null) {
+                        $('#chooseNewEventClub').text("Club");
+                        clubTable.destroy(true);
+                    }
+                    if (courseTable !== null) {
+                        $('#chooseNewEventCourse').text("Course");
+                        courseTable.destroy(true);
+                    }
+                },
+                null);
+        }
+        else {
+            ttApp.changePage('addEventPage');
+        }
+        //$("#startDate").hide();
+        //$("#startTime").hide();
     });
-
-
-    $('#addEvent').click(function () {
-        addEventAction();
-    });
-
 
     return {
         currentEvent: function () {
