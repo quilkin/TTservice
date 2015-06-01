@@ -1,11 +1,21 @@
 ﻿{
-  "ignore": [],
+  "version": "2.0.0-beta5",
+  "ignore": [
+    "\\js\\jquery.dataTables.min.js",
+    "\\js\\jquery-ui.min.js",
+    "\\js\\jquery-ui-timepicker-addon.js",
+    "\\js\\jquery-1.11.1.min.js",
+    "\\js\\dataTables.tableTools.min.js",
+    "\\js\\cordova-2.2.0.js",
+    "\\js\\fastclick.js"
+  ],
   "options": {
-    "predef": {},
     "bitwise": true,
-    "plusplus": true,
+    "for": true,
+    "this": true,
     "white": true
   },
+  "globalVariables": [],
   "runOnBuild": false,
   "cancelBuild": false
 }

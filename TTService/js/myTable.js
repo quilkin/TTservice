@@ -4,9 +4,10 @@
 function myTable(tableID, language, array, height, columns, footercallback)
 {
     var file = "Rider List";
-    var event = EventList.currentEvent;
+    var event = EventList.currentEvent();
     if (tableID == "#results" || tableID == "#entries")
-        file = Clubs.getName(event.ClubID) + " " + ttTime.dateTimeString(event.Time) + " " + Course.getName(event.CourseID);
+        //        file = Clubs.getName(event.ClubID) + " " + ttTime.dateTimeString(event.Time) + " " + Course.getName(event.CourseID);
+        file = EventList.currentEvent().details();
     var search = true;
     if (tableID == "#events" || tableID == "#results" || tableID == "#extraresults")
         search = false;

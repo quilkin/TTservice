@@ -668,7 +668,13 @@ namespace TTService
             }
             return "Riders updated OK";
         }
-        public int SaveNewClubs(IEnumerable<Club> clubs)
+
+        /// <summary>
+        /// save club list and return list of any nw clubs with their new IDs
+        /// </summary>
+        /// <param name="clubs">list to save</param>
+        /// <returns>the list with new IDs</returns>
+        public IEnumerable<Club> SaveNewClubs(IEnumerable<Club> clubs)
         {
             int newID = 0;
 
@@ -676,7 +682,7 @@ namespace TTService
 
             mut.WaitOne();
 
-            List<Club> newRiders = new List<Club>();
+            List<Club> newClubs = new List<Club>();
             try
             {
                 ttConnection = new SqlConnection(connection);
@@ -692,7 +698,7 @@ namespace TTService
                 foreach (Club club in clubs)
                 {
                     string query = string.Format("insert into clubs (club, abbr) values ('{0}','{1}')\n\r",club.Name, club.Abbr);
-                    if (newID == 0)
+                    //if (newID == 0)
                     {
                         query += "DECLARE @NewClubID Int\n\r SET @NewClubID = SCOPE_IDENTITY()\n\r";
                         query += "SELECT clubs.id, clubs.club, clubs.abbr "
@@ -705,16 +711,18 @@ namespace TTService
                             {
                                 DataRow dr = dataClubs.Rows[0];
                                 newID = (int)dr["id"];
+                                Club newClub = new Club(newID, club.Name, club.Abbr);
+                                newClubs.Add(newClub);
                             }
                         }
                     }
-                    else
-                    {
-                        using (System.Data.SqlClient.SqlCommand command = new SqlCommand(query, ttConnection))
-                        {
-                            command.ExecuteNonQuery();
-                        }
-                    }
+                    //else
+                    //{
+                    //    using (System.Data.SqlClient.SqlCommand command = new SqlCommand(query, ttConnection))
+                    //    {
+                    //        command.ExecuteNonQuery();
+                    //    }
+                    //}
 
                 }
                 ttConnection.Close();
@@ -727,7 +735,7 @@ namespace TTService
             {
                 mut.ReleaseMutex();
             }
-            return newID;
+            return newClubs;
         }
         public string EmailStartSheet(int eventID)
         {

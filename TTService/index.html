@@ -144,7 +144,7 @@
     <div data-role="page" id="eventManage">
         <div data-role="header">   <h1>event Management</h1>   </div>
         <div data-role="content">
-            <div class="realtime">Time</div>
+            <h2 id="eventDetails">Event</h2>
             <ul data-role="listview" data-inset="true">
                 <li id="addEvent" class="ui-btn ui-btn-icon-right">Create new event</li>
                 <li id="addEvRider" class="ui-btn ui-btn-icon-right">Add riders to event</li>
@@ -181,6 +181,29 @@
         </div>
     </div>
 
+
+    <div data-role="page" id="addEventPage">
+        <div data-role="header">
+            <h1>Create new Event</h1>
+        </div>
+        <div>
+            <a data-role="button" data-mini="true" id="chooseNewEventClub">Choose club for event</a>
+            <a data-role="button" data-mini="true" id="chooseNewEventCourse">Choose course for event</a>
+        </div>
+        <p id="addEventTables" style="text-align:center;" />
+        <div>
+            <input id="startDate" type="hidden" />
+            <a data-role="button" data-mini="true" id="btnStartDate">Date of event</a>
+        </div>
+        <div>
+            <input id="startTime" type="hidden" value="Time of event" />
+            <a data-role="button" data-mini="true" id="btnStartTime">Time of event</a>
+        </div>
+        <div>
+            <a data-role="button" id="eventSubmit">Save new event</a>
+        </div>
+    </div>
+
     <div data-role="page" id="loadEventPage">
         <div data-role="header">
             <h1>Load existing Event</h1>
@@ -202,27 +225,6 @@
         <p id="eventsTable" />
     </div>
 
-    <div data-role="page" id="addEventPage">
-        <div data-role="header">
-            <h1>Create new Event</h1>
-        </div>
-        <div>
-            <a data-role="button" data-mini="true" id="chooseNewEventClub">Choose club for event</a>
-            <a data-role="button" data-mini="true" id="chooseNewEventCourse">Choose course for event</a>
-        </div>
-        <p id="addEventTables" style="text-align:center;" />
-        <div>
-            <input id="startDate" type="hidden" />
-            <a data-role="button" data-mini="true" id="btnStartDate">Date of event</a>
-        </div>
-        <div>
-            <input id="startTime" type="hidden" value="Time of event"/>
-            <a data-role="button" data-mini="true" id="btnStartTime">Time of event</a>
-        </div>
-        <div>
-            <a data-role="button" id="eventSubmit">Save new event</a>
-        </div>
-    </div>
 
 
     <div data-role="page" id="entrypage">
@@ -237,7 +239,7 @@
         <div data-role="header">
             <h1>Add or update times for event</h1>
         </div>
-        <p id="timesTable" ">No entries loaded</p>
+        <p id="timesTable">No entries loaded</p>
         <div class="ui-grid-b">
             <div class="ui-block-a"><label for="riderTime" id="riderTimeLabel">Result Time:</label></div>
             <div class="ui-block-b"><input type="time" id="riderTime" /></div>

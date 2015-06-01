@@ -62,7 +62,7 @@ namespace TTService
 
         [OperationContract]
         [WebInvoke(Method = "POST", UriTemplate = "/SaveNewClubs", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        int SaveNewClubs(IEnumerable<Club> clubs);
+        IEnumerable<Club> SaveNewClubs(IEnumerable<Club> clubs);
 
         [OperationContract]
         [WebInvoke(Method = "POST", UriTemplate = "/EmailStartSheet", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]

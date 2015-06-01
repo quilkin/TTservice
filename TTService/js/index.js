@@ -68,7 +68,10 @@
 
         $('#getRiderData').click(function () {   Riders.getRiderData();    });
         $('#saveRiderData').click(function () {  Riders.saveRiderData();   });
-        $('#manage').click(function () { ttApp.changePage('eventManage'); });
+        $('#manage').click(function () {
+            $('#eventDetails').text(EventList.currentDetails());
+            ttApp.changePage('eventManage');
+        });
         $('#theday').click(function () { ttApp.changePage('onTheDay'); });
         $('#ridersclubs').click(function () { ttApp.changePage('ridersClubs'); });
     });

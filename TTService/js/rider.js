@@ -100,6 +100,7 @@ var TTRider = (function ($) {
             clubid = Clubid;
             best25 = Best25 > 0 ? Best25 : notarget;
             email = Email;
+            this.changed = false;
 
             if (ID > 0) {
                 // club created with known ID from the db
@@ -135,7 +136,7 @@ var TTRider = (function ($) {
             this.setAge = function (value) { age = value; };
             this.setEmail = function (value) { email = value; };
             this.setClubID = function (value) { clubid = value; };
-            this.changed = false;
+
         };
 
     // public (shared across instances)
@@ -232,7 +233,7 @@ var TTRider = (function ($) {
                     }
                 }
                 else {
-                    $('#start').text("Error with entry details");
+                    $('#start').text("No event loaded");
                 }
             }
             else {

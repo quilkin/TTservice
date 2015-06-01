@@ -96,8 +96,8 @@ var EventList = (function ($) {
             timemillisec,
             coursename = $("#chooseNewEventCourse").text(),
             club = $("#chooseNewEventClub").text(),
-            date = $("#startDate").text().split('/'),
-            time = $("#startTime").text().split(':');
+            date = $("#btnStartDate").text().split('/'),
+            time = $("#btnStartTime").text().split(':');
 
         datetime = new Date(date[2], date[1] - 1, date[0], time[0], time[1], 0, 0);
         timemillisec = datetime.valueOf();
@@ -202,6 +202,8 @@ var EventList = (function ($) {
         controlType: 'select',
         stepHour: 1,
         stepMinute: 15,
+        showSecond: false,
+        hour: 8,
         onSelect: function (result, i) {
             $("#btnStartTime").text(result);
         }
@@ -315,6 +317,13 @@ var EventList = (function ($) {
     return {
         currentEvent: function () {
             return event;
+        },
+        currentDetails: function () {
+            if (event===null) {
+                return "No event loaded";
+            }
+            return event.details();
+            //return Clubs.getName(event.ClubID) + ": " + ttTime.dateTimeString(event.Time) + " (" + Course.getName(event.CourseID) + ")";
         }
     };
 

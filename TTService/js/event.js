@@ -57,11 +57,15 @@ var Event = (function ($) {
         this.sync = function () {
             this.Synched = true;
         };
-        //this.synched = function () {
-        //    return this.Synched;
-        //};
-        this.results = function () {
 
+        this.details = function () {
+            if (this.ClubID < 1) {
+                return "No club for event";
+            }
+            return Clubs.getName(this.ClubID) + ": " + ttTime.dateTimeString(this.Time) + " (" + Course.getName(this.CourseID) + ")";
+        };
+        this.results = function () 
+        {
             if (this.Entries.length < 1) {
                 popup.alert("No event loaded, or no riders in event!");
                 return;
@@ -79,7 +83,7 @@ var Event = (function ($) {
             var pos = 1,
                 results = [],
                 self = this,
-                title, table, file;
+                table;
 
             $.each(this.Entries, function (index, entry) {
                 entry.setPosition(pos++);
@@ -99,11 +103,11 @@ var Event = (function ($) {
                 rideTime = finish - start;
                 if (finish / 1000 === ttTime.didNotStart() / 1000) {
                     rideTimeString = "DNS";
-                    ntry.setVet(0);
+                    entry.setVet(0);
                 }
                 else if (finish / 1000 === ttTime.didNotFinish() / 1000) {
                     rideTimeString = "DNF";
-                    ntry.setVet(0);
+                    entry.setVet(0);
                 }
                 else if (finish >= ttTime.specialTimes()) {
                     return true;          //continue, don't add to list
@@ -123,8 +127,8 @@ var Event = (function ($) {
             if (login.checkRole() == false) {
                 $('#btnEmailResult').hide();
             }
-            title = Clubs.getName(this.ClubID) + " " + ttTime.dateTimeString(this.Time) + " " + Course.getName(this.CourseID);
-            $('#resultsTitle').text(title);
+            //title = Clubs.getName(this.ClubID) + " " + ttTime.dateTimeString(this.Time) + " " + Course.getName(this.CourseID);
+            $('#resultsTitle').text(this.details());
 
             resultsTableRiders(results);
 
@@ -159,10 +163,9 @@ var Event = (function ($) {
                     rideTimeString = ttTime.timeStringH1(rideTime);
 
                 results.push([Clubs.getAbbr(rider.getClubID()), entry.Number, rider.getName(), rideTimeString, ttTime.timeStringVetStd(entry.VetOnStd)]);
-
             });
-            file = Clubs.getName(this.ClubID) + " " + ttTime.dateTimeString(this.Time) + " " + Course.getName(this.CourseID);
-            resultsTableSummary(results, file);
+            //file = Clubs.getName(this.ClubID) + " " + ttTime.dateTimeString(this.Time) + " " + Course.getName(this.CourseID);
+            resultsTableSummary(results, this.details());
         };
         this.displayEvent = function () {
             var r, rider,
@@ -270,6 +273,7 @@ var Event = (function ($) {
                 stepHour: 1,
                 stepMinute: 1,
                 stepSecond: 1
+
             });
             $('#times tbody tr').on('click', function () {
                 var nTds = $('td', this),

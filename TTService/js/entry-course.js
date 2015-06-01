@@ -19,12 +19,15 @@
             list[index] = course;
         })
     };
+    // generate list of courses for a table
     course.populateList = function (plist) {
         while (plist.length > 0) {
             plist.pop();
         }
         $.each(list, function (index, course) {
-            plist.push([course.Name]);
+            if (course !== undefined) {
+                plist.push([course.Name]);
+            }
         })
     }
     course.getName = function (courseID) {
