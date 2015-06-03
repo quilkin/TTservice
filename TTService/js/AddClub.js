@@ -1,81 +1,25 @@
 ﻿
-/*global jQuery,popup,TTRider*/
-
 var CycleClub = (function () {
     "use strict";
 
-    // constructor
     var club = function (id, name, abbr) {
-            // private
-            //this.tempID = false;
-            this.ID = id;
-
-            if (id <= 0) {
-                // must create a temporary ID
-                // This will be replaced with a permanent ID later, when there is communication with the DB
-                this.ID = Clubs.getTempID();
-
-                if (Riders.getNewRider() !== null) {
-                    Riders.getNewRider().setClubID(this.ID);
-                }
-                //this.tempID = true;
+        this.ID = id;
+        if (id <= 0) {
+            // must create a temporary ID
+            // This will be replaced with a permanent ID later, when there is communication with the DB
+            this.ID = Clubs.getTempID();
+            if (Riders.getNewRider() !== null) {
+                Riders.getNewRider().ClubID = this.ID;
             }
-            this.Name = name;
-            if (abbr.length > 2) {
-                this.Abbr = abbr;
-            }
-            else {
-                this.Abbr = name.substr(0, 5);
-            }
-
-            // public (this instance only)
-            //this.getId = function () { return id; };
-            //this.getTempId = function () { return this.tempID; };
-            //this.getName = function () { return name; };
-            //this.getAbbr = function () { return abbr; };
-            //this.setId = function (value) { id = value; };
-            //this.setTempId = function (value) { this.tempID = value; };
-            //this.setName = function (value) {
-            //    if (typeof value !== 'string') {
-            //        throw 'Club name must start with a letter';
-            //    }
-            //    if (value.length === 0) {
-            //        value = "Unknown club";
-            //    }
-            //    if (value.length < 5 || value.length > 31) {
-            //        throw 'Club name must be 5-31 characters long.';
-            //    }
-            //    name = value;
-            //};
-            //this.setAbbr = function (value) {
-            //    if (typeof value !== 'string') {
-            //        throw 'Club abbr must start with a letter';
-            //    }
-            //    if (value.length === 0) {
-            //        // default is first 5 chars of name
-            //        value = name.substr(0, 5);
-            //    }
-            //    if (value.length < 3 || value.length > 5) {
-            //        throw 'Club abbr must be 3-5 characters long.';
-            //    } 
-            //    abbr = value;
-            //};
-        };
-    // public static
-    //club.getNextId = function () {
-    //    return nextId;
-    //};
-
-
-    //club.checkTempIDs = function(newID)  {
-    //    if (this.tempID) {
-    //        // need to change clubIDs for any new riders........
-    //        Riders.updateClubIDs(this.ID, newID);
-    //        this.setId(newID++);
-    //        this.tempID = false;
-    //    }
-    //};
-
+        }
+        this.Name = name;
+        if (abbr.length > 2) {
+            this.Abbr = abbr;
+        }
+        else {
+            this.Abbr = name.substr(0, 5);
+        }
+    };
     return club;
 }());
 
@@ -117,7 +61,7 @@ var Clubs = (function ($) {
         });
     };
     clubs.getID = function (clubname) {
-        for (i = 0; i < list.length; i++) {
+        for (i = 0; i < list.length; i+=1) {
             club = list[i];
             if (club !== undefined && clubname === club.Name) {
                 return club.ID;
@@ -129,7 +73,7 @@ var Clubs = (function ($) {
         // must create a temporary (negative) ID
         // This will be replaced with a permanemt ID later, when there is communication with the DB
         var highest = 0, posID;
-        for (i = 0; i < list.length; i++) {
+        for (i = 0; i < list.length; i+=1) {
             club = list[i];
             if (club !== undefined) {
                 posID = club.ID > 0 ? club.ID : -club.ID;
@@ -139,8 +83,9 @@ var Clubs = (function ($) {
             }
         }
         return -(highest + 1);
-    }
+    };
     clubs.getName = function (clubID) {
+        if (clubID < 0) { clubID = -clubID; }
         return list[clubID].Name;
         //for (i = 0; i < list.length; i++) {
         //    club = list[i];
@@ -151,6 +96,7 @@ var Clubs = (function ($) {
         //return "unknown";
     };
     clubs.getAbbr = function (clubID) {
+        if (clubID < 0) { clubID = -clubID; }
         return list[clubID].Abbr;
         //for (i = 0; i < list.length; i++) {
         //    club = list[i];
@@ -192,46 +138,51 @@ var Clubs = (function ($) {
             var nTds = $('td', this);
             newClub = $(nTds[0]).text();
             $('#riderClubTable').html(newClub);
-            Riders.getNewRider().setClubID(Clubs.getID(newClub));
+            Riders.getNewRider().ClubID = Clubs.getID(newClub);
         });
 
     }
 
+    //function updateClubID(index, club,newID) {
+    //    if (club !== undefined && club.ID < 0) {
+    //        // this was a temp ID, replace it
+    //        club.ID = newID;
+    //        // need to change clubIDs for any new riders........
+    //        Riders.updateClubIDs(club.ID, newID);
+    //    }
+    //}
     // response contains a list of the clubs with their new IDs
     function clubsResponse(response) {
         var newID, index;
-        for (index=0; index < response.length; index++) {
+        for (index=0; index < response.length; index+=1) {
             newID = response[index].ID;
             // add new IDs to existing clubs
-            $.each(list, function (index, club) {
-                if (club !==undefined && club.ID < 0) {
+            $.each(list, function(index,club) {
+                if (club !== undefined && club.ID < 0) {
                     // this was a temp ID, replace it
-                    club.ID = newID;
-                    // need to change clubIDs for any new riders........
+                    // first need to change clubIDs for any new riders........
                     Riders.updateClubIDs(club.ID, newID);
+                    club.ID = newID;
                 }
             });
-            popup.alert(response.length + " clubs uploaded OK");
         }
-        Riders.saveRiderData3();
-        //else {
-        //    popup.alert("! No clubs uploaded");
-        //}
+        popup.alert(response.length + " clubs uploaded OK");
+        //Riders.saveRiderData3();
     }
     
     $('#displayClubList').click(function () {
-        if (list == null) {
+        if (list === null) {
             popup.alert("No clubs loaded!");
             return;
         }
-        var table, tableClubs = [];
+        var tableClubs = [];
         $.each(list, function (index, club) {
             if (club !== undefined) {
                 tableClubs.push([club.Name, club.Abbr]);
             }
         });
         ttApp.changePage("clubsPage");
-        table = myTable('#clubs2', { "sSearch": "Select Club:" }, tableClubs, ttApp.tableHeight(), [null, null], null);
+        myTable('#clubs2', { "sSearch": "Select Club:" }, tableClubs, ttApp.tableHeight(), [null, null], null);
     });
 
     clubs.uploadNewClubs = function () {
@@ -242,16 +193,16 @@ var Clubs = (function ($) {
             }
         });
         if (newClubs.length > 0) {
-            TTData.json("SaveNewClubs", "POST", newClubs, clubsResponse, true);
+            TTData.json("SaveNewClubs", "POST", newClubs, [clubsResponse,Riders.saveNewRiders], true);
             // riders will be saved *after* clubs have been saved
         }
         else {
-            Riders.saveRiderData3();
+            Riders.saveNewRiders();
         }
     };
     clubs.chooseRiderClub = function (clubID) {
         var tempclubs = [];
-        for (i = 0; i < list.length; i++) {
+        for (i = 0; i < list.length; i+=1) {
             club = list[i];
             if (club !== undefined) {
                 tempclubs.push([club.Name, club.Abbr]);
@@ -276,5 +227,5 @@ var Clubs = (function ($) {
 
     
 
-    return clubs
+    return clubs;
 }(jQuery));

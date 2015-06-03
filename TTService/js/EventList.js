@@ -1,7 +1,4 @@
-﻿
-/*global jQuery,popup,Clubs,Course,TTData,ttTime,login,Rider,Riders,Event,ttApp*/
-
-var EventList = (function ($) {
+﻿var EventList = (function ($) {
     "use strict";
     var coursesList = [],
         clubsList = [],
@@ -102,7 +99,7 @@ var EventList = (function ($) {
         datetime = new Date(date[2], date[1] - 1, date[0], time[0], time[1], 0, 0);
         timemillisec = datetime.valueOf();
         event = new Event(0, Course.getID(coursename), timemillisec, Clubs.getID(club), 0);
-
+        event.clearEntries();
         ttApp.changePage("home");
     }
     
@@ -131,18 +128,18 @@ var EventList = (function ($) {
     });
     $('#sortEvent').click(function () {
         if (exists()) {
-            event.sortEvent();
+            event.prepareSortEvent();
         }
     });
     $('#saveEvent1').click(function () {
         if (exists()) {
-            event.saveEvent();
+            event.prepareSaveEvent();
         }
     });
 
     $('#saveEvent2').click(function () {
         if (exists()) {
-            event.saveEvent();
+            event.prepareSaveEvent();
         }
     });
 

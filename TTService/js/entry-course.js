@@ -77,35 +77,9 @@ var Entry = (function () {
         this.RiderID = riderID;
         this.Position = 0;
         this.VetOnStd = 0;
-        this.getRiderID = function () {
-            return this.RiderID;
-        };
-        this.getFinish = function () {
-            return this.Finish;
-        }
-        this.getStart = function () {
-            return this.Start;
-        }
-        this.getPos = function () {
-            return this.Position;
-        }
-        this.getNum = function () {
-            return this.Number;
-        }
-        this.getVet = function () {
-            return this.VetOnStd;
-        }
-        this.setPosition = function (value) {
-            this.Position = value;
-        };
-        this.setVet = function (value) {
-            this.VetOnStd = value;
-        };
         this.sequence = -1; // used in button grid; see FinishLine for use
     };
-    //entry.getRiderID = function () {
-    //    return this.RiderID;
-    //};
+
     return entry;
 }());
 

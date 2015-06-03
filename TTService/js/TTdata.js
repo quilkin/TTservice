@@ -18,7 +18,7 @@ don't allow duplicate logins
 •	Allow emails to be sent from organiser’s email address
 •	Create results tables for vets, women, juniors etc
 •	Sort out birthdates and ages so that ages are automatically updated in subsequent years
-
+*   update vet's table
 */
 
 var TTData = (function ($) {

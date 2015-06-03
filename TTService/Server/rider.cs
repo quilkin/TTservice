@@ -20,19 +20,23 @@ namespace TTService
         [DataMember]
         public int Age { get; set; }
         [DataMember]
-        public Categories Category { get; set; }
+        public bool Lady { get; set; }
         [DataMember]
         public int ClubID { get; set; }
         [DataMember]
         public string Club { get; set; }
         [DataMember]
         public string Email { get; set; }
+        [DataMember]
+        public int Best25 { get; set; }
+
+
+        public Categories Category { get; set; }
         public DateTime DOB { get; set; }
         //public TimeSpan time10;
         //public TimeSpan time25;
         //public TimeSpan timeAggregate;
-        [DataMember]
-        public int Best25 { get; set; }
+
         //public TimeSpan vetStandard;
         public bool inEvent;
         public string email;
@@ -54,7 +58,8 @@ namespace TTService
                 Category = Categories.Junior;
             else if (Age >= 40)
             {
-                if (Category == Categories.Lady || Category == Categories.LadyVet)
+                //if (Category == Categories.Lady || Category == Categories.LadyVet)
+                if (Lady)
                     Category = Categories.LadyVet;
                 else
                     Category = Categories.Vet;
@@ -72,12 +77,12 @@ namespace TTService
         //    UpdateCategory();
 
         //}
-        public Rider(int id, string name, Categories cat, int age, int clubID, int best25, string email)
+        public Rider(int id, string name, int age, bool lady,int clubID, int best25, string email)
         {
             ID = id;
             Name = name;
             Age = age;
-            Category = cat;
+            Lady = lady;
             Best25 = best25;
             Email = email;
             DOB = DateTime.Now.AddYears(-age);

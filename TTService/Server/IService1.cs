@@ -54,7 +54,7 @@ namespace TTService
                  
         [OperationContract]
         [WebInvoke(Method = "POST", UriTemplate = "/SaveNewRiders", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        int SaveNewRiders(IEnumerable<Rider> riders);
+        IEnumerable<Rider> SaveNewRiders(IEnumerable<Rider> riders);
 
         [OperationContract]
         [WebInvoke(Method = "POST", UriTemplate = "/SaveChangedRiders", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]

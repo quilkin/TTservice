@@ -390,14 +390,14 @@
 
 						if (litem === 'hour') {
 							for (var h = o[litem + 'Min']; h <= max[litem]; h += parseInt(o[litem + 'Grid'], 10)) {
-								gridSize[litem]++;
+								gridSize[litem]+=1;
 								var tmph = $.datepicker.formatTime(this.support.ampm ? 'hht' : 'HH', {hour: h}, o);
 								html += '<td data-for="' + litem + '">' + tmph + '</td>';
 							}
 						}
 						else {
 							for (var m = o[litem + 'Min']; m <= max[litem]; m += parseInt(o[litem + 'Grid'], 10)) {
-								gridSize[litem]++;
+								gridSize[litem]+=1;
 								html += '<td data-for="' + litem + '">' + ((m < 10) ? '0' : '') + m + '</td>';
 							}
 						}

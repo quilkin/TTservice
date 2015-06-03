@@ -31,6 +31,13 @@ var popup = (function ($) {
         popup.addMenuItem('OK', null);
         popup.open();
     };
+    // wait for popup to be answered before running function
+    pop.wait = function (message, func) {
+        var popup = new pop(message);
+        popup.addMenuItem('OK', func);
+        popup.open();
+    };
+   // wait for question to be answered before running function(s)
     pop.confirm = function (question, yesfunc, nofunc) {
         var popup = new pop(question);
         popup.addMenuItem('yes', yesfunc);

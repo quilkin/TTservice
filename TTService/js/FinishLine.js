@@ -1,6 +1,4 @@
-﻿/*global jQuery,Event,EventList,popup,login,ttTime,ttApp,Riders*/
-
-var finishLine = (function ($) {
+﻿var finishLine = (function ($) {
     
     "use strict";
 
@@ -106,7 +104,7 @@ var finishLine = (function ($) {
         var rider = Riders.riderFromID(riderID),
             entry = event.getEntryFromRiderID(riderID),
             pop;
-        $('#rname').text(rider.getName());
+        $('#rname').text(rider.Name);
         $('#rnumber').text(entry.Number);
         $('#fTimes').empty();
 

@@ -1,5 +1,3 @@
-/*global jQuery,popup,ttTime,Riders,Clubs*/
-
 var TTRider = (function ($) {
     "use strict";
 
@@ -82,60 +80,72 @@ var TTRider = (function ($) {
 
 
     // constructor
-        rider = function (ID, Name, Age, Cat, Clubid, Email, Best25) {
-            var id,
-                name,
-                age,
-                category,
-                clubid,
-                email,
-                best25,
-                notarget = 86399,               // constant: no target time so leave as 23:59:59 for correct seeding
+        rider = function (id, name, age, lady, clubid, email, best25) {
+            var notarget = 86399;               // constant: no target time so leave as 23:59:59 for correct seeding
 
-                tempid = false;
 
-            name = Name;
-            age = Age;
-            category = Cat;
-            clubid = Clubid;
-            best25 = Best25 > 0 ? Best25 : notarget;
-            email = Email;
+            this.Name = name;
+            this.Age = age;
+            this.Lady = lady;
+            this.ClubID = clubid;
+            this.Best25 = best25 > 0 ? best25 : notarget;
+            this.Email = email;
             this.changed = false;
-
-            if (ID > 0) {
-                // club created with known ID from the db
-                id = ID;
-            } else {
+            this.ID = id;
+            if (id <= 0) {
                 // must create a temporary ID
                 // This will be replaced with a permanent ID later, when there is communication with the DB
-                id = Riders.tempID;
-                tempid = true;
+                this.ID = Riders.tempID();
             }
 
-            this.getId = function () { return id; };
-            this.getName = function () { return name; };
-            this.getClubID = function () { return clubid; };
-            this.getAge = function () { return age; };
-            this.getEmail = function () { return email; };
-            this.getBest25 = function () { return best25; };
-            this.hasBest25 = function () { return best25 < notarget; };
-            this.isLady = function () { return category === Categories.Lady || category === Categories.LadyVet; };
-            this.tempID = function () { return tempid; };
-            this.setName = function (value) {
-                if (typeof value !== 'string') {
-                    throw 'Club name must start with a letter';
+            //this.getId = function () { return id; };
+            ////this.getName = function () { return name; };
+            //this.getClubID = function () { return clubid; };
+            //this.getAge = function () { return age; };
+            //this.getEmail = function () { return email; };
+            //this.getBest25 = function () { return best25; };
+            this.getCategory = function () {
+                var cat, age;
+                age = this.Age,
+                    cat = Categories.Senior;
+                if (age < 16) {
+                    cat = Categories.Juvenile;
                 }
-                if (value.length === 0) {
-                    value = "Unknown rider";
+                else if (age < 18) {
+                    cat = Categories.Junior;
                 }
-                if (value.length < 5 || value.length > 31) {
-                    throw 'Rider name must be 5-31 characters long.';
+                else if (age >= 40) {
+                    cat = Categories.Vet;
                 }
-                name = value;
-            };
-            this.setAge = function (value) { age = value; };
-            this.setEmail = function (value) { email = value; };
-            this.setClubID = function (value) { clubid = value; };
+                if (this.Lady) {
+                    cat = Categories.Lady;
+                    if (age >= 40) {
+                        cat = Categories.LadyVet;
+                    }
+                }
+                return cat;
+            },
+            this.catAbbr = function () {
+                return CatAbbr[this.getCategory()];
+            },
+            this.hasBest25 = function () { return this.Best25 < notarget; };
+            //this.isLady = function () { return this.Category === Categories.Lady || this.Category === Categories.LadyVet; };
+            this.tempID = function () { return (this.ID < 0); };
+            //this.setName = function (value) {
+            //    if (typeof value !== 'string') {
+            //        throw 'Club name must start with a letter';
+            //    }
+            //    if (value.length === 0) {
+            //        value = "Unknown rider";
+            //    }
+            //    if (value.length < 5 || value.length > 31) {
+            //        throw 'Rider name must be 5-31 characters long.';
+            //    }
+            //    name = value;
+            //};
+            //this.setAge = function (value) { age = value; };
+            //this.setEmail = function (value) { email = value; };
+            //this.setClubID = function (value) { clubid = value; };
 
         };
 
@@ -143,8 +153,8 @@ var TTRider = (function ($) {
     rider.prototype = {
         vetStandardTime: function (distance) {
             var time,
-                ageOver40 = this.getAge() - 40;
-            if (this.getCategory() === Categories.LadyVet) {
+                ageOver40 = this.Age - 40;
+            if (this.Category === Categories.LadyVet) {
                 ageOver40 += 8; // eight years difference on standard times
             }
             if (ageOver40 >= 0) {
@@ -160,29 +170,8 @@ var TTRider = (function ($) {
             return 0;
 
         },
-        getCategory: function () {
-            var age = this.getAge(),
-                cat = Categories.Senior;
-            if (age < 16) {
-                cat = Categories.Juvenile;
-            }
-            else if (age < 18) {
-                cat = Categories.Junior;
-            }
-            else if (age >= 40) {
-                cat = Categories.Vet;
-            }
-            if ($("#checkLady").prop("checked")) {
-                cat = Categories.Lady;
-                if (age >= 40) {
-                    cat = Categories.LadyVet;
-                }
-            }
-            return cat;
-        },
-        catAbbr: function () {
-            return CatAbbr[this.getCategory()];
-        },
+
+
         inEvent: function()
         {
             var i,entry,
@@ -193,8 +182,8 @@ var TTRider = (function ($) {
             }
             for (i = 0; i < event.getEntries().length; i++) {
                 entry = event.getEntries()[i];
-                if (entry.RiderID === this.getId()) {
-                    return this.getId();
+                if (entry.RiderID === this.ID) {
+                    return this.ID;
                 }
             }
             return 0;
@@ -207,22 +196,22 @@ var TTRider = (function ($) {
                 best25string,
                 self = this;
 
-            $('#name').text(this.getName());
-            $('#club').text("Club: " + Clubs.getName(this.getClubID()));
+            $('#name').text(this.Name);
+            $('#club').text("Club: " + Clubs.getName(this.ClubID));
             $('#cat').text("Category: " + this.getCategory());
             if (event) {
                 $.each(event.getEntries(), function (index, e) {
                     //for (ev in currentEvent.Entries) {
-                    if (self.getId() === e.RiderID) {
+                    if (self.ID === e.RiderID) {
                         entry = e;
                         return false; // break
                     }
                 });
                 if (entry !== null) {
-                    $('#start').text("Start time:   " + ttTime.timeString(entry.getStart()));
-                    $('#number').text("Start Number: " + entry.getNum());
-                    if (entry.getFinish() / 1000 < ttTime.noTimeYet() / 1000) {
-                        $('#time').text("Result Time:  " + ttTime.timeString(entry.getFinish() - entry.getStart()));
+                    $('#start').text("Start time:   " + ttTime.timeString(entry.Start));
+                    $('#number').text("Start Number: " + entry.Number);
+                    if (entry.Finish / 1000 < ttTime.noTimeYet() / 1000) {
+                        $('#time').text("Result Time:  " + ttTime.timeString(entry.Finish - entry.Start));
                         distance = event.distance();
                         //var r = new Rider(rider.ID, rider.Name, rider.Age, rider.Category, rider.ClubID,rider.Email,rider.Best25);
                         vetStdTime = this.vetStandardTime(distance);
@@ -237,16 +226,16 @@ var TTRider = (function ($) {
                 }
             }
             else {
-                $('#age').text("Age: " + login.checkRole()? this.getAge() : "Undisclosed");
+                $('#age').text("Age: " + login.checkRole()? this.Age : "Undisclosed");
                 $('#inevent').text("In event?: " + this.inEvent() ? "yes" : "no");
                 //$('#time10').text(rider.time10);
                 if (this.hasBest25()) {
-                    best25string = ttTime.timeStringH1(this.getBest25() * 1000);
+                    best25string = ttTime.timeStringH1(this.Best25 * 1000);
                     $('#time25').text("Best '25' time: " + best25string);
                 }
                 //$('#target').text(rider.target);
                 if (login.checkRole() > 1) {
-                    $('#email').text(this.getEmail());
+                    $('#email').text(this.Email);
                 }
             }
 

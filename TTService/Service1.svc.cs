@@ -101,7 +101,7 @@ namespace TTService
                 Trace.WriteLine(ex.Message);
 
             }
-            string query = "SELECT riders.id, riders.name, riders.clubID, riders.age, riders.cat, riders.best25, riders.email "
+            string query = "SELECT riders.id, riders.name, riders.clubID, riders.age, riders.lady, riders.best25, riders.email "
                             + "FROM riders ORDER BY riders.name";
             using (SqlDataAdapter riderAdapter = new SqlDataAdapter(query, ttConnection))
             {
@@ -118,8 +118,10 @@ namespace TTService
                         string email = "";
                         if (!DBNull.Value.Equals(dr["email"]))
                             email = (string)dr["email"];
-                        int cat = (int)dr["cat"];
-                        riders.Add(new Rider(id, (string)dr["name"], (Rider.Categories)cat, (int)dr["age"], (int)dr["clubID"], (int)dr["best25"], email));
+                        //int cat = (int)dr["cat"];
+                        //riders.Add(new Rider(id, (string)dr["name"], (Rider.Categories)cat, (int)dr["age"], (int)dr["clubID"], (int)dr["best25"], email));
+                        riders.Add(new Rider(id, (string)dr["name"], (int)dr["age"], (bool)dr["lady"],(int)dr["clubID"], (int)dr["best25"], email));
+
                     }
                     catch (Exception ex)
                     {
@@ -560,7 +562,7 @@ namespace TTService
         /// Otherwise it is to difficult to allocate new rider IDs correctly
         /// </summary>
         private static Mutex mut = new Mutex();
-        public int SaveNewRiders(IEnumerable<Rider> riders)
+        public IEnumerable<Rider> SaveNewRiders(IEnumerable<Rider> riders)
         {
             int newID = 0;
 
@@ -588,12 +590,12 @@ namespace TTService
                         // assume this is a '10' time not a '25' time
                         r.Best25 = r.Best25 + r.Best25 + r.Best25 / 2;
 
-                    string query = string.Format("insert into riders (name, clubID, age, dob, cat, best25,email) values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}')\n\r",
-                        r.Name, r.ClubID, r.Age, TimeString(DOB),(int)r.Category, r.Best25, r.Email);
-                    if (newID == 0)
+                    string query = string.Format("insert into riders (name, clubID, age, lady,dob, best25,email) values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}')\n\r",
+                        r.Name, r.ClubID, r.Age, r.Lady, TimeString(DOB),r.Best25, r.Email);
+                    //if (newID == 0)
                     {
                         query += "DECLARE @NewRiderID Int\n\r SET @NewRiderID = SCOPE_IDENTITY()\n\r";
-                        query += "SELECT riders.id, riders.name, riders.clubID, riders.age, riders.cat, riders.best25, riders.email "
+                        query += "SELECT riders.id, riders.name, riders.clubID, riders.age, riders.lady, riders.best25, riders.email "
                                 + "FROM riders where riders.id = @NewRiderID";
                         using (SqlDataAdapter riderAdapter = new SqlDataAdapter(query, ttConnection))
                         {
@@ -603,17 +605,19 @@ namespace TTService
                             {
                                 DataRow dr = dataRiders.Rows[0];
                                 newID = (int)dr["id"];
+                                Rider newRider = new Rider(newID, r.Name, r.Age, r.Lady, r.ClubID, r.Best25, r.Email);
+                                newRiders.Add(newRider);
                             }
                         }
                     }
-                    else
-                    {
-                        using (System.Data.SqlClient.SqlCommand command = new SqlCommand(query, ttConnection))
-                        {
-                            command.ExecuteNonQuery();
-                        }
+                    //else
+                    //{
+                    //    using (System.Data.SqlClient.SqlCommand command = new SqlCommand(query, ttConnection))
+                    //    {
+                    //        command.ExecuteNonQuery();
+                    //    }
 
-                    }
+                    //}
                 }
 
                 ttConnection.Close();
@@ -627,7 +631,7 @@ namespace TTService
             {
                 mut.ReleaseMutex();
             }
-            return newID;
+            return newRiders;
         }
         public string SaveChangedRiders(IEnumerable<Rider> riders)
         {
@@ -649,8 +653,8 @@ namespace TTService
                         // assume this is a '10' time not a '25' time
                         r.Best25 = r.Best25 + r.Best25 + r.Best25 / 2;
                     DateTime DOB = DateTime.Now.AddYears(-r.Age);
-                    string query = string.Format("update riders set name='{0}', clubID='{1}', age='{2}', dob='{3}', cat='{4}', best25='{5}', email='{6}'",
-                        r.Name, r.ClubID, r.Age, TimeString(DOB), (int)r.Category, r.Best25, r.Email);
+                    string query = string.Format("update riders set name='{0}', clubID='{1}', age='{2}', lady='{3}',dob='{4}', best25='{5}', email='{6}'",
+                        r.Name, r.ClubID, r.Age, r.Lady,TimeString(DOB), r.Best25, r.Email);
                     query += string.Format("where id='{0}'\n\r", r.ID);
 
                     using (System.Data.SqlClient.SqlCommand command = new SqlCommand(query, ttConnection))
@@ -804,7 +808,8 @@ namespace TTService
                         invalid += "ChrisF\n\r";
                     }
 
-                    message.Subject = "Time Trial Entry 13 July";
+                    message.Subject = "Time Trial";
+                    //message.Body = string.Format("Apologies for sending out last year's results again, please ignore!");
                     message.Body = string.Format("Dear rider\n\nThank you for entering the TCC event this year");
                     if (results)
                     {

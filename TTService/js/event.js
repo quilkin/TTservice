@@ -18,6 +18,8 @@ var Event = (function ($) {
                 this.Entries.pop();
             }
         };
+        // intellisense helper
+        this.Entries[0] = new Entry(0,0,0,0);
 
         this.distance = function (courseID) {
             return Course.getDistance(courseID);
@@ -25,6 +27,9 @@ var Event = (function ($) {
         this.loadEntries = function (entries) {
             var self = this,
                 entry;
+            while (this.Entries.length > 0) {
+                this.Entries.pop();
+            }
             $.each(entries, function (index, e) {
                 // convert json list into list of entry objects
                 entry = new Entry(e.Number, e.Start, e.Finish, e.RiderID);
@@ -38,7 +43,11 @@ var Event = (function ($) {
             return this.Time;
         }
         this.pastEvent = function () {
+
             var diff, now = new Date().valueOf();
+            if (this.ID === 0) {
+                return false;
+            }
             diff = this.Time - now;
             return (diff < 0);
         };
@@ -47,7 +56,7 @@ var Event = (function ($) {
             //    return 0;
             var entry = null;
             $.each(this.Entries, function (index, e) {
-                if (e.getRiderID() === riderID) {
+                if (e.RiderID === riderID) {
                     entry = e;
                     return false;
                 }
@@ -83,31 +92,35 @@ var Event = (function ($) {
             var pos = 1,
                 results = [],
                 self = this,
+                entry,
+                index,
                 table;
 
-            $.each(this.Entries, function (index, entry) {
-                entry.setPosition(pos++);
-                var rider = Riders.riderFromID(entry.getRiderID()),
+            //$.each(this.Entries, function (index, entry) {
+            for (index=0; index < this.Entries.length; index +=1) {
+                entry = this.Entries[index];
+                entry.Position = pos+=1;
+                var rider = Riders.riderFromID(entry.RiderID),
                     //rider = new TTRider(r.ID, r.Name, r.Age, r.Category, r.ClubID, r.Email, r.Best25),
                     stdTime = rider.vetStandardTime(self.distance()),
                     rideTimeString, rideTime,
-                    start = entry.getStart(),
-                    finish = entry.getFinish();
+                    start = entry.Start,
+                    finish = entry.Finish;
 
                 if (stdTime > 0) {
-                    entry.setVet(finish - start - stdTime);
+                    entry.VetOnStd = (finish - start - stdTime);
                 }
                 else {
-                    entry.setVet(0);
+                    entry.VetOnStd = 0;
                 }
                 rideTime = finish - start;
                 if (finish / 1000 === ttTime.didNotStart() / 1000) {
                     rideTimeString = "DNS";
-                    entry.setVet(0);
+                    entry.VetOnStd = 0;
                 }
                 else if (finish / 1000 === ttTime.didNotFinish() / 1000) {
                     rideTimeString = "DNF";
-                    entry.setVet(0);
+                    entry.VetOnStd = 0;
                 }
                 else if (finish >= ttTime.specialTimes()) {
                     return true;          //continue, don't add to list
@@ -116,9 +129,9 @@ var Event = (function ($) {
                     rideTimeString = ttTime.timeStringH1(rideTime);
                 }
 
-                results.push([entry.getPos(), entry.getNum(), rider.getName(), ttApp.isMobile() ? Clubs.getAbbr(rider.getClubID()) : Clubs.getName(rider.getClubID()), rideTimeString, ttTime.timeStringVetStd(entry.getVet())]);
+                results.push([entry.Position, entry.Number, rider.Name, ttApp.isMobile() ? Clubs.getAbbr(rider.ClubID) : Clubs.getName(rider.ClubID), rideTimeString, ttTime.timeStringVetStd(entry.VetOnStd)]);
 
-            });
+            };
 
             ttApp.changePage("resultpage");
             if (ttApp.isMobile()) {
@@ -162,7 +175,7 @@ var Event = (function ($) {
                 else
                     rideTimeString = ttTime.timeStringH1(rideTime);
 
-                results.push([Clubs.getAbbr(rider.getClubID()), entry.Number, rider.getName(), rideTimeString, ttTime.timeStringVetStd(entry.VetOnStd)]);
+                results.push([Clubs.getAbbr(rider.ClubID), entry.Number, rider.Name, rideTimeString, ttTime.timeStringVetStd(entry.VetOnStd)]);
             });
             //file = Clubs.getName(this.ClubID) + " " + ttTime.dateTimeString(this.Time) + " " + Course.getName(this.CourseID);
             resultsTableSummary(results, this.details());
@@ -193,7 +206,7 @@ var Event = (function ($) {
                     if (rider === null) {
                         rider = new TTRider(entry.RiderID, "Rider not found", 0, 1, 0, "");
                     }
-                    entrydata.push([entry.Number, rider.Name, Clubs.getAbbr(rider.getClubID()), ttTime.timeString(entry.Start)]);
+                    entrydata.push([entry.Number, rider.Name, Clubs.getAbbr(rider.ClubID), ttTime.timeString(entry.Start)]);
                 });
                 myTable('#entries', { "search": "Find entry" }, entrydata, ttApp.tableHeight(), [{ "title": "#" }, { "title": "Name" }, { "title": "Club" }, { "title": "Start" }], null);
             }
@@ -209,13 +222,13 @@ var Event = (function ($) {
 
                     target = "";
                     if (rider.hasBest25()) {
-                        target = ttTime.timeStringH1(rider.getBest25() * 1000);
+                        target = ttTime.timeStringH1(rider.Best25 * 1000);
                     }
 
                     cat = rider.catAbbr();
                     stdTime = rider.vetStandardTime(self.distance());
                     stdTimeStr = stdTime > 0 ? ttTime.timeStringH1(stdTime) : "";
-                    entrydata.push([entry.Number, rider.getName(), cat, stdTimeStr, target, Clubs.getName(rider.getClubID()), ttTime.timeString(entry.Start)]);
+                    entrydata.push([entry.Number, rider.Name, cat, stdTimeStr, target, Clubs.getName(rider.ClubID), ttTime.timeString(entry.Start)]);
                 });
                 myTable('#entries', { "search": "Find entry" }, entrydata, ttApp.tableHeight(), [{ "title": "#" }, { "title": "Name" }, { "title": "Cat" }, { "title": "VetStd" }, { "title": "Target" }, { "title": "Club" }, { "title": "Start" }], null);
 
@@ -262,7 +275,7 @@ var Event = (function ($) {
                 else {
                     rideTimeString = ttTime.timeStringH1(rideTime);
                 }
-                entrydata.push([entry.Number, rider.getName(), Clubs.getAbbr(rider.getClubID()), rideTimeString]);
+                entrydata.push([entry.Number, rider.Name, Clubs.getAbbr(rider.ClubID), rideTimeString]);
             });
             table = myTable('#times', { "search": "Find entry" }, entrydata, ttApp.tableHeight() - 100, [{ "title": "#" }, { "title": "Name" }, { "title": "Club" }, { "title": "Time" }], null);
             table.order([[1, 'asc']]);
@@ -318,17 +331,19 @@ var Event = (function ($) {
             });
             //newdata = 1;
         };
-        this.sortEvent = function () {
+        this.prepareSortEvent = function () {
             //var evID = currentEvent.ID;
             var self = this;
             if (login.checkRole() === false) {
                 return;
             }
-            // first save any new riders
-            Riders.saveRiderData(true);
-            // must not be async call to ensure clubs saved before seeds call
-            TTData.json("SaveEvent", "POST", this, function (response) { popup.alert(response); }, false);
-
+            // first save any new riders & clubs - also saves event again
+            Riders.saveRiderData(this);
+            // wait until all done before continuing....
+            popup.confirm('Event saved; proceed with sort?',this.sortEvent,null);
+        };
+        this.sortEvent = function() {
+            popup.wait('Event saved; proceed with sort?',)
             TTData.json('SeedEntries', "POST", this, function (entries) {
                 $.each(entries, function (index, e) {
                     self.Entries[index] = e;
@@ -336,26 +351,33 @@ var Event = (function ($) {
                 self.displayEvent();
             }, true);
         };
-        this.saveEvent = function () {
+        this.prepareSaveEvent = function () {
             if (login.checkRole() === false) {
                 return;
             }
-            // first save any new riders
-            Riders.saveRiderData(true);
-            TTData.json("SaveEvent", "POST", this, function (response) { popup.alert(response); }, true);
+            // first save any new clubs and riders, and deal with responses, before saving the event
+            Riders.saveRiderData(this);
+            //TTData.json("SaveEvent", "POST", this, function (response) { popup.alert(response); }, true);
             //newdata = 0;
         };
+        this.saveEvent = function () {
+            TTData.json("SaveEvent", "POST", this, function (response) {
+                popup.alert(response);
+            }, true);
+        }
         this.emailStart = function () {
             if (login.checkRole() === false) {
                 return;
             }
-            TTData.json("EmailStartSheet", "POST", this.ID, function (response) { popup.alert(response); }, true);
+            // ***************** comment out until debugged!
+            //TTData.json("EmailStartSheet", "POST", this.ID, function (response) { popup.alert(response); }, true);
         };
         this.emailResults = function () {
             if (login.checkRole() === false) {
                 return;
             }
-            TTData.json("EmailResultSheet", "POST", this.ID, function (response) { popup.alert(response); }, true);
+            // ***************** comment out until debugged!
+            //TTData.json("EmailResultSheet", "POST", this.ID, function (response) { popup.alert(response); }, true);
         };
         this.startLine = function () {
             if (login.checkRole() == false)

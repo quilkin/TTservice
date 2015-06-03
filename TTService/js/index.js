@@ -67,7 +67,7 @@
         document.body.style.backgroundColor = "#FFD700";
 
         $('#getRiderData').click(function () {   Riders.getRiderData();    });
-        $('#saveRiderData').click(function () {  Riders.saveRiderData();   });
+        $('#saveRiderData').click(function () {  Riders.saveRiderData(null);   });
         $('#manage').click(function () {
             $('#eventDetails').text(EventList.currentDetails());
             ttApp.changePage('eventManage');
