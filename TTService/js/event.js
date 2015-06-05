@@ -18,8 +18,10 @@ var Event = (function ($) {
                 this.Entries.pop();
             }
         };
+        this.sortingRequired = false;
+
         // intellisense helper
-        this.Entries[0] = new Entry(0,0,0,0);
+        this.Entries[0] = new Entry(0, 0, 0, 0);
 
         this.distance = function (courseID) {
             return Course.getDistance(courseID);
@@ -30,18 +32,18 @@ var Event = (function ($) {
             while (this.Entries.length > 0) {
                 this.Entries.pop();
             }
-            $.each(entries, function (index, e) {
+            $.each(entries, function () {
                 // convert json list into list of entry objects
-                entry = new Entry(e.Number, e.Start, e.Finish, e.RiderID);
+                entry = new Entry(this.Number, this.Start, this.Finish, this.RiderID);
                 self.Entries.push(entry);
-            })
+            });
         };
         this.getEntries = function () {
             return this.Entries;
-        }
+        };
         this.getTime = function () {
             return this.Time;
-        }
+        };
         this.pastEvent = function () {
 
             var diff, now = new Date().valueOf();
@@ -52,12 +54,10 @@ var Event = (function ($) {
             return (diff < 0);
         };
         this.getEntryFromRiderID = function (riderID) {
-            //if (event == null)
-            //    return 0;
             var entry = null;
-            $.each(this.Entries, function (index, e) {
-                if (e.RiderID === riderID) {
-                    entry = e;
+            $.each(this.Entries, function () {
+                if (this.RiderID === riderID) {
+                    entry = this;
                     return false;
                 }
             });
@@ -73,8 +73,7 @@ var Event = (function ($) {
             }
             return Clubs.getName(this.ClubID) + ": " + ttTime.dateTimeString(this.Time) + " (" + Course.getName(this.CourseID) + ")";
         };
-        this.results = function () 
-        {
+        this.results = function () {
             if (this.Entries.length < 1) {
                 popup.alert("No event loaded, or no riders in event!");
                 return;
@@ -94,18 +93,23 @@ var Event = (function ($) {
                 self = this,
                 entry,
                 index,
-                table;
+                rider,
+                rideTimeString,
+                rideTime,
+                stdTime,
+                start, finish;
 
             //$.each(this.Entries, function (index, entry) {
-            for (index=0; index < this.Entries.length; index +=1) {
+            for (index = 0; index < this.Entries.length; index += 1) {
                 entry = this.Entries[index];
-                entry.Position = pos+=1;
-                var rider = Riders.riderFromID(entry.RiderID),
-                    //rider = new TTRider(r.ID, r.Name, r.Age, r.Category, r.ClubID, r.Email, r.Best25),
-                    stdTime = rider.vetStandardTime(self.distance()),
-                    rideTimeString, rideTime,
-                    start = entry.Start,
-                    finish = entry.Finish;
+                pos += 1;
+                entry.Position = pos;
+                rider = Riders.riderFromID(entry.RiderID);
+                //rider = new TTRider(r.ID, r.Name, r.Age, r.Category, r.ClubID, r.Email, r.Best25),
+                stdTime = rider.vetStandardTime(self.distance());
+
+                start = entry.Start;
+                finish = entry.Finish;
 
                 if (stdTime > 0) {
                     entry.VetOnStd = (finish - start - stdTime);
@@ -125,19 +129,16 @@ var Event = (function ($) {
                 else if (finish >= ttTime.specialTimes()) {
                     return true;          //continue, don't add to list
                 }
-                else {
-                    rideTimeString = ttTime.timeStringH1(rideTime);
-                }
-
+                rideTimeString = ttTime.timeStringH1(rideTime);
                 results.push([entry.Position, entry.Number, rider.Name, ttApp.isMobile() ? Clubs.getAbbr(rider.ClubID) : Clubs.getName(rider.ClubID), rideTimeString, ttTime.timeStringVetStd(entry.VetOnStd)]);
 
-            };
+            }
 
             ttApp.changePage("resultpage");
             if (ttApp.isMobile()) {
                 $('#btnEmailResult').hide();
             }
-            if (login.checkRole() == false) {
+            if (login.checkRole() === false) {
                 $('#btnEmailResult').hide();
             }
             //title = Clubs.getName(this.ClubID) + " " + ttTime.dateTimeString(this.Time) + " " + Course.getName(this.CourseID);
@@ -146,42 +147,39 @@ var Event = (function ($) {
             resultsTableRiders(results);
 
             results = [];
-            $.each(this.Entries, function (index, entry) {
+            $.each(this.Entries, function () {
                 //entry.Position = pos++;
-                var rider = Riders.riderFromID(entry.RiderID),
-                    // rider = new TTRider(r.ID, r.Name, r.Age, r.Category, r.ClubID, r.Email, r.Best25),
-                    stdTime = rider.vetStandardTime(self.distance()),
-                    rideTimeString, rideTime;
+                rider = Riders.riderFromID(this.RiderID);
+                // rider = new TTRider(r.ID, r.Name, r.Age, r.Category, r.ClubID, r.Email, r.Best25),
+                stdTime = rider.vetStandardTime(self.distance());
 
                 if (stdTime > 0) {
-                    entry.VetOnStd = entry.Finish - entry.Start - stdTime;
+                    this.VetOnStd = this.Finish - this.Start - stdTime;
                 }
                 else {
-                    entry.VetOnStd = 0;
+                    this.VetOnStd = 0;
                 }
-                rideTime = entry.Finish - entry.Start;
-                if (entry.Finish / 1000 === ttTime.didNotStart() / 1000) {
+                rideTime = this.Finish - this.Start;
+                if (this.Finish / 1000 === ttTime.didNotStart() / 1000) {
                     rideTimeString = "DNS";
-                    entry.VetOnStd = 0;
+                    this.VetOnStd = 0;
                 }
-                else if (entry.Finish / 1000 === ttTime.didNotFinish() / 1000) {
+                else if (this.Finish / 1000 === ttTime.didNotFinish() / 1000) {
                     rideTimeString = "DNF";
-                    entry.VetOnStd = 0;
+                    this.VetOnStd = 0;
                 }
-                else if (entry.Finish >= ttTime.specialTimes()) {
+                else if (this.Finish >= ttTime.specialTimes()) {
                     return true;          //continue, don't add to list
                 }
-                    //rideTimeString = "???";
-                else
-                    rideTimeString = ttTime.timeStringH1(rideTime);
-
-                results.push([Clubs.getAbbr(rider.ClubID), entry.Number, rider.Name, rideTimeString, ttTime.timeStringVetStd(entry.VetOnStd)]);
+                rideTimeString = ttTime.timeStringH1(rideTime);
+                results.push([Clubs.getAbbr(rider.ClubID), this.Number, rider.Name, rideTimeString, ttTime.timeStringVetStd(this.VetOnStd)]);
             });
             //file = Clubs.getName(this.ClubID) + " " + ttTime.dateTimeString(this.Time) + " " + Course.getName(this.CourseID);
             resultsTableSummary(results, this.details());
         };
         this.displayEvent = function () {
-            var r, rider,
+            var rider,
+                self,
                 entrydata = [],
                 target, cat,
                 stdTime, stdTimeStr;
@@ -201,23 +199,23 @@ var Event = (function ($) {
             }
 
             if (ttApp.screenWidth() < 500) {
-                $.each(this.Entries, function (index, entry) {
-                    rider = Riders.riderFromID(entry.RiderID);
+                $.each(this.Entries, function () {
+                    rider = Riders.riderFromID(this.RiderID);
                     if (rider === null) {
-                        rider = new TTRider(entry.RiderID, "Rider not found", 0, 1, 0, "");
+                        rider = new TTRider(this.RiderID, "Rider not found", 0, 1, 0, "");
                     }
-                    entrydata.push([entry.Number, rider.Name, Clubs.getAbbr(rider.ClubID), ttTime.timeString(entry.Start)]);
+                    entrydata.push([this.Number, rider.Name, Clubs.getAbbr(rider.ClubID), ttTime.timeString(this.Start)]);
                 });
                 myTable('#entries', { "search": "Find entry" }, entrydata, ttApp.tableHeight(), [{ "title": "#" }, { "title": "Name" }, { "title": "Club" }, { "title": "Start" }], null);
             }
             else {
                 // more details
-                var self = this;
-                $.each(this.Entries, function (index, entry) {
-                    rider = Riders.riderFromID(entry.RiderID);
+                self = this;
+                $.each(this.Entries, function () {
+                    rider = Riders.riderFromID(this.RiderID);
 
                     if (rider === null) {
-                        rider = new TTRider(entry.RiderID, "Rider not found", 0, 1, 0, "", 0);
+                        rider = new TTRider(this.RiderID, "Rider not found", 0, 1, 0, "", 0);
                     }
 
                     target = "";
@@ -228,7 +226,7 @@ var Event = (function ($) {
                     cat = rider.catAbbr();
                     stdTime = rider.vetStandardTime(self.distance());
                     stdTimeStr = stdTime > 0 ? ttTime.timeStringH1(stdTime) : "";
-                    entrydata.push([entry.Number, rider.Name, cat, stdTimeStr, target, Clubs.getName(rider.ClubID), ttTime.timeString(entry.Start)]);
+                    entrydata.push([this.Number, rider.Name, cat, stdTimeStr, target, Clubs.getName(rider.ClubID), ttTime.timeString(this.Start)]);
                 });
                 myTable('#entries', { "search": "Find entry" }, entrydata, ttApp.tableHeight(), [{ "title": "#" }, { "title": "Name" }, { "title": "Cat" }, { "title": "VetStd" }, { "title": "Target" }, { "title": "Club" }, { "title": "Start" }], null);
 
@@ -256,26 +254,26 @@ var Event = (function ($) {
                 rider, rideTime, rideTimeString,
                 table;
 
-            $.each(this.Entries, function (index, entry) {
-                rider = Riders.riderFromID(entry.RiderID);
+            $.each(this.Entries, function () {
+                rider = Riders.riderFromID(this.RiderID);
                 if (rider === null) {
-                    rider = new TTRider(entry.RiderID, "Rider not found", 0, 1, 0, "");
+                    rider = new TTRider(this.RiderID, "Rider not found", 0, 1, 0, "");
                 }
 
-                rideTime = entry.Finish - entry.Start;
-                if (entry.Finish / 1000 === ttTime.didNotStart() / 1000) {
+                rideTime = this.Finish - this.Start;
+                if (this.Finish / 1000 === ttTime.didNotStart() / 1000) {
                     rideTimeString = "DNS";
                 }
-                else if (entry.Finish / 1000 === ttTime.didNotFinish() / 1000) {
+                else if (this.Finish / 1000 === ttTime.didNotFinish() / 1000) {
                     rideTimeString = "DNF";
                 }
-                else if (entry.Finish >= ttTime.specialTimes()) {
+                else if (this.Finish >= ttTime.specialTimes()) {
                     rideTimeString = "???";
                 }
                 else {
                     rideTimeString = ttTime.timeStringH1(rideTime);
                 }
-                entrydata.push([entry.Number, rider.Name, Clubs.getAbbr(rider.ClubID), rideTimeString]);
+                entrydata.push([this.Number, rider.Name, Clubs.getAbbr(rider.ClubID), rideTimeString]);
             });
             table = myTable('#times', { "search": "Find entry" }, entrydata, ttApp.tableHeight() - 100, [{ "title": "#" }, { "title": "Name" }, { "title": "Club" }, { "title": "Time" }], null);
             table.order([[1, 'asc']]);
@@ -291,10 +289,10 @@ var Event = (function ($) {
             $('#times tbody tr').on('click', function () {
                 var nTds = $('td', this),
                     name = $(nTds[1]).text(),
-                    time = $(nTds[3]).text();
-                updatingEntry = parseInt($(nTds[0]).text(),10);
+                    rtime = $(nTds[3]).text();
+                updatingEntry = parseInt($(nTds[0]).text(), 10);
 
-                $('#riderTime').val(time);
+                $('#riderTime').val(rtime);
                 $('#riderTimeLabel').text(name);
             });
         };
@@ -321,35 +319,22 @@ var Event = (function ($) {
                 endTime = ttTime.noTimeYet();
             }
 
-            $.each(this.Entries, function (index, e) {
-                //for (ev in currentEvent.Entries) {
-                if (updatingEntry === e.Number) {
-                    e.Finish = endTime;
+            $.each(this.Entries, function () {
+                if (updatingEntry === this.Number) {
+                    this.Finish = endTime;
                     self.updateEventTimes();
                     return false; // break
                 }
             });
-            //newdata = 1;
         };
         this.prepareSortEvent = function () {
             //var evID = currentEvent.ID;
-            var self = this;
+            this.sortingRequired = true;
             if (login.checkRole() === false) {
                 return;
             }
-            // first save any new riders & clubs - also saves event again
+            // first save any new riders & clubs - also saves event 
             Riders.saveRiderData(this);
-            // wait until all done before continuing....
-            popup.confirm('Event saved; proceed with sort?',this.sortEvent,null);
-        };
-        this.sortEvent = function() {
-            popup.wait('Event saved; proceed with sort?',)
-            TTData.json('SeedEntries', "POST", this, function (entries) {
-                $.each(entries, function (index, e) {
-                    self.Entries[index] = e;
-                });
-                self.displayEvent();
-            }, true);
         };
         this.prepareSaveEvent = function () {
             if (login.checkRole() === false) {
@@ -357,14 +342,27 @@ var Event = (function ($) {
             }
             // first save any new clubs and riders, and deal with responses, before saving the event
             Riders.saveRiderData(this);
-            //TTData.json("SaveEvent", "POST", this, function (response) { popup.alert(response); }, true);
-            //newdata = 0;
         };
         this.saveEvent = function () {
-            TTData.json("SaveEvent", "POST", this, function (response) {
-                popup.alert(response);
-            }, true);
-        }
+            var self = this;
+            if (this.sortingRequired) {
+                TTData.json("SaveEvent", "POST", this, function () {
+                    TTData.json('SeedEntries', "POST", this, function (entries) {
+                        $.each(entries, function (index, e) {
+                            self.Entries[index] = e;
+                        });
+                        popup.alert("Sorting done");
+                        self.sortingRequired = false;
+                        self.displayEvent();
+                    }, true);
+                }, true);
+            }
+            else {
+                TTData.json("SaveEvent", "POST", this, function (response) {
+                    popup.alert(response);
+                }, true);
+            }
+        };
         this.emailStart = function () {
             if (login.checkRole() === false) {
                 return;
@@ -380,8 +378,9 @@ var Event = (function ($) {
             //TTData.json("EmailResultSheet", "POST", this.ID, function (response) { popup.alert(response); }, true);
         };
         this.startLine = function () {
-            if (login.checkRole() == false)
+            if (login.checkRole() === false) {
                 return;
+            }
             if (this.Synched) {
                 popup.alert("Cannot re-sync after any riders have finished");
                 return;
@@ -390,17 +389,18 @@ var Event = (function ($) {
         };
         this.syncStart = function () {
             // adjust start time to match another stopwatch
-            var d = new Date();
+            var d = new Date(),
             // timediff will be positive if event started 'late'
-            var timediff = d.valueOf() - this.Time;
+                timediff = d.valueOf() - this.Time;
+
             this.Time = d.valueOf();
             // now need to adjust start times of all entrants
-            $.each(this.Entries, function (index, entry) {
-                entry.Start += timediff;
+            $.each(this.Entries, function () {
+                this.Start += timediff;
             });
             $("#finish")[0].play();
             ttApp.changePage("onTheDay");
-        },
+        };
         this.sortEntries = function () {
 
             // compares entries and sorts in order of start, but with those already finished shifted to the end
@@ -412,11 +412,9 @@ var Event = (function ($) {
                 }
                 return a.Number - b.Number;
             });
-         };
-    }
-
-
-    
+        };
+    };
+   
     return event;
 
 }(jQuery));

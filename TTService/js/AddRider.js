@@ -663,10 +663,15 @@
             });
             var event = EventList.currentEvent();
             if (changedRiders.length > 0) {
-                TTData.json("SaveChangedRiders", "POST", changedRiders, function (response) { popup.alert(response); }, true);
+                TTData.json("SaveChangedRiders", "POST", changedRiders,
+                    [function (response) { popup.alert(response); },
+                        eventToBeSaved.saveEvent],
+                            true);
             }
-            if (eventToBeSaved !== null) {
-                eventToBeSaved.saveEvent();
+            else {
+                if (eventToBeSaved !== null) {
+                    eventToBeSaved.saveEvent();
+                }
             }
         },
         updateClubIDs: function(oldID, newID) {

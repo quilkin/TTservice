@@ -20,7 +20,8 @@
       "TTRider": true,
       "ttApp": true,
       "TTData": true,
-      "EventList": true
+      "EventList": true,
+      "Entry": true
     },
     "bitwise": true,
     "plusplus": true,
