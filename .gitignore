@@ -1,11 +1,8 @@
 # database connection credentials
 
-TTservice/js/Connect.cs
+Connect.cs
 *.zip
-*.dll
-*.pdb
 
-git_test.js
 
 # Windows image file caches
 Thumbs.db
