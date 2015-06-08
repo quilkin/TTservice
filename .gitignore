@@ -5,6 +5,8 @@ TTservice/js/Connect.cs
 *.dll
 *.pdb
 
+git_test.js
+
 # Windows image file caches
 Thumbs.db
 ehthumbs.db
