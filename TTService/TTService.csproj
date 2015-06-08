@@ -67,6 +67,7 @@
     <Content Include="index.html" />
     <Content Include="js\entry-course.js" />
     <Content Include="js\event.js" />
+    <Content Include="js\git_test.js" />
     <Content Include="js\jquery-ui-timepicker-addon.js" />
     <Content Include="js\rider.js" />
     <Content Include="js\timesdates.js" />
