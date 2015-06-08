@@ -2,6 +2,8 @@
 
 Connect.cs
 *.zip
+*.dll
+*.pdb
 
 # Windows image file caches
 Thumbs.db
