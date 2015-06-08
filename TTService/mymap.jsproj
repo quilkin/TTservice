@@ -1,0 +1,369 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props')" />
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Android">
+      <Configuration>Debug</Configuration>
+      <Platform>Android</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|iOS">
+      <Configuration>Debug</Configuration>
+      <Platform>iOS</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|Windows-AnyCPU">
+      <Configuration>Debug</Configuration>
+      <Platform>Windows-AnyCPU</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|Windows-x64">
+      <Configuration>Debug</Configuration>
+      <Platform>Windows-x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|Windows-x86">
+      <Configuration>Debug</Configuration>
+      <Platform>Windows-x86</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|Windows-ARM">
+      <Configuration>Debug</Configuration>
+      <Platform>Windows-ARM</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|Windows Phone 8">
+      <Configuration>Debug</Configuration>
+      <Platform>Windows Phone 8</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|Windows Phone (Universal)">
+      <Configuration>Debug</Configuration>
+      <Platform>Windows Phone (Universal)</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Android">
+      <Configuration>Release</Configuration>
+      <Platform>Android</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|iOS">
+      <Configuration>Release</Configuration>
+      <Platform>iOS</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Windows-AnyCPU">
+      <Configuration>Release</Configuration>
+      <Platform>Windows-AnyCPU</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Windows-x64">
+      <Configuration>Release</Configuration>
+      <Platform>Windows-x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Windows-x86">
+      <Configuration>Release</Configuration>
+      <Platform>Windows-x86</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Windows-ARM">
+      <Configuration>Release</Configuration>
+      <Platform>Windows-ARM</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Windows Phone 8">
+      <Configuration>Release</Configuration>
+      <Platform>Windows Phone 8</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Windows Phone (Universal)">
+      <Configuration>Release</Configuration>
+      <Platform>Windows Phone (Universal)</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Distribution|Android">
+      <Configuration>Distribution</Configuration>
+      <Platform>Android</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Distribution|iOS">
+      <Configuration>Distribution</Configuration>
+      <Platform>iOS</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Distribution|Windows-AnyCPU">
+      <Configuration>Distribution</Configuration>
+      <Platform>Windows-AnyCPU</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Distribution|Windows-x64">
+      <Configuration>Distribution</Configuration>
+      <Platform>Windows-x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Distribution|Windows-x86">
+      <Configuration>Distribution</Configuration>
+      <Platform>Windows-x86</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Distribution|Windows-ARM">
+      <Configuration>Distribution</Configuration>
+      <Platform>Windows-ARM</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Distribution|Windows Phone 8">
+      <Configuration>Distribution</Configuration>
+      <Platform>Windows Phone 8</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Distribution|Windows Phone (Universal)">
+      <Configuration>Distribution</Configuration>
+      <Platform>Windows Phone (Universal)</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>0d4ee377-376b-4a1e-8567-05823ba9d490</ProjectGuid>
+  </PropertyGroup>
+  <PropertyGroup>
+    <DefaultReferenceGroup>Implicit (Multi-Device Apps)</DefaultReferenceGroup>
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup Condition="'$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0'">
+    <VisualStudioVersion>12.0</VisualStudioVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\.fetch.json" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\example\SampleApp\config.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\example\SampleApp\config\res\icon\android\drawable-hdpi\ic_launcher.png" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\example\SampleApp\config\res\icon\android\drawable-ldpi\ic_launcher.png" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\example\SampleApp\config\res\icon\android\drawable-mdpi\ic_launcher.png" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\example\SampleApp\config\res\icon\android\drawable-xhdpi\ic_launcher.png" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\example\SampleApp\config\res\icon\android\drawable-xxhdpi\ic_launcher.png" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\example\SampleApp\config\res\icon\android\drawable-xxxhdpi\ic_launcher.png" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\example\SampleApp\config\res\icon\android\playstore-icon.png" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\example\SampleApp\config\res\icon\ios\Contents.json" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\example\SampleApp\config\res\icon\ios\Icon-40.png" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\example\SampleApp\config\res\icon\ios\Icon-40@2x.png" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\example\SampleApp\config\res\icon\ios\Icon-40@3x.png" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\example\SampleApp\config\res\icon\ios\Icon-60.png" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\example\SampleApp\config\res\icon\ios\Icon-60@2x.png" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\example\SampleApp\config\res\icon\ios\Icon-60@3x.png" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\example\SampleApp\config\res\icon\ios\Icon-72.png" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\example\SampleApp\config\res\icon\ios\Icon-72@2x.png" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\example\SampleApp\config\res\icon\ios\Icon-76.png" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\example\SampleApp\config\res\icon\ios\Icon-76@2x.png" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\example\SampleApp\config\res\icon\ios\Icon-Small-50.png" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\example\SampleApp\config\res\icon\ios\Icon-Small-50@2x.png" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\example\SampleApp\config\res\icon\ios\Icon-Small.png" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\example\SampleApp\config\res\icon\ios\Icon-Small@2x.png" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\example\SampleApp\config\res\icon\ios\Icon-Small@3x.png" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\example\SampleApp\config\res\icon\ios\Icon.png" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\example\SampleApp\config\res\icon\ios\Icon@2x.png" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\example\SampleApp\config\res\icon\ios\iTunesArtwork.png" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\example\SampleApp\config\res\icon\ios\iTunesArtwork@2x.png" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\example\SampleApp\contributors.txt" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\example\SampleApp\hooks\before_prepare\resource_copier.js" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\example\SampleApp\hooks\README.md" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\example\SampleApp\README.md" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\example\SampleApp\www\css\bootstrap-min.css" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\example\SampleApp\www\css\index.css" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\example\SampleApp\www\fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\example\SampleApp\www\fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\example\SampleApp\www\fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\example\SampleApp\www\fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\example\SampleApp\www\img\logo.png" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\example\SampleApp\www\img\still_blue.png" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\example\SampleApp\www\index.html" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\example\SampleApp\www\js\index.js" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\example\SampleApp\www\js\jquery-2.1.1.js" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\example\www\index.html" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\example\www\js\index.js" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\images\android-battery-detail.png" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\images\android-battery.png" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\images\android-sample-app.png" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\images\distance-filter-city.png" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\images\distance-filter-highway.png" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\images\enable-background-audio.png" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\LICENSE" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\plugin.xml" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\README.md" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\src\android\BackgroundGpsPlugin.java" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\src\android\data\DAOFactory.java" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\src\android\data\Location.java" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\src\android\data\LocationDAO.java" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\src\android\data\sqlite\LocationOpenHelper.java" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\src\android\data\sqlite\SQLiteLocationDAO.java" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\src\android\LocationUpdateService.java" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\src\android\notification.png" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\src\ios\CDVBackgroundGeoLocation.h" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\src\ios\CDVBackgroundGeoLocation.m" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\src\wp8\BackgroundGeoLocation.cs" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\src\wp8\BackgroundGeoLocationOptions.cs" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\src\wp8\DebugAudioNotifier.cs" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\src\wp8\ExtensionMethods.cs" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\src\wp8\IBackgroundGeoLocation.cs" />
+    <Content Include="plugins\org.transistorsoft.cordova.background-geolocation\www\BackgroundGeoLocation.js" />
+    <Content Include="scripts\prototype.js" />
+    <Folder Include="images\" />
+    <Content Include="merges\android\scripts\android2.3-jscompat.js" />
+    <Content Include="merges\android\scripts\platformOverrides.js" />
+    <Folder Include="merges\ios\" />
+    <Content Include="merges\windows\scripts\platformOverrides.js" />
+    <Content Include="merges\windows\scripts\winstore-jscompat.js" />
+    <Folder Include="merges\wp8\" />
+    <Folder Include="res\icons\android\" />
+    <Folder Include="res\icons\ios\" />
+    <Folder Include="res\icons\wp8\" />
+    <Folder Include="res\icons\windows\" />
+    <Folder Include="res\screens\android\" />
+    <Folder Include="res\screens\ios\" />
+    <Folder Include="res\screens\windows\" />
+    <Folder Include="res\screens\wp8\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="config.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="index.html" />
+    <Content Include="openlayers\img\blank.gif" />
+    <Content Include="openlayers\img\cloud-popup-relative.png" />
+    <Content Include="openlayers\img\drag-rectangle-off.png" />
+    <Content Include="openlayers\img\drag-rectangle-on.png" />
+    <Content Include="openlayers\img\east-mini.png" />
+    <Content Include="openlayers\img\layer-switcher-maximize.png" />
+    <Content Include="openlayers\img\layer-switcher-minimize.png" />
+    <Content Include="openlayers\img\marker-blue.png" />
+    <Content Include="openlayers\img\marker-gold.png" />
+    <Content Include="openlayers\img\marker-green.png" />
+    <Content Include="openlayers\img\marker.png" />
+    <Content Include="openlayers\img\measuring-stick-off.png" />
+    <Content Include="openlayers\img\measuring-stick-on.png" />
+    <Content Include="openlayers\img\north-mini.png" />
+    <Content Include="openlayers\img\panning-hand-off.png" />
+    <Content Include="openlayers\img\panning-hand-on.png" />
+    <Content Include="openlayers\img\slider.png" />
+    <Content Include="openlayers\img\south-mini.png" />
+    <Content Include="openlayers\img\west-mini.png" />
+    <Content Include="openlayers\img\zoom-minus-mini.png" />
+    <Content Include="openlayers\img\zoom-plus-mini.png" />
+    <Content Include="openlayers\img\zoom-world-mini.png" />
+    <Content Include="openlayers\img\zoombar.png" />
+    <Content Include="openlayers\OpenLayers.debug.js" />
+    <Content Include="openlayers\OpenLayers.js" />
+    <Content Include="openlayers\theme\default\google.css" />
+    <Content Include="openlayers\theme\default\google.tidy.css" />
+    <Content Include="openlayers\theme\default\ie6-style.css" />
+    <Content Include="openlayers\theme\default\ie6-style.tidy.css" />
+    <Content Include="openlayers\theme\default\img\add_point_off.png" />
+    <Content Include="openlayers\theme\default\img\add_point_on.png" />
+    <Content Include="openlayers\theme\default\img\blank.gif" />
+    <Content Include="openlayers\theme\default\img\close.gif" />
+    <Content Include="openlayers\theme\default\img\drag-rectangle-off.png" />
+    <Content Include="openlayers\theme\default\img\drag-rectangle-on.png" />
+    <Content Include="openlayers\theme\default\img\draw_line_off.png" />
+    <Content Include="openlayers\theme\default\img\draw_line_on.png" />
+    <Content Include="openlayers\theme\default\img\draw_point_off.png" />
+    <Content Include="openlayers\theme\default\img\draw_point_on.png" />
+    <Content Include="openlayers\theme\default\img\draw_polygon_off.png" />
+    <Content Include="openlayers\theme\default\img\draw_polygon_on.png" />
+    <Content Include="openlayers\theme\default\img\editing_tool_bar.png" />
+    <Content Include="openlayers\theme\default\img\move_feature_off.png" />
+    <Content Include="openlayers\theme\default\img\move_feature_on.png" />
+    <Content Include="openlayers\theme\default\img\navigation_history.png" />
+    <Content Include="openlayers\theme\default\img\overview_replacement.gif" />
+    <Content Include="openlayers\theme\default\img\pan-panel-NOALPHA.png" />
+    <Content Include="openlayers\theme\default\img\pan-panel.png" />
+    <Content Include="openlayers\theme\default\img\panning-hand-off.png" />
+    <Content Include="openlayers\theme\default\img\panning-hand-on.png" />
+    <Content Include="openlayers\theme\default\img\pan_off.png" />
+    <Content Include="openlayers\theme\default\img\pan_on.png" />
+    <Content Include="openlayers\theme\default\img\remove_point_off.png" />
+    <Content Include="openlayers\theme\default\img\remove_point_on.png" />
+    <Content Include="openlayers\theme\default\img\ruler.png" />
+    <Content Include="openlayers\theme\default\img\save_features_off.png" />
+    <Content Include="openlayers\theme\default\img\save_features_on.png" />
+    <Content Include="openlayers\theme\default\img\view_next_off.png" />
+    <Content Include="openlayers\theme\default\img\view_next_on.png" />
+    <Content Include="openlayers\theme\default\img\view_previous_off.png" />
+    <Content Include="openlayers\theme\default\img\view_previous_on.png" />
+    <Content Include="openlayers\theme\default\img\zoom-panel-NOALPHA.png" />
+    <Content Include="openlayers\theme\default\img\zoom-panel.png" />
+    <Content Include="openlayers\theme\default\style.css" />
+    <Content Include="openlayers\theme\default\style.mobile.css" />
+    <Content Include="openlayers\theme\default\style.mobile.tidy.css" />
+    <Content Include="openlayers\theme\default\style.tidy.css" />
+    <Content Include="scripts\index.js" />
+    <Content Include="scripts\jquery-1.11.1.min.js" />
+    <Content Include="scripts\myMap.js" />
+    <Content Include="scripts\opencyclemap.js" />
+    <Content Include="scripts\platformOverrides.js" />
+    <Content Include="css\index.css" />
+    <Content Include="res\icons\android\icon-36-ldpi.png" />
+    <Content Include="res\icons\android\icon-48-mdpi.png" />
+    <Content Include="res\icons\android\icon-72-hdpi.png" />
+    <Content Include="res\icons\android\icon-96-xhdpi.png" />
+    <Content Include="res\icons\ios\icon-40.png" />
+    <Content Include="res\icons\ios\icon-40-2x.png" />
+    <Content Include="res\icons\ios\icon-50.png" />
+    <Content Include="res\icons\ios\icon-50-2x.png" />
+    <Content Include="res\icons\ios\icon-57.png" />
+    <Content Include="res\icons\ios\icon-57-2x.png" />
+    <Content Include="res\icons\ios\icon-60.png" />
+    <Content Include="res\icons\ios\icon-60-2x.png" />
+    <Content Include="res\icons\ios\icon-72.png" />
+    <Content Include="res\icons\ios\icon-72-2x.png" />
+    <Content Include="res\icons\ios\icon-76.png" />
+    <Content Include="res\icons\ios\icon-76-2x.png" />
+    <Content Include="res\icons\ios\icon-small.png" />
+    <Content Include="res\icons\ios\icon-small-2x.png" />
+    <Content Include="res\icons\windows\logo.png" />
+    <Content Include="res\icons\windows\smalllogo.png" />
+    <Content Include="res\icons\windows\Square150x150Logo.scale-240.png" />
+    <Content Include="res\icons\windows\Square44x44Logo.scale-240.png" />
+    <Content Include="res\icons\windows\Square71x71Logo.scale-240.png" />
+    <Content Include="res\icons\windows\storelogo.png" />
+    <Content Include="res\icons\windows\StoreLogo.scale-240.png" />
+    <Content Include="res\icons\windows\Wide310x150Logo.scale-240.png" />
+    <Content Include="res\icons\wp8\icon-62-tile.png" />
+    <Content Include="res\icons\wp8\icon-173-tile.png" />
+    <Content Include="res\native\android\ant.properties" />
+    <Content Include="res\screens\android\screen-hdpi-landscape.png" />
+    <Content Include="res\screens\android\screen-hdpi-portrait.png" />
+    <Content Include="res\screens\android\screen-ldpi-landscape.png" />
+    <Content Include="res\screens\android\screen-ldpi-portrait.png" />
+    <Content Include="res\screens\android\screen-mdpi-landscape.png" />
+    <Content Include="res\screens\android\screen-mdpi-portrait.png" />
+    <Content Include="res\screens\android\screen-xhdpi-landscape.png" />
+    <Content Include="res\screens\android\screen-xhdpi-portrait.png" />
+    <Content Include="res\screens\ios\screen-ipad-landscape.png" />
+    <Content Include="res\screens\ios\screen-ipad-landscape-2x.png" />
+    <Content Include="res\screens\ios\screen-ipad-portrait.png" />
+    <Content Include="res\screens\ios\screen-ipad-portrait-2x.png" />
+    <Content Include="res\screens\ios\screen-iphone-568h-2x.png" />
+    <Content Include="res\screens\ios\screen-iphone-portrait.png" />
+    <Content Include="res\screens\ios\screen-iphone-portrait-2x.png" />
+    <Content Include="res\screens\windows\splashscreen.png" />
+    <Content Include="res\screens\windows\SplashScreen.scale-240.png" />
+    <Content Include="res\screens\wp8\screen-portrait.jpg" />
+  </ItemGroup>
+  <PropertyGroup>
+    <TypeScriptToolsVersion>1.0</TypeScriptToolsVersion>
+    <DefaultReferenceGroup>Implicit (Multi-Device Apps)</DefaultReferenceGroup>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <TypeScriptCompileOnSaveEnabled>false</TypeScriptCompileOnSaveEnabled>
+    <TypeScriptRemoveComments>false</TypeScriptRemoveComments>
+    <TypeScriptSourceMap>true</TypeScriptSourceMap>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <TypeScriptCompileOnSaveEnabled>false</TypeScriptCompileOnSaveEnabled>
+    <TypeScriptRemoveComments>true</TypeScriptRemoveComments>
+    <TypeScriptSourceMap>false</TypeScriptSourceMap>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Distribution'">
+    <TypeScriptCompileOnSaveEnabled>false</TypeScriptCompileOnSaveEnabled>
+    <TypeScriptRemoveComments>true</TypeScriptRemoveComments>
+    <TypeScriptSourceMap>false</TypeScriptSourceMap>
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\CordovaTools\vs-mda-targets\Microsoft.MDA.targets" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\CordovaTools\vs-mda-targets\Microsoft.TypeScript.MDA.targets" />
+  <PropertyGroup>
+    <ProjectUISubcaption>Tools for Apache Cordova</ProjectUISubcaption>
+  </PropertyGroup>
+  <PropertyGroup>
+    <TargetPlatformIdentifier>MDD</TargetPlatformIdentifier>
+  </PropertyGroup>
+  <Target Name="EnsureBuildPrerequisites">
+    <!-- These errors will trigger if building from inside Visual Studio and requirements could not be determined -->
+    <Error Condition="$(MDAPropertiesEvaluated) == 'true' And $(NodeJsDir) == ''" Text="Path to NodeJs could not be determined. Please check that NodeJs has been installed." />
+    <Error Condition="$(MDAPropertiesEvaluated) == 'true' And $(MDAVsixDir) == ''" Text="Path to the Visual Studio Extension for Tools for Apache Cordova could not be determined. Please check that the extension has been installed." />
+    <!-- These errors will trigger if building from outside Visual Studio (e.g. command line) and environment variables have not been set -->
+    <Error Condition="$(MDAPropertiesEvaluated) == '' And $(NodeJsDir) == ''" Text="Path to NodeJs has not been specified. Please check that NodeJs has been installed and set the NodeJsDir environment variable before building." />
+    <Error Condition="$(MDAPropertiesEvaluated) == '' And $(MDAVsixDir) == ''" Text="Path to Visual Studio Extension for Tools for Apache Cordova has not been specified. Please install it and set the MDAVsixDir environment variable before building." />
+    <!-- Sanity check that things exist in the specified places. These are more likely to fail if building outside Visual Studio and the required environment variables have not been set, or set incorrectly. -->
+    <Error Condition="!Exists('$(NodeJsDir)') Or !Exists('$(NodeJsDir)\node.exe')" Text="The specified NodeJs directory $(NodeJsDir) either does not exist, or does not contain node.exe. Please check that NodeJs has been installed, and set the NodeJsDir variable to the correct directory." />
+    <Error Condition="!Exists('$(MDAVsixDir)') Or !Exists('$(MDAVsixDir)\packages\vs-mda')" Text="The specified directory to the Visual Studio extension $(MDAVsixDir)\node.exe either does not exist, or does not contain a packages\vs-mda sub-directory. Please check that the extension directory exists and set the MDAVsixDir variable to the correct directory." />
+    <!-- Installs (if necessary) the supporting Nodejs module -->
+    <Exec Command="&quot;$(MDAVsixDir)&quot;\packages\vs-mda\install &quot;$(NodeJsDir)&quot; &quot;$(MDAVsixDir)&quot;\packages\vs-mda" />
+  </Target>
+</Project>
