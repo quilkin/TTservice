@@ -1,6 +1,6 @@
 # database connection credentials
 
-Connect.cs
+TTservice/js/Connect.cs
 *.zip
 *.dll
 *.pdb
