@@ -21,7 +21,10 @@
       "ttApp": true,
       "TTData": true,
       "EventList": true,
-      "Entry": true
+      "Entry": true,
+      "myTable": true,
+      "Event": true,
+      "login": true
     },
     "bitwise": true,
     "plusplus": true,

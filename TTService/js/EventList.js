@@ -6,9 +6,9 @@
         event = new Event(0,0,0,0,0);       // just to help with intellisense...
 
 
-    function parseEvents(response) {
-        var eventData = [],
-            events = response;
+    function parseEvents(events) {
+        var eventData = [];
+       //     events = response;
 
         if (events.length === 0) {
             $('#eventsTable').html('No matching events found');
@@ -16,10 +16,9 @@
         }
         $('#events').empty();
 
-        $.each(events, function (index, ev) {
-            var date = new Date(ev.Time);
-            eventData.push([ev.ID, Clubs.getName(ev.ClubID), Course.getName(ev.CourseID), ttTime.dateTimeString(date)]);
-
+        //$.each(events, function (index, ev) {
+        events.forEach(function(ev){
+            eventData.push([ev.ID, Clubs.getName(ev.ClubID), Course.getName(ev.CourseID), ttTime.dateTimeString(new Date(ev.Time))]);
         });
         event = null;
         eventTable = myTable('#events', { "search": "" }, eventData, 200,
@@ -38,10 +37,11 @@
                 eventID = parseInt($(nTds[0]).text(),10);
 
             // find the correct event from the list
-            $.each(events, function (index, ev) {
+            //$.each(events, function (index, ev) {
+            events.some(function(ev){
                 if (ev.ID === eventID) {
                     event = new Event(ev.ID, ev.CourseID, ev.Time, ev.ClubID, 0);
-                    return false;  // i.e. break out of 'each' loop
+                    return true;  // i.e. break out of loop
                 }
             });
             if (event === null) {

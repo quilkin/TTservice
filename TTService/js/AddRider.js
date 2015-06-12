@@ -18,13 +18,18 @@
 
     function getRiderData2() {
         TTData.json("GetClubs", "GET", 0, Clubs.parseJson, true);
+        list.length = 0;
+        //while (list.length > 0) {
+        //    list.pop();
+        //}
         TTData.json("GetRiders", "GET", 0, function (response) {
-            list = response;
-            var rider;
-            $.each(list, function (index, e) {
+            //list = response;
+            //var rider;
+            //$.each(list, function (index, e) {
+            response.forEach(function(r){
                 // convert json list into list of rider objects
-                rider = new TTRider(e.ID, e.Name, e.Age, e.Lady, e.ClubID, e.Email, e.Best25);
-                list[index] = rider;
+                //rider = new TTRider(r.ID, r.Name, r.Age, r.Lady, r.ClubID, r.Email, r.Best25);
+                list.push(new TTRider(r.ID, r.Name, r.Age, r.Lady, r.ClubID, r.Email, r.Best25));
             });
             //ridersLoaded = true;
         }, true);
@@ -79,7 +84,8 @@
             // enable getting back the table (to choose a different rider) by double-clicking the chosen name
             $('#newRiderTable').dblclick(function () { chooseRider(addToEvent); });
             // place other details in form  from existing rider
-            $.each(list, function (index, rider) {
+            // $.each(list, function (index, rider) {
+            list.forEach(function(rider){
                 if (rider.Name === newName) {
                     // save details so we can see if they have been changed
 
@@ -273,7 +279,8 @@
             return;
         }
 
-        $.each(list, function (index, rider) {
+        //$.each(list, function (index, rider) {
+        list.forEach(function(rider){
             var cat = rider.catAbbr();
             if (rider.inEvent()) {
                 cat += " *";
@@ -554,7 +561,8 @@
                     event.getEntries().push(entry);
                 }
                 else {
-                    $.each(event.getEntries(), function (index, e) {
+                    //$.each(event.getEntries(), function (index, e) {
+                    event.getEntries().forEach(function(e){
                         if (e.RiderID === newRider.ID) {
                             e = entry;
                             return false;
@@ -616,7 +624,8 @@
         },
         saveNewRiders: function() {
             // upload the new riders.These will have a temporary ID  when uploaded, but post will return first new permanent ID
-            $.each(list, function (index, rider) {
+            //$.each(list, function (index, rider) {
+            list.forEach(function(rider){
                 if (rider.tempID()) {
                     newRiders.push(rider);
                 }
@@ -633,13 +642,15 @@
             for (index=0; index < response.length; index+=1) {
                 newID = response[index].ID;
                 // add new IDs to existing riders
-                $.each(list, function(index,rider) {
+                //$.each(list, function(index,rider) {
+                list.forEach(function (rider) {
                     if (rider !== undefined && rider.ID < 0) {
                         // this was a temp ID, replace it
                         // replace in the event list first, if there is an event to be saved
                         if (eventToBeSaved !== null) {
                             var eventEntries = eventToBeSaved.Entries;
-                            $.each(eventEntries, function (index, entry) {
+                            //$.each(eventEntries, function (index, entry) {
+                            eventEntries.forEach(function (entry) {
                                 if (entry !== undefined && entry.RiderID === rider.ID) {
                                     // this was a temp ID, replace it
                                     entry.RiderID = newID;
@@ -656,7 +667,8 @@
         },
         saveChangedRiders: function() {
             // now upload changed riders
-            $.each(list, function (index, rider) {
+            //$.each(list, function (index, rider) {
+            list.forEach(function (rider) {
                 if (rider.changed) {
                     changedRiders.push(rider);
                 }
@@ -675,7 +687,8 @@
             }
         },
         updateClubIDs: function(oldID, newID) {
-            $.each(list, function (index, rider) {
+            //$.each(list, function (index, rider) {
+            list.forEach(function (rider) {
                 if (rider.ClubID === oldID) {
                     rider.ClubID= newID;
                 }

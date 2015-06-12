@@ -76,7 +76,10 @@
         $('#ridersclubs').click(function () { ttApp.changePage('ridersClubs'); });
     });
 
-
+    //Array.prototype.forEach2 = function (a) {
+    //    var l = this.length;
+    //    for (var i = 0; i < l; i++) a(this[i], i)
+    //}
 })();
 
 

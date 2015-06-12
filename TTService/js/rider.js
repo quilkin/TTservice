@@ -200,8 +200,7 @@ var TTRider = (function ($) {
             $('#club').text("Club: " + Clubs.getName(this.ClubID));
             $('#cat').text("Category: " + this.getCategory());
             if (event) {
-                $.each(event.getEntries(), function (index, e) {
-                    //for (ev in currentEvent.Entries) {
+                event.getEntries().every(function(e){
                     if (self.ID === e.RiderID) {
                         entry = e;
                         return false; // break

@@ -38,23 +38,20 @@ var Clubs = (function ($) {
     list[0] = new CycleClub(1, '', '');
 
     clubs.parseJson = function (response) {
-        var jsonlist = response;
-        $.each(jsonlist, function (index, e) {
-            // convert json list into list of club objects
-            //club = new CycleClub(e.ID, e.Name, e.Abbr);
-            //list[e.ID] = club;
-
+        response.forEach(function(club) {
             // make a fast lookup list
-            list[e.ID] = e;
+            list[club.ID] = club;
         });
     };
     // generate list of clubs for a table
     clubs.populateList = function (plist) {
         // clear any existing list
-        while (plist.length > 0) {
-            plist.pop();
-        }
-        $.each(list, function (index, club) {
+        plist.length = 0;
+        //while (plist.length > 0) {
+        //    plist.pop();
+        //}
+        //$.each(list, function (index, club) {
+        list.forEach(function(club){
             if (club !== undefined) {
                 plist.push([club.Name]);
             }
@@ -176,7 +173,8 @@ var Clubs = (function ($) {
             return;
         }
         var tableClubs = [];
-        $.each(list, function (index, club) {
+        //$.each(list, function (index, club) {
+        list.forEach(function(club){
             if (club !== undefined) {
                 tableClubs.push([club.Name, club.Abbr]);
             }
@@ -187,7 +185,8 @@ var Clubs = (function ($) {
 
     clubs.uploadNewClubs = function () {
         var newClubs = [];
-        $.each(list, function (index, club) {
+        //$.each(list, function (index, club) {
+        list.forEach(function(club){
             if (club!==undefined && club.ID < 0) {
                 newClubs.push(club);
             }

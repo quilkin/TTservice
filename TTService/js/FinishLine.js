@@ -10,14 +10,21 @@
 
     function displayFinishTimes() {
 
-        var txt = "Finished at...<br >";
-        $.each(finishTimes, function (index, t) {
+        var txt = "Finished at...<br >",
+            br = false;
+        //$.each(finishTimes, function (index, t) {
+        finishTimes.forEach(function(t){
             if (t !== null && t > 0) {
                 txt += (ttTime.timeString(new Date(t)));
             }
             txt += "...";
-            if ((index & 1) === 1) {
+            if (br) {
+                //if ((index & 1) === 1) {
                 txt += "<br >";
+                br = false;
+            }
+            else {
+                br = true;
             }
         });
         $("#btnFinish").html(txt);
@@ -38,14 +45,8 @@
             null);
     }
     function riderFinished(riderID, ftime) {
-
         var entry = event.getEntryFromRiderID(riderID);
-        //if (entry.Finish / 1000 < noTimeYet / 1000) {
-        //    popup.Confirm("Rider has already finished; update the time?",
-        //        DefineRiderTime(entry),
-        //        BackToFinishLine);
-        //}
-        //else
+
         entry.Finish = ftime;
         // remove this time from stored list of finish times
         deleteFinishTime(ftime);
@@ -53,6 +54,7 @@
         event.sortEntries();
         createButtonGrid(0);
     }
+
     function cancelFinished() {
         ttApp.changePage("finishLine");
         event.sortEntries();
@@ -61,23 +63,32 @@
     function BackToFinishLine() {
         ttApp.changePage("finishLine");
     }
+
+    function UndoFinish(entry) {
+        entry.Finish = ttTime.didNotFinish();
+        event.sortEntries();
+        createButtonGrid(0);
+    }
     function confirmFinishTime(riderID) {
-        var htmlline, pop;
-        $.each(finishTimes, function (index, t) {
+        var htmlline, pop, index = 0;
+        //$.each(finishTimes, function (index, t) {
+        finishTimes.forEach(function (t) {
             htmlline = '<div data-role="controlgroup" data-type="horizontal">';
-            //htmlline += '<p class="ui-btn" onclick="riderFinished(' + riderID + ',' + t + ')">Finished at: ' + ttTime.timeString(t) + '</p>';
             htmlline += '<p class="ui-btn" id="finished' + index + '">Finished at: ' + ttTime.timeString(t) + '</p>';
-            //htmlline += '<p class="ui-btn" onclick="queryDeleteFinishTime(' + t + ')" data-icon="delete" data-iconpos="notext">delete this timing</p></div>';
             htmlline += '<p class="ui-btn" id="qdelete' + index + '" data-icon="delete" data-iconpos="notext">delete this timing</p></div>';
             $('#fTimes').append(htmlline);
             $("#finished" + index).off();
-            $('#fTimes').off('click', "#finished" + index).on('click', "#finished" + index, (function () { riderFinished(riderID, t); }));
-            $('#fTimes').off('click', "#qdelete" + index).on('click', "#qdelete" + index, (function () { queryDeleteFinishTime(t); }));
-
+            $('#fTimes')
+                .off('click', "#finished" + index)
+                .on('click', "#finished" + index, function () { riderFinished(riderID, t); });
+            $('#fTimes')
+                .off('click', "#qdelete" + index)
+                .on('click', "#qdelete" + index, function () { queryDeleteFinishTime(t); });
+            index += 1;
         });
         htmlline = '<div data-role="controlgroup" data-type="horizontal">';
         htmlline += '<p class="ui-btn" id="cancelFinished">Cancel</p></div>';
-        $("#fTimes").on('click', '#cancelFinished', (function () { cancelFinished(); }));
+        $("#fTimes").on('click', '#cancelFinished', function () { cancelFinished(); });
         $('#fTimes').append(htmlline);
         $('#fTimes').trigger('create');
 
@@ -90,14 +101,8 @@
             pop.addMenuItem('Cancel', BackToFinishLine);
             pop.open();
         }
-
     }
 
-    function UndoFinish(entry) {
-        entry.Finish = ttTime.didNotFinish();
-        event.sortEntries();
-        createButtonGrid(0);
-    }
 
     function getRiderFromGrid(riderID) {
 
@@ -119,15 +124,13 @@
             confirmFinishTime(riderID);
         }
     }
-
-    var debugCount = 0;
     function createButtonGrid(gridSequence) {
         // create an array of buttons, one for each entry, in a paged fashion
         var row = 0,
             col = 0,
             htmlline,
             done = false;
-    
+
         // recursive call; need to remove existing buttons here
         $('#buttonArray').empty();
 
@@ -137,13 +140,11 @@
         }
         if (gridSequence === 0) {
             // first page of showing grid
-           // event = EventList.currentEvent();
             if (event === null) {
                 popup.alert("No event loaded");
                 return;
             }
-            $.each(event.Entries, function (index, entry)
-            {
+            event.Entries.forEach(function (entry) {
                 // rider sequence is their position in the sequence of grid buttons. Not the same as rider number!
                 entry.sequence = -1;
             });
@@ -152,13 +153,13 @@
             // this is not first page of riders
             // create a button which, when clicked, will go back to first display, recursively
             ++col;
-            //var lastGrid = gridSequence - rows * cols + 1;
             htmlline = '<div class="ui-block-a"><button type="button" id="createGrid0"> << </button></div>';
             $('#buttonArray').append(htmlline);
-            $("#buttonArray").on('click', "#createGrid0" , (function () { createButtonGrid(0); }));
+            $("#buttonArray")
+                .off('click', "#createGrid0")
+                .on('click', "#createGrid0", function () { createButtonGrid(0); });
         }
-        console.log('createButtonGrid: ' + debugCount++);
-        $.each(event.Entries, function (index, entry) {
+        event.Entries.every(function (entry, index) {
             var caption;
 
             if (entry.sequence >= 0) {
@@ -169,26 +170,25 @@
             if (row === rows - 1 && col === cols - 1 && event.Entries.length > rows * cols - 1) {
                 // lots of entries, need to create a new page and a button to get to it
                 htmlline = '<div class="ui-block-c"><button type="button" id="createGridx"> next </button></div>';
-                $("#buttonArray").on('click', "#createGridx", (function () { createButtonGrid(gridSequence); }));
-
+                $("#buttonArray")
+                    .off('click', "#createGridx")
+                    .on('click', "#createGridx", function () { createButtonGrid(gridSequence); });
                 done = true;
             }
-            else
-            {
-                if (col >= cols)
-                {
+            else {
+                if (col >= cols) {
                     col = 0; ++row;
                 }
                 caption = entry.Number;
-                if (entry.Finish/1000 < ttTime.noTimeYet()/1000) {
-                     // rider has finished event, denote with brackets
+                if (entry.Finish / 1000 < ttTime.noTimeYet() / 1000) {
+                    // rider has finished event, denote with brackets
                     caption = '(' + caption + ')';
                 }
 
-                //htmlline = '<div class="ui-block-xx"><button type="button" onclick="finishLine.getRiderFromGrid(' + entry.RiderID + ')">' + caption + '</button></div>';
                 htmlline = '<div class="ui-block-xx"><button type="button" id="getGridRider' + index + '">' + caption + '</button></div>';
-                //$("#getGridRider" + index).click(function () { getRiderFromGrid(entry.RiderID); });
-                $("#buttonArray").off('click',"#getGridRider" + index).on('click',"#getGridRider" + index,(function () { getRiderFromGrid(entry.RiderID); }));
+                $("#buttonArray")
+                    .off('click', "#getGridRider" + index)
+                    .on('click', "#getGridRider" + index, function () { getRiderFromGrid(entry.RiderID); });
 
                 switch (col) {
                     // arrange buttons in columns - see jquerymobile 'ui-block'
@@ -198,13 +198,14 @@
                 }
                 entry.sequence = gridSequence;
                 ++gridSequence;
- 
+
             }
             $('#buttonArray').append(htmlline);
             if (done) {
                 return false;
             }
             ++col;
+            return true;
 
         });
         $('#buttonArray').trigger('create');
@@ -214,6 +215,9 @@
 
 
 
+
+
+    
     $('#finLine').click(function () {
         if (login.checkRole() === false) {
             return;
@@ -240,14 +244,6 @@
 
         createButtonGrid(0);
     });
-
-
-
-    
-
-
-
-  
 
     $('#btnFinish').click(function () {
         if (finishTimes.length >= 6) {

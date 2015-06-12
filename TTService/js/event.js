@@ -14,9 +14,10 @@ var Event = (function ($) {
         this.OddData = extraData;
         this.Synched = false;
         this.clearEntries = function () {
-            while (this.Entries.length > 0) {
-                this.Entries.pop();
-            }
+            this.Entries.length = 0;
+            //while (this.Entries.length > 0) {
+            //    this.Entries.pop();
+            //}
         };
         this.sortingRequired = false;
 
@@ -27,16 +28,18 @@ var Event = (function ($) {
             return Course.getDistance(courseID);
         };
         this.loadEntries = function (entries) {
-            var self = this,
-                entry;
-            while (this.Entries.length > 0) {
-                this.Entries.pop();
-            }
-            $.each(entries, function () {
+            //var self = this,
+            //    entry;
+            this.Entries.length = 0;
+            //while (this.Entries.length > 0) {
+            //    this.Entries.pop();
+            //}
+            //$.each(entries, function () {
+            entries.forEach(function(entry){
                 // convert json list into list of entry objects
-                entry = new Entry(this.Number, this.Start, this.Finish, this.RiderID);
-                self.Entries.push(entry);
-            });
+                //entry = new Entry(this.Number, this.Start, this.Finish, this.RiderID);
+                this.Entries.push(new Entry(entry.Number, entry.Start, entry.Finish, entry.RiderID));
+            },this);
         };
         this.getEntries = function () {
             return this.Entries;
@@ -54,14 +57,15 @@ var Event = (function ($) {
             return (diff < 0);
         };
         this.getEntryFromRiderID = function (riderID) {
-            var entry = null;
-            $.each(this.Entries, function () {
-                if (this.RiderID === riderID) {
-                    entry = this;
-                    return false;
+            var i, entry;
+            for (i = 0; i < this.Entries.length; i+=1) {
+                entry = this.Entries[i];
+           // $.each(this.Entries, function () {
+                if (entry.RiderID === riderID) {
+                    return entry;
                 }
-            });
-            return entry;
+            }
+            return null;
         };
         this.sync = function () {
             this.Synched = true;
@@ -88,26 +92,21 @@ var Event = (function ($) {
                 return a.Number - b.Number;
             });
 
-            var pos = 1,
+            var pos = 0,
                 results = [],
-                self = this,
-                entry,
-                index,
                 rider,
                 rideTimeString,
                 rideTime,
                 stdTime,
                 start, finish;
 
-            //$.each(this.Entries, function (index, entry) {
-            for (index = 0; index < this.Entries.length; index += 1) {
-                entry = this.Entries[index];
+            // first do a table in finishing order
+
+            this.Entries.forEach(function (entry) {
                 pos += 1;
                 entry.Position = pos;
                 rider = Riders.riderFromID(entry.RiderID);
-                //rider = new TTRider(r.ID, r.Name, r.Age, r.Category, r.ClubID, r.Email, r.Best25),
-                stdTime = rider.vetStandardTime(self.distance());
-
+                stdTime = rider.vetStandardTime(this.distance());
                 start = entry.Start;
                 finish = entry.Finish;
 
@@ -126,13 +125,11 @@ var Event = (function ($) {
                     rideTimeString = "DNF";
                     entry.VetOnStd = 0;
                 }
-                else if (finish >= ttTime.specialTimes()) {
-                    return true;          //continue, don't add to list
+                if (finish < ttTime.specialTimes()) {
+                    rideTimeString = ttTime.timeStringH1(rideTime);
+                    results.push([entry.Position, entry.Number, rider.Name, ttApp.isMobile() ? Clubs.getAbbr(rider.ClubID) : Clubs.getName(rider.ClubID), rideTimeString, ttTime.timeStringVetStd(entry.VetOnStd)]);
                 }
-                rideTimeString = ttTime.timeStringH1(rideTime);
-                results.push([entry.Position, entry.Number, rider.Name, ttApp.isMobile() ? Clubs.getAbbr(rider.ClubID) : Clubs.getName(rider.ClubID), rideTimeString, ttTime.timeStringVetStd(entry.VetOnStd)]);
-
-            }
+            }, this);
 
             ttApp.changePage("resultpage");
             if (ttApp.isMobile()) {
@@ -146,35 +143,35 @@ var Event = (function ($) {
 
             resultsTableRiders(results);
 
-            results = [];
-            $.each(this.Entries, function () {
-                //entry.Position = pos++;
-                rider = Riders.riderFromID(this.RiderID);
-                // rider = new TTRider(r.ID, r.Name, r.Age, r.Category, r.ClubID, r.Email, r.Best25),
-                stdTime = rider.vetStandardTime(self.distance());
+            // now do a summary table in clubs order
 
+            results = [];
+            this.Entries.forEach(function(entry){
+                rider = Riders.riderFromID(entry.RiderID);
+                stdTime = rider.vetStandardTime(this.distance());
+                start = entry.Start;
+                finish = entry.Finish;
                 if (stdTime > 0) {
-                    this.VetOnStd = this.Finish - this.Start - stdTime;
+                    entry.VetOnStd = finish - start - stdTime;
                 }
                 else {
-                    this.VetOnStd = 0;
+                    entry.VetOnStd = 0;
                 }
-                rideTime = this.Finish - this.Start;
-                if (this.Finish / 1000 === ttTime.didNotStart() / 1000) {
+                rideTime = finish - start;
+                if (finish / 1000 === ttTime.didNotStart() / 1000) {
                     rideTimeString = "DNS";
-                    this.VetOnStd = 0;
+                    entry.VetOnStd = 0;
                 }
-                else if (this.Finish / 1000 === ttTime.didNotFinish() / 1000) {
+                else if (finish / 1000 === ttTime.didNotFinish() / 1000) {
                     rideTimeString = "DNF";
-                    this.VetOnStd = 0;
+                    entry.VetOnStd = 0;
                 }
-                else if (this.Finish >= ttTime.specialTimes()) {
-                    return true;          //continue, don't add to list
+                if (finish < ttTime.specialTimes()) {
+                    rideTimeString = ttTime.timeStringH1(rideTime);
+                    results.push([Clubs.getAbbr(rider.ClubID), entry.Number, rider.Name, rideTimeString, ttTime.timeStringVetStd(entry.VetOnStd)]);
                 }
-                rideTimeString = ttTime.timeStringH1(rideTime);
-                results.push([Clubs.getAbbr(rider.ClubID), this.Number, rider.Name, rideTimeString, ttTime.timeStringVetStd(this.VetOnStd)]);
-            });
-            //file = Clubs.getName(this.ClubID) + " " + ttTime.dateTimeString(this.Time) + " " + Course.getName(this.CourseID);
+            },this);
+
             resultsTableSummary(results, this.details());
         };
         this.displayEvent = function () {
@@ -199,35 +196,32 @@ var Event = (function ($) {
             }
 
             if (ttApp.screenWidth() < 500) {
-                $.each(this.Entries, function () {
-                    rider = Riders.riderFromID(this.RiderID);
+                //$.each(this.Entries, function () {
+                this.Entries.forEach(function(entry){
+                    rider = Riders.riderFromID(entry.RiderID);
                     if (rider === null) {
-                        rider = new TTRider(this.RiderID, "Rider not found", 0, 1, 0, "");
+                        rider = new TTRider(entry.RiderID, "Rider not found", 0, 1, 0, "");
                     }
-                    entrydata.push([this.Number, rider.Name, Clubs.getAbbr(rider.ClubID), ttTime.timeString(this.Start)]);
+                    entrydata.push([entry.Number, rider.Name, Clubs.getAbbr(rider.ClubID), ttTime.timeString(entry.Start)]);
                 });
                 myTable('#entries', { "search": "Find entry" }, entrydata, ttApp.tableHeight(), [{ "title": "#" }, { "title": "Name" }, { "title": "Club" }, { "title": "Start" }], null);
             }
             else {
                 // more details
-                self = this;
-                $.each(this.Entries, function () {
-                    rider = Riders.riderFromID(this.RiderID);
-
+                this.Entries.forEach(function(entry) {
+                    rider = Riders.riderFromID(entry.RiderID);
                     if (rider === null) {
                         rider = new TTRider(this.RiderID, "Rider not found", 0, 1, 0, "", 0);
                     }
-
                     target = "";
                     if (rider.hasBest25()) {
                         target = ttTime.timeStringH1(rider.Best25 * 1000);
                     }
-
                     cat = rider.catAbbr();
-                    stdTime = rider.vetStandardTime(self.distance());
+                    stdTime = rider.vetStandardTime(this.distance());
                     stdTimeStr = stdTime > 0 ? ttTime.timeStringH1(stdTime) : "";
-                    entrydata.push([this.Number, rider.Name, cat, stdTimeStr, target, Clubs.getName(rider.ClubID), ttTime.timeString(this.Start)]);
-                });
+                    entrydata.push([entry.Number, rider.Name, cat, stdTimeStr, target, Clubs.getName(rider.ClubID), ttTime.timeString(entry.Start)]);
+                },this);
                 myTable('#entries', { "search": "Find entry" }, entrydata, ttApp.tableHeight(), [{ "title": "#" }, { "title": "Name" }, { "title": "Cat" }, { "title": "VetStd" }, { "title": "Target" }, { "title": "Club" }, { "title": "Start" }], null);
 
             }
@@ -254,26 +248,27 @@ var Event = (function ($) {
                 rider, rideTime, rideTimeString,
                 table;
 
-            $.each(this.Entries, function () {
-                rider = Riders.riderFromID(this.RiderID);
+            //$.each(this.Entries, function () {
+            this.Entries.forEach(function(entry){
+                rider = Riders.riderFromID(entry.RiderID);
                 if (rider === null) {
-                    rider = new TTRider(this.RiderID, "Rider not found", 0, 1, 0, "");
+                    rider = new TTRider(entry.RiderID, "Rider not found", 0, 1, 0, "");
                 }
 
-                rideTime = this.Finish - this.Start;
-                if (this.Finish / 1000 === ttTime.didNotStart() / 1000) {
+                rideTime = entry.Finish - entry.Start;
+                if (entry.Finish / 1000 === ttTime.didNotStart() / 1000) {
                     rideTimeString = "DNS";
                 }
-                else if (this.Finish / 1000 === ttTime.didNotFinish() / 1000) {
+                else if (entry.Finish / 1000 === ttTime.didNotFinish() / 1000) {
                     rideTimeString = "DNF";
                 }
-                else if (this.Finish >= ttTime.specialTimes()) {
+                else if (entry.Finish >= ttTime.specialTimes()) {
                     rideTimeString = "???";
                 }
                 else {
                     rideTimeString = ttTime.timeStringH1(rideTime);
                 }
-                entrydata.push([this.Number, rider.Name, Clubs.getAbbr(rider.ClubID), rideTimeString]);
+                entrydata.push([entry.Number, rider.Name, Clubs.getAbbr(rider.ClubID), rideTimeString]);
             });
             table = myTable('#times', { "search": "Find entry" }, entrydata, ttApp.tableHeight() - 100, [{ "title": "#" }, { "title": "Name" }, { "title": "Club" }, { "title": "Time" }], null);
             table.order([[1, 'asc']]);
@@ -298,8 +293,7 @@ var Event = (function ($) {
         };
         this.saveRiderTime = function () {
             var endTime = ttTime.noTimeYet(),
-                startTime, rideTimeS, rideTimeD,
-                self = this;
+                startTime, rideTimeS, rideTimeD;
 
             startTime = this.Time + 1000 * 60 * updatingEntry;
             rideTimeS = $('#riderTime').val();
@@ -319,13 +313,14 @@ var Event = (function ($) {
                 endTime = ttTime.noTimeYet();
             }
 
-            $.each(this.Entries, function () {
-                if (updatingEntry === this.Number) {
-                    this.Finish = endTime;
-                    self.updateEventTimes();
+            //$.each(this.Entries, function () {
+            this.Entries.every(function(entry){
+                if (updatingEntry === entry.Number) {
+                    entry.Finish = endTime;
+                    this.updateEventTimes();
                     return false; // break
                 }
-            });
+            },this);
         };
         this.prepareSortEvent = function () {
             //var evID = currentEvent.ID;
@@ -345,13 +340,20 @@ var Event = (function ($) {
         };
         this.saveEvent = function () {
             var self = this;
-            if (this.sortingRequired) {
-                TTData.json("SaveEvent", "POST", this, function () {
-                    TTData.json('SeedEntries', "POST", this, function (entries) {
-                        $.each(entries, function (index, e) {
-                            self.Entries[index] = e;
-                        });
-                        popup.alert("Sorting done");
+            if (self.sortingRequired) {
+                // must save before sorting
+                TTData.json("SaveEvent", "POST", self, function () {
+                    TTData.json('SeedEntries', "POST", self, function (response) {
+                        if (response.length < self.Entries.length) {
+                            popup.alert("Error with sorting, so not perfomed");
+                        }
+                        else {
+                            self.Entries.length = 0;
+                            response.forEach(function (entry) {
+                                self.Entries.push(entry);
+                            });
+                            popup.alert("Sorting done");
+                        }
                         self.sortingRequired = false;
                         self.displayEvent();
                     }, true);
@@ -395,17 +397,16 @@ var Event = (function ($) {
 
             this.Time = d.valueOf();
             // now need to adjust start times of all entrants
-            $.each(this.Entries, function () {
-                this.Start += timediff;
+            //$.each(this.Entries, function () {
+            this.Entries.forEach(function(entry){
+                entry.Start += timediff;
             });
             $("#finish")[0].play();
             ttApp.changePage("onTheDay");
         };
         this.sortEntries = function () {
-
             // compares entries and sorts in order of start, but with those already finished shifted to the end
             this.Entries.sort(function (a, b) {
-
                 var result = b.Finish - a.Finish;
                 if (result !== 0) {
                     return result;
@@ -414,7 +415,5 @@ var Event = (function ($) {
             });
         };
     };
-   
     return event;
-
 }(jQuery));
