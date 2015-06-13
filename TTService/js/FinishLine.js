@@ -5,21 +5,20 @@
     // button grid size
     var finishLine = {},
         rows, cols,
-        finishTimes = [],    // set of times clicked as riders go past finsih line
+        finishTimes = [],    // set of times clicked as riders go past finish line
         event = new Event(0, 0, 0, 0, 0);       // just to help with intellisense...
 
     function displayFinishTimes() {
 
         var txt = "Finished at...<br >",
             br = false;
-        //$.each(finishTimes, function (index, t) {
+ 
         finishTimes.forEach(function(t){
             if (t !== null && t > 0) {
-                txt += (ttTime.timeString(new Date(t)));
+                txt += (ttTime.timeString(t));
             }
             txt += "...";
             if (br) {
-                //if ((index & 1) === 1) {
                 txt += "<br >";
                 br = false;
             }
@@ -44,8 +43,8 @@
             function () { deleteFinishTime(ftime); },
             null);
     }
-    function riderFinished(riderID, ftime) {
-        var entry = event.getEntryFromRiderID(riderID);
+    function riderFinished(entry, ftime) {
+        //var entry = event.getEntryFromRiderID(riderID);
 
         entry.Finish = ftime;
         // remove this time from stored list of finish times
@@ -69,45 +68,49 @@
         event.sortEntries();
         createButtonGrid(0);
     }
-    function confirmFinishTime(riderID) {
+    function confirmFinishTime(entry) {
         var htmlline, pop, index = 0;
-        //$.each(finishTimes, function (index, t) {
         finishTimes.forEach(function (t) {
             htmlline = '<div data-role="controlgroup" data-type="horizontal">';
-            htmlline += '<p class="ui-btn" id="finished' + index + '">Finished at: ' + ttTime.timeString(t) + '</p>';
-            htmlline += '<p class="ui-btn" id="qdelete' + index + '" data-icon="delete" data-iconpos="notext">delete this timing</p></div>';
+            htmlline += '<p class="ui-btn" id="finished' + t + '">Finished at: ' + ttTime.timeString(t) + '</p>';
+            htmlline += '<p class="ui-btn" id="qydelete' + t + '" data-icon="delete" data-iconpos="notext">delete this timing</p></div>';
             $('#fTimes').append(htmlline);
-            $("#finished" + index).off();
-            $('#fTimes')
-                .off('click', "#finished" + index)
-                .on('click', "#finished" + index, function () { riderFinished(riderID, t); });
-            $('#fTimes')
-                .off('click', "#qdelete" + index)
-                .on('click', "#qdelete" + index, function () { queryDeleteFinishTime(t); });
-            index += 1;
         });
         htmlline = '<div data-role="controlgroup" data-type="horizontal">';
         htmlline += '<p class="ui-btn" id="cancelFinished">Cancel</p></div>';
-        $("#fTimes").on('click', '#cancelFinished', function () { cancelFinished(); });
         $('#fTimes').append(htmlline);
+        $("#fTimes").on('click', '#cancelFinished', function () { cancelFinished(); });
+        $('#fTimes div p')
+            .off('click')
+            .on('click', function () {
+                var btn = $(this);
+                var btnID = $(this)[0].id,
+                    time = parseInt(btnID.substring(8), 10);
+
+                if (btnID.indexOf('finished') === 0) {
+                    riderFinished(entry, time);
+                }
+                else {
+                    queryDeleteFinishTime(time);
+                }
+            });
+
         $('#fTimes').trigger('create');
 
         ttApp.changePage("riderFinishPage");
 
         if (finishTimes.length === 0) {
             pop = new popup('No times stored for this rider');
-            pop.addMenuItem('Did not Start', riderFinished, riderID, ttTime.didNotStart());
-            pop.addMenuItem('Did not Finish', riderFinished, riderID, ttTime.didNotFinish());
+            pop.addMenuItem('Did not Start', riderFinished, entry, ttTime.didNotStart());
+            pop.addMenuItem('Did not Finish', riderFinished, entry, ttTime.didNotFinish());
             pop.addMenuItem('Cancel', BackToFinishLine);
             pop.open();
         }
     }
 
-
-    function getRiderFromGrid(riderID) {
-
-        var rider = Riders.riderFromID(riderID),
-            entry = event.getEntryFromRiderID(riderID),
+    function getRiderFromGrid(entryNumber) {
+        var entry = event.getEntryFromNumber(entryNumber),
+            rider = event.getRiderFromNumber(entryNumber),
             pop;
         $('#rname').text(rider.Name);
         $('#rnumber').text(entry.Number);
@@ -115,13 +118,13 @@
 
         if (entry.Finish / 1000 < ttTime.noTimeYet() / 1000) {
             pop = new popup('Rider has already finished');
-            pop.addMenuItem('Update with new finish time', confirmFinishTime, riderID);
+            pop.addMenuItem('Update with new finish time', confirmFinishTime, entry);
             pop.addMenuItem("Oops, rider wasn't finished", UndoFinish, entry);
             pop.addMenuItem('Cancel', BackToFinishLine);
             pop.open();
         }
         else {
-            confirmFinishTime(riderID);
+            confirmFinishTime(entry);
         }
     }
     function createButtonGrid(gridSequence) {
@@ -153,11 +156,9 @@
             // this is not first page of riders
             // create a button which, when clicked, will go back to first display, recursively
             ++col;
-            htmlline = '<div class="ui-block-a"><button type="button" id="createGrid0"> << </button></div>';
+            htmlline = '<div class="ui-block-a"><button type="button"> << </button></div>';
             $('#buttonArray').append(htmlline);
-            $("#buttonArray")
-                .off('click', "#createGrid0")
-                .on('click', "#createGrid0", function () { createButtonGrid(0); });
+
         }
         event.Entries.every(function (entry, index) {
             var caption;
@@ -166,13 +167,9 @@
                 // already displayed this entry, continue
                 return true;
             }
-
             if (row === rows - 1 && col === cols - 1 && event.Entries.length > rows * cols - 1) {
                 // lots of entries, need to create a new page and a button to get to it
-                htmlline = '<div class="ui-block-c"><button type="button" id="createGridx"> next </button></div>';
-                $("#buttonArray")
-                    .off('click', "#createGridx")
-                    .on('click', "#createGridx", function () { createButtonGrid(gridSequence); });
+                htmlline = '<div class="ui-block-c"><button type="button"> next </button></div>';
                 done = true;
             }
             else {
@@ -184,12 +181,7 @@
                     // rider has finished event, denote with brackets
                     caption = '(' + caption + ')';
                 }
-
-                htmlline = '<div class="ui-block-xx"><button type="button" id="getGridRider' + index + '">' + caption + '</button></div>';
-                $("#buttonArray")
-                    .off('click', "#getGridRider" + index)
-                    .on('click', "#getGridRider" + index, function () { getRiderFromGrid(entry.RiderID); });
-
+                htmlline = '<div class="ui-block-xx"><button type="button">' + caption + '</button></div>';
                 switch (col) {
                     // arrange buttons in columns - see jquerymobile 'ui-block'
                     case 0: htmlline = htmlline.replace("xx", "a"); break;
@@ -198,7 +190,6 @@
                 }
                 entry.sequence = gridSequence;
                 ++gridSequence;
-
             }
             $('#buttonArray').append(htmlline);
             if (done) {
@@ -206,8 +197,25 @@
             }
             ++col;
             return true;
-
         });
+        $('#buttonArray div button')
+            .off('click')
+            .on('click', function () {
+                var btnText = $(this).text();
+                if (btnText.indexOf('next', 0) >= 0) {
+                    // go to next page of buttons
+                    createButtonGrid(gridSequence);
+                }
+                else if (btnText.indexOf('<<', 0) >= 0) {
+                    // go back to beginning
+                    createButtonGrid(0)
+                }
+                else {
+                    // a rider number has been chosen
+                    btnText = btnText.replace('(', '');
+                    getRiderFromGrid(parseInt(btnText, 10));
+                }
+            });
         $('#buttonArray').trigger('create');
         displayFinishTimes();
         ttApp.changePage("finishLine");

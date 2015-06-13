@@ -6,14 +6,12 @@ function myTable(tableID, language, array, height, columns, footercallback)
     var file = "Rider List";
     var event = EventList.currentEvent();
     if (tableID == "#results" || tableID == "#entries")
-        //        file = Clubs.getName(event.ClubID) + " " + ttTime.dateTimeString(event.Time) + " " + Course.getName(event.CourseID);
         file = EventList.currentEvent().details();
     var search = true;
     if (tableID == "#events" || tableID == "#results" || tableID == "#extraresults")
         search = false;
 
     if (ttApp.isMobile() == false && event != null && (tableID == '#riders' || tableID == '#results' || tableID == '#entries')) {
-        // use table tools for printing options
         $(tableID + 'Table').html('<table class="display" id="' + tableID.substring(1) + '"></table>');
         var oTable = $(tableID).DataTable({
             
@@ -21,6 +19,7 @@ function myTable(tableID, language, array, height, columns, footercallback)
             "language": language,
             "scrollY": height,
             "filter": search,
+            // use table tools for printing options
             "tableTools": {
                 "sSwfPath": "copy_csv_xls_pdf.swf",
                 "aButtons": ["copy", { "sExtends": "pdf", "sTitle": file }]
@@ -40,7 +39,6 @@ function myTable(tableID, language, array, height, columns, footercallback)
             "language": language,
             "scrollY": height,
             "filter": search,
-            //"bjQueryUI": true,
             "paging": false,
             "scrollCollapse": true,
             "data": array,
@@ -49,14 +47,8 @@ function myTable(tableID, language, array, height, columns, footercallback)
                     { "width": "2%", "targets": 0 }
             ],
             "footerCallback": footercallback
-
-
-
         });
     }
-    //oTable.aoColumnDefs
-
-
     return oTable;
 }
 

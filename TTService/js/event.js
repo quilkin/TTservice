@@ -67,6 +67,26 @@ var Event = (function ($) {
             }
             return null;
         };
+        this.getEntryFromNumber = function (number) {
+            var i, entry;
+            for (i = 0; i < this.Entries.length; i += 1) {
+                entry = this.Entries[i];
+                if (entry.Number=== number) {
+                    return entry;
+                }
+            }
+            return null;
+        };
+        this.getRiderFromNumber = function (number) {
+            var i, entry;
+            for (i = 0; i < this.Entries.length; i += 1) {
+                entry = this.Entries[i];
+                if (entry.Number === number) {
+                    return entry.RiderID;
+                }
+            }
+            return null;
+        };
         this.sync = function () {
             this.Synched = true;
         };
