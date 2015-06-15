@@ -1,133 +1,91 @@
 ﻿
-"use strict";
+var TTTable = (function ($) {
+    "use strict";
 
-function myTable(tableID, language, array, height, columns, footercallback)
-{
-    var file = "Rider List";
-    var event = EventList.currentEvent();
-    if (tableID == "#results" || tableID == "#entries")
-        file = EventList.currentEvent().details();
-    var search = true;
-    if (tableID == "#events" || tableID == "#results" || tableID == "#extraresults")
-        search = false;
+    var table,
+        ttTable = {};
+    
+    ttTable = function (tableID, searchText, array, height, footercallback, allowPrint) {
+        var file = "Rider List",
+            event = EventList.currentEvent();
 
-    if (ttApp.isMobile() == false && event != null && (tableID == '#riders' || tableID == '#results' || tableID == '#entries')) {
-        $(tableID + 'Table').html('<table class="display" id="' + tableID.substring(1) + '"></table>');
-        var oTable = $(tableID).DataTable({
-            
-            "dom": 'T<"clear"><"top"f>rt<"bottom"l>',
-            "language": language,
+        this.tableDefs = {
+            "language": { "sSearch": searchText },
             "scrollY": height,
-            "filter": search,
+            "filter": true,
+            "paging": false,
+            "scrollCollapse": true,
+            "data": array,
+            "footerCallback": footercallback
+        };
+        if (tableID === "#results" || tableID === "#entries" || tableID=="#extraResults") {
+            file = EventList.currentEvent().details();
+        }
+        if (tableID === "#extraResults") {
+            this.tableDefs.aoColumnDefs = [  { "bVisible": false, "aTargets": [0] } ];
+            this.tableDefs.aaSortingFixed = [[0, 'asc']];
+            this.tableDefs.aaSorting = [[1, 'asc']];
+            this.tableDefs.drawCallback = function (oSettings) {
+                if (oSettings.aiDisplay.length === 0) {
+                    return;
+                }
+
+                var nTrs = $('#extraResults tbody tr'),
+                    iCol = nTrs[0].getElementsByTagName('td'),
+                    iColspan = iCol.length,
+                    sLastGroup = "",
+                    i;
+                for (i = 0 ; i < nTrs.length ; i++) {
+                    var iDisplayIndex = oSettings._iDisplayStart + i,
+                        sGroup = oSettings.aoData[oSettings.aiDisplay[iDisplayIndex]]._aData[0];
+                    if (sGroup !== sLastGroup) {
+                        var nGroup = document.createElement('tr'),
+                            nCell = document.createElement('td');
+                        //ncell.colSpan = iColspan;
+                        nCell.colSpan = 100;
+                        nCell.className = "group";
+                        nCell.innerHTML = sGroup;
+                        nGroup.appendChild(nCell);
+                        nTrs[i].parentNode.insertBefore(nGroup, nTrs[i]);
+                        sLastGroup = sGroup;
+                    }
+                }
+            };
+        }
+        if (ttApp.isMobile()) {
+            allowPrint = false;
+        }
+        if (allowPrint) {
+            // add print buttons
+            this.tableDefs.dom = 'T<"clear"><"top"f>rt<"bottom"l>';
             // use table tools for printing options
-            "tableTools": {
+            this.tableDefs.tableTools = {
                 "sSwfPath": "copy_csv_xls_pdf.swf",
                 "aButtons": ["copy", { "sExtends": "pdf", "sTitle": file }]
-            },
-            "paging": false,
-            "scrollCollapse": true,
-            "data": array,
-            "columns": columns,
-            "footerCallback": footercallback
-        });
-    }
-
-    else {
+            };
+        }
+        else {
+            this.tableDefs.columnDefs = [
+                { "width": "2%", "targets": 0 }
+            ];
+        }
         $(tableID + 'Table').html('<table class="display" id="' + tableID.substring(1) + '"></table>');
-        var oTable = $(tableID).DataTable({
-            "dom": '<"top"f>rt<"bottom"l>',
-            "language": language,
-            "scrollY": height,
-            "filter": search,
-            "paging": false,
-            "scrollCollapse": true,
-            "data": array,
-            "columns": columns,
-            "columnDefs": [
-                    { "width": "2%", "targets": 0 }
-            ],
-            "footerCallback": footercallback
-        });
-    }
-    return oTable;
-}
 
-function resultsTableRiders(results) {
-    var table = myTable('#results', { "sSearch": "Select Rider:" }, results, ttApp.tableHeight(),
-        [{ "sTitle": "" },
-          { "sTitle": "no:" },
-          { "sTitle": "name" },
-          { "sTitle": "club" },
-          { "sTitle": "time" },
-          { "sTitle": "vet+" }],
-         null);
+        this.show = function () {
+            table = $(tableID).DataTable(this.tableDefs);
+            return table;
+        };
+        this.settings = function () {
+            return table.settings;
+        };
+        this.order = function () {
+            table.order();
+        }
 
-    $('#results tbody tr').on('click', function () {
-        var nTds, name, rider;
-        nTds = $('td', this);
-        name = $(nTds[2]).text();
-        rider = Riders.riderFromName(name);
-
-        ttApp.changePage("riderDetailsPage");
-
-        rider.displayRider(true);
-    });
-}
-
-function resultsTableSummary(results,file) {
-
-    $('#extraresultsTable').html('<table class="display" id="extraresults"></table>');
-
-    var oTable = $('#extraresults').DataTable({
-        "data": results,
-        "scrollY": 300,
-        "paging": false,
-        "filter": false,
-        "columns":
-          [
-          { "title": "no:" },
-          { "title": "name" },
-          { "title": "club" },
-          { "title": "time" },
-          { "title": "vet+" }],
-        "tableTools": {
-            "sSwfPath": "copy_csv_xls_pdf.swf",
-            "aButtons": ["copy", { "sExtends": "pdf", "sTitle": file }]
-        },
-        "drawCallback": function (oSettings) {
-            if (oSettings.aiDisplay.length == 0) {
-                return;
-            }
-
-            var nTrs = $('#extraresults tbody tr');
-            var iCol = nTrs[0].getElementsByTagName('td');
-            var iColspan = iCol.length;
-            var sLastGroup = "";
-            for (var i = 0 ; i < nTrs.length ; i++) {
-                var iDisplayIndex = oSettings._iDisplayStart + i;
-                var sGroup = oSettings.aoData[oSettings.aiDisplay[iDisplayIndex]]._aData[0];
-                if (sGroup != sLastGroup) {
-                    var nGroup = document.createElement('tr');
-                    var nCell = document.createElement('td');
-                    //ncell.colSpan = iColspan;
-                    nCell.colSpan = 100;
-                    nCell.className = "group";
-                    nCell.innerHTML = sGroup;
-                    nGroup.appendChild(nCell);
-                    nTrs[i].parentNode.insertBefore(nGroup, nTrs[i]);
-                    sLastGroup = sGroup;
-                }
-            }
-        },
+    };
 
 
-        "aoColumnDefs": [
-            { "bVisible": false, "aTargets": [0] }
-        ],
-        "aaSortingFixed": [[0, 'asc']],
-        "aaSorting": [[1, 'asc']],
-        //  "sDom": 'lfr<"giveHeight"t>ip'
-        "sDom": 'T<"clear"><"top"f>rt<"bottom"l>'
-    });
+    return ttTable;
 
-}
+
+}(jQuery));

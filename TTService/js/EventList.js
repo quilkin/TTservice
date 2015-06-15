@@ -8,7 +8,6 @@
 
     function parseEvents(events) {
         var eventData = [];
-       //     events = response;
 
         if (events.length === 0) {
             $('#eventsTable').html('No matching events found');
@@ -16,17 +15,17 @@
         }
         $('#events').empty();
 
-        //$.each(events, function (index, ev) {
         events.forEach(function(ev){
             eventData.push([ev.ID, Clubs.getName(ev.ClubID), Course.getName(ev.CourseID), ttTime.dateTimeString(new Date(ev.Time))]);
         });
         event = null;
-        eventTable = myTable('#events', { "search": "" }, eventData, 200,
-            [{ "title": "#" },
+        eventTable = new TTTable('#events', "" , eventData, 200,  null, false);
+        eventTable.tableDefs.filter = false;
+        eventTable.tableDefs.columns = [{ "title": "#" },
               { "title": "Club" },
               { "title": "Course" },
-              { "title": "Date/Time" }],
-              null);
+              { "title": "Date/Time" }];
+        eventTable.show();
 
         // trying to make first column invisible but that messes up indexing
         //var column = eventTable.column(0);
@@ -37,7 +36,6 @@
                 eventID = parseInt($(nTds[0]).text(),10);
 
             // find the correct event from the list
-            //$.each(events, function (index, ev) {
             events.some(function(ev){
                 if (ev.ID === eventID) {
                     event = new Event(ev.ID, ev.CourseID, ev.Time, ev.ClubID, 0);
@@ -168,7 +166,8 @@
 
 
     function chooseClub(element) {
-        clubTable = myTable('#clubs', { "search": "Select Club:" }, clubsList, 200, [null], null);
+        clubTable = new TTTable('#clubs', "Select Club:", clubsList, 200, null,false);
+        clubTable.show();
         $('#clubs tbody tr').on('click', function () {
             // add the club name to the button for reference
             var nTds, club;
@@ -179,7 +178,8 @@
         });
     }
     function chooseCourse(element) {
-        courseTable = myTable('#courses', { "search": "Select Course:" }, coursesList, 200, [null], null);
+        courseTable = new TTTable('#courses', "Select Course:", coursesList, 200,  null,false);
+        courseTable.show();
         $('#courses tbody tr').on('click', function () {
             var nTds, course;
             nTds = $('td', this);

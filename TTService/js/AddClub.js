@@ -129,7 +129,8 @@ var Clubs = (function ($) {
         }
     }
     function clubTable(clubsarray, existingClub) {
-        var table = myTable('#riderClub', { "sSearch": "Select Club:" }, clubsarray, 200, [null, null], noClubsFound);
+        var table = new TTTable('#riderClub', "Select Club:" , clubsarray, 200, noClubsFound,false);
+        table.show();
         clubTableSettings = table.settings();
         $('#riderClub tbody tr').on('click', function () {
             var nTds = $('td', this);
@@ -173,14 +174,15 @@ var Clubs = (function ($) {
             return;
         }
         var tableClubs = [];
-        //$.each(list, function (index, club) {
+
         list.forEach(function(club){
             if (club !== undefined) {
                 tableClubs.push([club.Name, club.Abbr]);
             }
         });
         ttApp.changePage("clubsPage");
-        myTable('#clubs2', { "sSearch": "Select Club:" }, tableClubs, ttApp.tableHeight(), [null, null], null);
+        var table = new TTTable('#clubs2', "Select Club:", tableClubs, ttApp.tableHeight(),  null,false);
+        table.show();
     });
 
     clubs.uploadNewClubs = function () {

@@ -205,6 +205,7 @@ var TTRider = (function ($) {
                         entry = e;
                         return false; // break
                     }
+                    return true;
                 });
                 if (entry !== null) {
                     $('#start').text("Start time:   " + ttTime.timeString(entry.Start));

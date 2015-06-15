@@ -161,8 +161,26 @@ var Event = (function ($) {
             //title = Clubs.getName(this.ClubID) + " " + ttTime.dateTimeString(this.Time) + " " + Course.getName(this.CourseID);
             $('#resultsTitle').text(this.details());
 
-            resultsTableRiders(results);
+            var table = new TTTable('#results', "Select Rider:", results, ttApp.tableHeight(), null, true);
+            table.tableDefs.filter = false;
+            table.tableDefs.columns = [{ "sTitle": "" },
+                  { "sTitle": "no:" },
+                  { "sTitle": "name" },
+                  { "sTitle": "club" },
+                  { "sTitle": "time" },
+                  { "sTitle": "vet+" }];
+            table.show();
+            //ttTable.resultsTableRiders(results);
+            $('#results tbody tr').on('click', function () {
+                var nTds, name, rider;
+                nTds = $('td', this);
+                name = $(nTds[2]).text();
+                rider = Riders.riderFromName(name);
 
+                ttApp.changePage("riderDetailsPage");
+
+                rider.displayRider(true);
+            });
             // now do a summary table in clubs order
 
             results = [];
@@ -192,11 +210,20 @@ var Event = (function ($) {
                 }
             },this);
 
-            resultsTableSummary(results, this.details());
+            //TTTable.resultsTableSummary(results, this.details());
+            table = new TTTable("#extraResults", "", results, 300, null, true);
+            table.tableDefs.columns = [
+                      { "title": "no:" },
+                      { "title": "name" },
+                      { "title": "club" },
+                      { "title": "time" },
+                      { "title": "vet+" }];
+            table.show();
         };
         this.displayEvent = function () {
             var rider,
                 self,
+                table,
                 entrydata = [],
                 target, cat,
                 stdTime, stdTimeStr;
@@ -224,7 +251,8 @@ var Event = (function ($) {
                     }
                     entrydata.push([entry.Number, rider.Name, Clubs.getAbbr(rider.ClubID), ttTime.timeString(entry.Start)]);
                 });
-                myTable('#entries', { "search": "Find entry" }, entrydata, ttApp.tableHeight(), [{ "title": "#" }, { "title": "Name" }, { "title": "Club" }, { "title": "Start" }], null);
+                table = new TTTable('#entries', "Find entry", entrydata, ttApp.tableHeight(), null, true);
+                table.tableDefs.columns =    [{ "title": "#" }, { "title": "Name" }, { "title": "Club" }, { "title": "Start" }];
             }
             else {
                 // more details
@@ -242,10 +270,10 @@ var Event = (function ($) {
                     stdTimeStr = stdTime > 0 ? ttTime.timeStringH1(stdTime) : "";
                     entrydata.push([entry.Number, rider.Name, cat, stdTimeStr, target, Clubs.getName(rider.ClubID), ttTime.timeString(entry.Start)]);
                 },this);
-                myTable('#entries', { "search": "Find entry" }, entrydata, ttApp.tableHeight(), [{ "title": "#" }, { "title": "Name" }, { "title": "Cat" }, { "title": "VetStd" }, { "title": "Target" }, { "title": "Club" }, { "title": "Start" }], null);
-
+                table = new TTTable('#entries', "Find entry", entrydata, ttApp.tableHeight(), null, true);
+                table.tableDefs.columns = [{ "title": "#" }, { "title": "Name" }, { "title": "Cat" }, { "title": "VetStd" }, { "title": "Target" }, { "title": "Club" }, { "title": "Start" }];
             }
-
+            table.show();
             // *********** ToDo: allow deletion of entries but only if event hasn't happened
             $('#entries tbody tr').on('click', function () {
                 var nTds = $('td', this),
@@ -290,7 +318,9 @@ var Event = (function ($) {
                 }
                 entrydata.push([entry.Number, rider.Name, Clubs.getAbbr(rider.ClubID), rideTimeString]);
             });
-            table = myTable('#times', { "search": "Find entry" }, entrydata, ttApp.tableHeight() - 100, [{ "title": "#" }, { "title": "Name" }, { "title": "Club" }, { "title": "Time" }], null);
+            table = new TTTable('#times', "Find entry", entrydata, ttApp.tableHeight() - 100, null,false);
+            table.tableDefs.columns = [{ "title": "#" }, { "title": "Name" }, { "title": "Club" }, { "title": "Time" }];
+            table.show();
             table.order([[1, 'asc']]);
             $("#riderTime").timepicker({
                 showSecond: true,

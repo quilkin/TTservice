@@ -69,12 +69,14 @@
                 names.push([rider.Name, Clubs.getAbbr(rider.ClubID)]);
             }
         };
-        table = myTable('#newRider', { "sSearch": "Select Rider:", "sZeroRecords": "" }, names, 200, [null, null], noRidersFound);
+        table = new TTTable('#newRider', "Select Rider:", names, 200, noRidersFound,false);
+        table.show();
+        riderTableSettings = table.settings();
 
         $('#riderClubTable').html("");
         $('#btnNewClub').hide();
 
-        riderTableSettings = table.settings();
+
         $('#newRider tbody tr').on('click', function () {
             var newName,
                 nTds = $('td', this);
@@ -294,7 +296,9 @@
 
         ttApp.changePage("ridersPage");
 
-        table = myTable('#riders', { "sSearch": "Select Rider:" }, riderArray, ttApp.tableHeight(), [{ "sTitle": "ID" }, { "sTitle": "Name" }, { "sTitle": "Club" }, { "sTitle": "Cat." }, { "sTitle": "Best 25" }], noRidersFound);
+        table = new TTTable('#riders', "Select Rider:", riderArray, ttApp.tableHeight(),  noRidersFound, true);
+        table.tableDefs.columns = [{ "sTitle": "ID" }, { "sTitle": "Name" }, { "sTitle": "Club" }, { "sTitle": "Cat." }, { "sTitle": "Best 25" }];
+        table.show();
         table.order([[1, 'asc'], [0, 'asc']]);
         $('#riders tbody tr').on('click', function () {
             nTds = $('td', this);

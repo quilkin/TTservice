@@ -88,7 +88,7 @@ var ttApp = (function () {
     "use strict";
 
     var ttApp = {},
-    ismobile,
+    ismobile = false,
     realTimer,
     screenTimeout,
     platform;

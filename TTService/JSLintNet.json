@@ -22,7 +22,7 @@
       "TTData": true,
       "EventList": true,
       "Entry": true,
-      "myTable": true,
+      "ttTable": true,
       "Event": true,
       "login": true
     },
