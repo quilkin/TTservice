@@ -11,7 +11,7 @@ var popup = (function ($) {
         pop = function (title) {
 
             if (popupCount > 4) {
-                this.alert("Too many popups");
+                alert("Too many popups");
                 popupCount = 0;
                 //return null;
             }
@@ -55,7 +55,7 @@ var popup = (function ($) {
                 theme: "b"
             }).on("click", function () {
                 self.popup("close");
-                if (func !== null) {
+                if (func !== null && func !== undefined) {
                     func(param1, param2);
                 }
             }).appendTo($popUp);

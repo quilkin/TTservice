@@ -76,10 +76,16 @@ var TTTable = (function ($) {
             return table;
         };
         this.settings = function () {
-            return table.settings;
+            return table.settings();
+        };
+        this.search = function () {
+            return table.search();
         };
         this.order = function () {
             table.order();
+        }
+        this.destroy = function () {
+            table.destroy();
         }
 
     };

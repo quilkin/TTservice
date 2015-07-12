@@ -145,10 +145,10 @@
             thistime,
             entry = null;
         
-        if (addToEvent &&  event.pastEvent()) {
-            popup.alert("Cannot add rider to past event");
-            return;
-        }
+        //if (addToEvent &&  event.pastEvent()) {
+        //    popup.alert("Cannot add rider to past event");
+        //    return;
+        //}
         if (addToEvent) {
             startNumber = event.getEntries().length + 1;
         }
@@ -347,11 +347,11 @@
         confirmation;
 
         if (newRider === null) {
-            //var newName = riderTableSettings.oPreviousSearch.sSearch;
+            //newName = riderTableSettings.oPreviousSearch.sSearch;
             newName = riderTableSettings.search();
             newNameParts = newName.split(' ');
             newName = capitalize(newNameParts[0]);
-            if (newNameParts[1] !== null) {
+            if (newNameParts[1] !== null && newNameParts[1] !== undefined) {
                 newName += (" " + capitalize(newNameParts[1]));
             }
 
@@ -481,8 +481,8 @@
                 //var startTimeS = $('#riderStartTime').val();
                 //var startTimeD = timeFromString(startTimeS);
                 //var startTime = startTimeD.valueOf();
-                if (event.pastEvent()) {
-                    startNumber = $('#riderStartNumber').val();
+                //if (event.pastEvent()) {
+                    startNumber = parseInt($('#riderStartNumber').val(),10);
                     if (startNumber === null || startNumber === "" || isNaN(startNumber)) {
                         popup.alert("Must set a starting number");
                         return;
@@ -500,10 +500,10 @@
                             return;
                         }
                     }
-                }
-                else {
-                    startNumber = event.getEntries().length + 1;
-                }
+                //}
+                //else {
+                //    startNumber = event.getEntries().length + 1;
+                //}
                 //currentTime = new Date(event.getTime());
                 //currentDate = new Date(currentTime.getFullYear(), currentTime.getMonth(), currentTime.getDate(), 0, 0, 0, 0);
                 startTime = event.getTime() + 1000 * 60 * startNumber;
