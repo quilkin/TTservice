@@ -3,7 +3,7 @@ var TTTable = (function ($) {
     "use strict";
 
     var table,
-        ttTable = {};
+    ttTable = {};
     
     ttTable = function (tableID, searchText, array, height, footercallback, allowPrint) {
         var file = "Rider List",
@@ -87,7 +87,9 @@ var TTTable = (function ($) {
         this.destroy = function () {
             table.destroy();
         }
-
+        this.clear = function () {
+            table.clear();
+        }
     };
 
 

@@ -55,7 +55,10 @@
                 }
                 else {
                     // popup.alert("No results yet, event has not happened");
-                    popup.alert(entries.length + " riders loaded for this (future) event");
+                    popup.wait(entries.length + " riders loaded for this (future) event",
+                        function () {
+                            ttApp.changePage("home");
+                        });
                     ttApp.changePage("home");
                 }
              },
@@ -167,7 +170,7 @@
 
     function chooseClub(element) {
         clubTable = new TTTable('#clubs', "Select Club:", clubsList, 200, null,false);
-        clubTable.show();
+        clubTable = clubTable.show();
         $('#clubs tbody tr').on('click', function () {
             // add the club name to the button for reference
             var nTds, club;
@@ -175,11 +178,12 @@
             club = $(nTds[0]).text();
             element.text(club);
             clubTable.destroy(true);
+
         });
     }
     function chooseCourse(element) {
         courseTable = new TTTable('#courses', "Select Course:", coursesList, 200,  null,false);
-        courseTable.show();
+        courseTable = courseTable.show();
         $('#courses tbody tr').on('click', function () {
             var nTds, course;
             nTds = $('td', this);

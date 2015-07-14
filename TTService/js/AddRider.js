@@ -150,7 +150,7 @@
         //    return;
         //}
         if (addToEvent) {
-            startNumber = event.getEntries().length + 1;
+            startNumber = event.nextAvailableEntry();
         }
         if (list.length < 2) {
             popup.alert("No riders loaded, cannot autocomplete");
@@ -346,6 +346,8 @@
         rider,
         confirmation;
 
+
+
         if (newRider === null) {
             //newName = riderTableSettings.oPreviousSearch.sSearch;
             newName = riderTableSettings.search();
@@ -423,7 +425,6 @@
             bestTimeS,
             timePopup;
 
-
         if (age < 12 && age !== 0) {
             popup.alert("Must enter a valid age (12 or above), or zero if age unknown");
             return;
@@ -447,8 +448,11 @@
             if (riderBeforeChange.Age !== newRider.Age || riderBeforeChange.ClubID !== newRider.ClubID) {
                 //riderBeforeChange.Category !== newRider.Category) {
                 // same name, details have been changed
-                if (popup.confirm('Rider already in list. Update Details?')) {
-                    updateRiderDetails();
+                popup.confirm('Rider already in list. Update Details?',
+                    function() {
+                        updateRiderDetails();
+                        addToEvent();
+                    },
                     //newRider.ID = riderBeforeChange.ID;
                     //newRider.changed = true;
                     //for (var i in ridersdata) {
@@ -459,126 +463,151 @@
                     //    }
                     //    ridersChanged = true;
                     //}
-                }
-                else {
-                    popup.alert("Rider not added or updated");
-                }
+                    function () {
+                        popup.alert("Rider not added or updated");
+                    }
+                );
             }
             else if ($("#checkIn").prop("checked") === false) {
                 popup.alert("No changes for rider");
+            }
+            else {
+                addToEvent();
             }
         }
         else {
             //// this is a new rider, needs adding to list
             list.push(newRider);
             ridersChanged = true;
+            addToEvent();
         }
-        
-        // if required, add to event list if not already there
-        if ($("#checkIn").prop("checked")) {
-            if (newRider.inEvent() === 0 || event.pastEvent()) {
 
-                //var startTimeS = $('#riderStartTime').val();
-                //var startTimeD = timeFromString(startTimeS);
-                //var startTime = startTimeD.valueOf();
-                //if (event.pastEvent()) {
-                    startNumber = parseInt($('#riderStartNumber').val(),10);
+        
+        function addToEvent() {
+            // if required, add to event list if not already there
+            if ($("#checkIn").prop("checked")) {
+                if (newRider.inEvent() === 0 || event.pastEvent()) {
+
+                    //var startTimeS = $('#riderStartTime').val();
+                    //var startTimeD = timeFromString(startTimeS);
+                    //var startTime = startTimeD.valueOf();
+                    //if (event.pastEvent()) {
+                    startNumber = parseInt($('#riderStartNumber').val(), 10);
                     if (startNumber === null || startNumber === "" || isNaN(startNumber)) {
                         popup.alert("Must set a starting number");
                         return;
                     }
+                    //popup.alert("debug1");
+                    //popup.alert("debug2");
                     // check that start number chosen hasn't already been used
+                    var startNumberOK = true;
                     for (i = 0; i < event.getEntries().length; i++) {
                         entry = event.getEntries()[i];
                         if (entry.Number === startNumber && entry.RiderID !== newRider.ID) {
+                            startNumberOK = false;
                             rider = fromID(entry.RiderID);
-                            if (popup.confirm("Start number already used by " + rider.Name + ". Do you want to re-allocate that one?")) {
-                                entry.Number = event.getEntries().length + 1;
-                                break;
+                            var nextAvailable = event.nextAvailableEntry();
+                            popup.confirm("Start number already used by " + rider.Name + ". Do you want to re-allocate that one?",
+                                function () {
+                                    // yes, allocate next available number to existing entry
+                                    entry.Number = nextAvailable;
+                                    addToEventPart2();
+                                },
+                                function () {
+                                    // no, allocate next available number to this one
+                                    startNumber = nextAvailable;
+                                    addToEventPart2();
+                                });
+                            break;
+                        }
+                    }
+                    if (startNumberOK) {
+                        addToEventPart2();
+                    }
+
+                    function addToEventPart2() {
+                        startTime = event.getTime() + 1000 * 60 * startNumber;
+
+                        if (event.pastEvent()) {
+                            rideTimeS = $('#riderRideTime').val();
+                            if ($('#riderRideTime').val() === 'DNS') {
+                                endTime = ttTime.didNotStart();
                             }
-                            // allow choosing a different number
-                            return;
+                            else if ($('#riderRideTime').val() === 'DNF') {
+                                endTime = ttTime.didNotFinish();
+                            }
+                            else {
+
+                                rideTimeD = ttTime.timeFromString(rideTimeS);
+                                endTime = startTime + rideTimeD.valueOf();
+
+                                if (endTime === null || isNaN(endTime)) {
+                                    timePopup = new popup('Rider\'s time required');
+                                    timePopup.addMenuItem('Did not Start', TimePopup, 'DNS');
+                                    timePopup.addMenuItem('Did not Finish', TimePopup, 'DNF');
+                                    timePopup.addMenuItem('Enter a time');
+                                    timePopup.open();
+                                    return;
+                                }
+                            }
+                            if (endTime === null || isNaN(endTime)) {
+                                // not yet finished or time unknown
+                                endTime = ttTime.noTimeYet();
+                            }
+
                         }
-                    }
-                //}
-                //else {
-                //    startNumber = event.getEntries().length + 1;
-                //}
-                //currentTime = new Date(event.getTime());
-                //currentDate = new Date(currentTime.getFullYear(), currentTime.getMonth(), currentTime.getDate(), 0, 0, 0, 0);
-                startTime = event.getTime() + 1000 * 60 * startNumber;
+                        else {
+                            endTime = ttTime.noTimeYet();
+                            bestTimeS = $('#riderRideTime').val();
+                            bestTimeD = ttTime.timeFromString(bestTimeS);
+                            if (bestTimeD === null || isNaN(bestTimeD)) {
+                                //ignore it
+                            }
+                            else {
+                                newRider.Best25 = bestTimeD.valueOf() / 1000;
+                                // Best '25' time in seconds. Server will convert to '25' time from '10' time if necessary
+                                if (riderBeforeChange !== null) {
+                                    if (riderBeforeChange.Best25 !== newRider.Best25) {
+                                        updateRiderDetails();
+                                    }
+                                }
+                            }
 
-                if (event.pastEvent()) {
-                    rideTimeS = $('#riderRideTime').val();
-                    if ($('#riderRideTime').val() === 'DNS') {
-                        endTime = ttTime.didNotStart();
-                    }
-                    else if ($('#riderRideTime').val() === 'DNF') {
-                        endTime = ttTime.didNotFinish();
-                    }
-                    else {
-
-                        rideTimeD = ttTime.timeFromString(rideTimeS);
-                        endTime = startTime + rideTimeD.valueOf();
-
-                        if (endTime === null || isNaN(endTime)) {
-                            timePopup = new popup('Rider\'s time required');
-                            timePopup.addMenuItem('Did not Start', TimePopup, 'DNS');
-                            timePopup.addMenuItem('Did not Finish', TimePopup, 'DNF');
-                            timePopup.addMenuItem('Enter a time');
-                            timePopup.open();
-                            return;
                         }
-                    }
-                    if (endTime === null || isNaN(endTime)) {
-                        // not yet finished or time unknown
-                        endTime = ttTime.noTimeYet();
-                    }
 
+                        entry = new Entry(
+                            // ToDo **** allow for more than one minute between starts
+                            startNumber,
+                            startTime,
+                            endTime,
+                            newRider.ID);
+                        if (editRider === null) {
+                            event.getEntries().push(entry);
+                        }
+                        else {
+                            //$.each(event.getEntries(), function (index, e) {
+                            event.getEntries().forEach(function (e) {
+                                if (e.RiderID === newRider.ID) {
+                                    e = entry;
+                                    return false;
+                                }
+                            });
+                        }
+                        addNextRider(true);
+                    }
                 }
                 else {
-                    endTime = ttTime.noTimeYet();
-                    bestTimeS = $('#riderRideTime').val();
-                    bestTimeD = ttTime.timeFromString(bestTimeS);
-                    if (bestTimeD === null || isNaN(bestTimeD)) {
-                        //ignore it
-                    }
-                    else {
-                        newRider.Best25 = bestTimeD.valueOf() / 1000;
-                        // Best '25' time in seconds. Server will convert to '25' time from '10' time if necessary
-                        if (riderBeforeChange !== null) {
-                            if (riderBeforeChange.Best25 !== newRider.Best25) {
-                                updateRiderDetails();
-                            }
-                        }
-                    }
+                    popup.alert("Rider already in event");
+                    addNextRider(in_event);
+                }
+                in_event = true;
 
-                }
+            }
 
-                entry = new Entry(
-                    // ToDo **** allow for more than one minute between starts
-                    startNumber,
-                    startTime,
-                    endTime,
-                    newRider.ID);
-                if (editRider === null) {
-                    event.getEntries().push(entry);
-                }
-                else {
-                    //$.each(event.getEntries(), function (index, e) {
-                    event.getEntries().forEach(function(e){
-                        if (e.RiderID === newRider.ID) {
-                            e = entry;
-                            return false;
-                        }
-                    });
-                }
-            }
-            else {
-                popup.alert("Rider already in event");
-            }
-            in_event = true;
         }
+
+    });
+    function addNextRider(in_event) {
         //  now add another rider...but first remove last rider's times, if any
         $('#riderStartNumber').val("");
         $('#riderRideTime').val("");
@@ -591,8 +620,7 @@
             editRider = null;
             // history.back();
         }
-    });
-
+    }
 
     return {
         getRiderData: function(){

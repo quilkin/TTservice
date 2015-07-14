@@ -44,6 +44,27 @@ var Event = (function ($) {
         this.getEntries = function () {
             return this.Entries;
         };
+        this.nextAvailableEntry = function () {
+            // find the unused missing entry number. The numbers won't necessarily be in sequence, so this algorithm isn't a simple/quick as it could be
+            var i, entry, highest=0, tryThis;
+            // find max number
+            for (i = 0; i < this.Entries.length; i += 1) {
+                entry = this.Entries[i];
+                if (entry.Number > highest) {
+                    highest = entry.Number;
+                }
+            }
+            for (tryThis = 1; tryThis <= highest ; tryThis += 1) {
+                var found = $.grep(this.Entries, function (a) {
+                    return a.Number === tryThis;
+                });
+                if (found.length == 0) {
+                    return tryThis;
+                }
+            };
+            return highest + 1;
+
+        };
         this.getTime = function () {
             return this.Time;
         };

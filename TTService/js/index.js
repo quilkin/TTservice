@@ -189,7 +189,11 @@ var ttApp = (function () {
             receivedElement.setAttribute('style', 'display:block;');
 
         },
-        changePage: function(page) {
+        changePage: function (page) {
+            //if (popup.prototype.count() > 0)
+            //{
+            //    return;
+            //}
             //$.mobile.changePage("#" + page);
             //ttApp.changePage("" + page);
             //$("body").pagecontainer("change", "#" + page, { transition: "slide" });
