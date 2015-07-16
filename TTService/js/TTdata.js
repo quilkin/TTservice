@@ -19,6 +19,8 @@ don't allow duplicate logins
 •	Create results tables for vets, women, juniors etc
 •	Sort out birthdates and ages so that ages are automatically updated in subsequent years
 *   update vet's table
+*   vets resulst 40-49, 50-59 etc
+*   allow for penalty start times
 */
 
 var TTData = (function ($) {

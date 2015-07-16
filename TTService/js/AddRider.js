@@ -40,6 +40,16 @@
     // to be used when a new rider is required (no riders found from search)
     function noRidersFound(nRow, ssData, iStart, iEnd, aiDisplay) {
         if (iStart === iEnd) {
+            // check that rider isn't already in event
+            var event = EventList.currentEvent();
+            var rider = riderTableSettings.search();
+            var entry = event.getEntryFromName(rider);
+            if (entry !== null) {
+                var rider = Riders.riderFromID(entry.RiderID);
+                $("#btnAlreadyIn").show();
+                $("#btnAlreadyIn").text(rider.Name + " is already in event");
+
+            }
             $("#btnNewRider").show();
             $("#btnAddRider").hide();
             //$("#riderClubTable").prop("disabled", true);
@@ -47,6 +57,7 @@
             //$("#checkLady").prop("disabled", true);
         }
         else {
+            $("#btnAlreadyIn").hide();
             $("#btnNewRider").hide();
             $("#btnAddRider").show();
             //$("#riderClubTable").prop("disabled", false);
@@ -174,15 +185,24 @@
 
         if (addToEvent === false || event === null || event.pastEvent()) {
             $("#checkIn").prop("disabled", true);
-            //        $("#lblRideTime").hide();
-            //       $("#riderRideTime").hide();
+
         }
         else {
             $("#checkIn").prop("disabled", false);
-            //       $("#lblRideTime").show();
-            //       $("#riderRideTime").show();
-        }
 
+        }
+        if (event.pastEvent()) {
+                   $("#lblRideTime").show();
+                   $("#riderRideTime").show();
+                   $("#DNS1").show();
+                   $("#DNF1").show();
+        }
+        else {
+                    $("#lblRideTime").hide();
+                    $("#riderRideTime").hide();
+                    $("#DNS1").hide();
+                    $("#DNF1").hide()
+        }
 
         if (editRider !== null) {
             age = editRider.Age;
@@ -198,6 +218,7 @@
             $("#riderRideTime").val(ttTime.timeString(thistime));
             $('#btnAddRider').text("Save Editing");
             $("#btnNewRider").hide();
+            $("#btnAlreadyIn").hide();
             $("#btnNewClub").hide();
         }
         $("#checkLady").prop("checked", false);
@@ -234,7 +255,10 @@
             controlType: 'select',
             stepHour: 1,
             stepMinute: 1,
-            stepSecond: 1
+            stepSecond: 1,
+            showButtonPanel: false,
+        //    showAnim: "fold",
+        //    showOptions: { direction: "up" }
         });
 
         if (event !== null && event.pastEvent()) {
@@ -333,7 +357,10 @@
     //    // So, can't go on to save riders until clubs have finished saving, so last part will be a callback
     //    Clubs.uploadNewClubs();
     //}
-
+    $('#btnAlreadyIn').click(function () {
+        //abort current choice and start again
+        chooseRider(true);
+    });
 
     $('#btnNewRider').click(function () {
 
@@ -406,7 +433,13 @@
             addRider(event.ID > 0);
         }
     });
+    $('#dns1').click(function () {
+        $('#riderRideTime').val('DNS');
+    });
 
+    $('#dnf1').click(function () {
+        $('#riderRideTime').val('DNF');
+    });
 
     $('#btnAddRider').click(function () {
         var in_event = false,

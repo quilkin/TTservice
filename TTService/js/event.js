@@ -98,6 +98,17 @@ var Event = (function ($) {
             }
             return null;
         };
+        this.getEntryFromName = function (name) {
+            var i, entry;
+            for (i = 0; i < this.Entries.length; i += 1) {
+                entry = this.Entries[i];
+                var rider = Riders.riderFromID(entry.RiderID);
+                if (rider.Name.toLowerCase().indexOf(name.toLowerCase()) >= 0) {
+                    return entry;
+                }
+            }
+            return null;
+        };
         this.getRiderFromNumber = function (number) {
             var i, entry;
             for (i = 0; i < this.Entries.length; i += 1) {
@@ -384,12 +395,11 @@ var Event = (function ($) {
                 endTime = ttTime.noTimeYet();
             }
 
-            //$.each(this.Entries, function () {
-            this.Entries.every(function(entry){
+            //$.each(this.Entries, function (entry) {
+            this.Entries.forEach(function(entry){
                 if (updatingEntry === entry.Number) {
                     entry.Finish = endTime;
                     this.updateEventTimes();
-                    return false; // break
                 }
             },this);
         };

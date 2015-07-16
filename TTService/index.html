@@ -307,39 +307,47 @@
             <h4 id="newRiderTable" style="text-align:center; color:blue" ; />
             <h4 id="riderClubTable" style="text-align:center; color:green" />
         </div>
-        <a data-role="button" id="btnNewRider">Confirm New Rider?</a>
-        <a data-role="button" id="btnNewClub">Confirm New Club?</a>
         <div class="ui-grid-a">
-            <div class="ui-block-a"> <label for="riderAge">Age:</label></div>
-            <div class="ui-block-b"> <input type="number" id="riderAge" value="0" min="10" max="99" /></div>
-        </div>
-        <!--<div class="ui-grid-a">
-            <div class="ui-block-a"><label for="riderClub" id="lblRiderClub">Rider's club:</label></div>
-            <div class="ui-block-b"><input type="text" id="riderClub" /></div>
-        </div>-->
-        <div class="ui-grid-a">
-            <div class="ui-block-a"><label for="riderStartNumber" id="lblRiderStart">Rider number:</label></div>
-            <div class="ui-block-b"><input type="number" id="riderStartNumber" /></div>
-        </div>
-        <!--            <p id="addRiderHelp">help</p>-->
-        <div class="ui-grid-a">
-            <div class="ui-block-a"><label for="riderRideTime" id="lblRideTime">Result Time:</label></div>
-            <div class="ui-block-b"><input type="time" id="riderRideTime" /></div>
-        </div>
+            <div class="ui-block-a">  <a data-role="button" id="btnNewRider">Confirm New Rider?</a>  </div>
+            <div class="ui-block-b">  <a data-role="button" id="btnAlreadyIn">Already in event?</a>   </div>
 
-        <div class="ui-grid-a">
-            <div class="ui-block-a"><label> <input type="checkbox" id="checkLady" class="custom" />Lady?</label></div>
-            <div class="ui-block-b"><label> <input type="checkbox" id="checkIn" class="custom" />InEvent?</label> </div>
+            <a data-role="button" id="btnNewClub">Confirm New Club?</a>
+            <div class="ui-grid-a">
+                <div class="ui-block-a"> <label for="riderAge">Age:</label></div>
+                <div class="ui-block-b"> <input type="number" id="riderAge" value="0" min="10" max="99" /></div>
+            </div>
+            <!--<div class="ui-grid-a">
+        <div class="ui-block-a"><label for="riderClub" id="lblRiderClub">Rider's club:</label></div>
+        <div class="ui-block-b"><input type="text" id="riderClub" /></div>
+    </div>-->
+            <div class="ui-grid-a">
+                <div class="ui-block-a"><label for="riderStartNumber" id="lblRiderStart">Rider number:</label></div>
+                <div class="ui-block-b"><input type="number" id="riderStartNumber" /></div>
+            </div>
+            <!--            <p id="addRiderHelp">help</p>-->
+            <div class="ui-grid-a">
+                <div class="ui-block-a"><label> <input type="checkbox" id="checkLady" class="custom" />Lady?</label></div>
+                <div class="ui-block-b"><label> <input type="checkbox" id="checkIn" class="custom" />InEvent?</label> </div>
+            </div>
+            <div class="ui-grid-a">
+                <div class="ui-block-a"><label for="riderRideTime" id="lblRideTime">Result Time:</label></div>
+                <div class="ui-block-b"><input type="time" id="riderRideTime" /></div>
+            </div>
+            <div class="ui-grid-c">
+                <div class="ui-block-a"><a></a></div>
+                <div class="ui-block-b"><a></a></div>
+                <div class="ui-block-c"><a data-role="button" id="dns1">Did not start</a></div>
+                <div class="ui-block-d"><a data-role="button" id="dnf1">Did not finish</a></div>
+            </div>
+            <div class="ui-grid-a">
+                <div class="ui-block-a"><label for="riderEmail" id="Label1">Email:</label></div>
+                <div class="ui-block-b"><input type="text" id="riderEmail" /></div>
+            </div>
+            <div class="ui-field-contain">
+                <a data-role="button" id="btnAddRider">Add Rider</a>
+                <!--                <a onclick="newRidersDone()"  data-role="button">Finished adding riders</a>-->
+            </div>
         </div>
-        <div class="ui-grid-a">
-            <div class="ui-block-a"><label for="riderEmail" id="Label1">Email:</label></div>
-            <div class="ui-block-b"><input type="text" id="riderEmail" /></div>
-        </div>
-        <div class="ui-field-contain">
-            <a  data-role="button" id="btnAddRider">Add Rider</a>
-            <!--                <a onclick="newRidersDone()"  data-role="button">Finished adding riders</a>-->
-        </div>
-    </div>
 
     <div data-role="page" id="riderDetailsPage">
         <div data-role="header">
