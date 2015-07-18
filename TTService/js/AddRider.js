@@ -97,11 +97,10 @@
             // enable getting back the table (to choose a different rider) by double-clicking the chosen name
             $('#newRiderTable').dblclick(function () { chooseRider(addToEvent); });
             // place other details in form  from existing rider
-            // $.each(list, function (index, rider) {
+
             list.forEach(function(rider){
                 if (rider.Name === newName) {
                     // save details so we can see if they have been changed
-
                     var age = rider.Age,
                         lady = rider.Lady,
                         id = rider.ID,
@@ -112,7 +111,23 @@
 
                     riderBeforeChange = new TTRider(id, name, age, lady,clubID, email, best25);
                     Clubs.chooseRiderClub(clubID);
-
+                    var event = EventList.currentEvent();
+                    
+                    if (event !== null && event.pastEvent() === false) {
+                        $("#dns1").hide();
+                        $("#dnf1").hide();
+                    }
+                    $("#lblRideTime").show();
+                    $("#riderRideTime").show();
+                    
+                    if (event !== null && event.pastEvent()) {
+                        $("#lblRideTime").text("Result time:");
+                        //        $("#addRiderHelp").text("Event aleady held: add rider's actual time");
+                    }
+                    else {
+                        $("#lblRideTime").text("Recent 10 or 25 time:");
+                        //        $("#addRiderHelp").text("Add rider's best recent 10 or 25 time (if known)");
+                    }
                     if (rider.hasBest25()) {
                         $("#riderRideTime").val(ttTime.timeString(best25 * 1000));
                     }
@@ -194,14 +209,14 @@
         if (event.pastEvent()) {
                    $("#lblRideTime").show();
                    $("#riderRideTime").show();
-                   $("#DNS1").show();
-                   $("#DNF1").show();
+                   //$("#DNS1").show();
+                   //$("#DNF1").show();
         }
         else {
                     $("#lblRideTime").hide();
                     $("#riderRideTime").hide();
-                    $("#DNS1").hide();
-                    $("#DNF1").hide()
+                    //$("#DNS1").hide();
+                    //$("#DNF1").hide();
         }
 
         if (editRider !== null) {
@@ -246,9 +261,7 @@
             $('#newRiderTable').html(newRider.Name);
         }
 
-        // adding result details to an old event
         $("#riderRideTime").show();
-
         $("#riderRideTime").timepicker({
             showSecond: true,
             timeFormat: 'HH:mm:ss',
@@ -319,11 +332,16 @@
         });
 
         ttApp.changePage("ridersPage");
-
         table = new TTTable('#riders', "Select Rider:", riderArray, ttApp.tableHeight(),  noRidersFound, true);
-        table.tableDefs.columns = [{ "sTitle": "ID" }, { "sTitle": "Name" }, { "sTitle": "Club" }, { "sTitle": "Cat." }, { "sTitle": "Best 25" }];
+        table.tableDefs.columns = [
+            { "title": "ID", "width": "1%" },
+            { "title": "Name" },
+            { "title": "Club", "width": "20%" },
+            { "title": "Cat.", "width": "10%" },
+            { "title": "Best 25" }];
+
         table.show();
-        table.order([[1, 'asc'], [0, 'asc']]);
+        table.order();
         $('#riders tbody tr').on('click', function () {
             nTds = $('td', this);
             riderID = parseInt($(nTds[0]).text(),10);
@@ -524,14 +542,12 @@
                     //var startTimeS = $('#riderStartTime').val();
                     //var startTimeD = timeFromString(startTimeS);
                     //var startTime = startTimeD.valueOf();
-                    //if (event.pastEvent()) {
+                    
                     startNumber = parseInt($('#riderStartNumber').val(), 10);
                     if (startNumber === null || startNumber === "" || isNaN(startNumber)) {
                         popup.alert("Must set a starting number");
                         return;
                     }
-                    //popup.alert("debug1");
-                    //popup.alert("debug2");
                     // check that start number chosen hasn't already been used
                     var startNumberOK = true;
                     for (i = 0; i < event.getEntries().length; i++) {
@@ -618,7 +634,6 @@
                             event.getEntries().push(entry);
                         }
                         else {
-                            //$.each(event.getEntries(), function (index, e) {
                             event.getEntries().forEach(function (e) {
                                 if (e.RiderID === newRider.ID) {
                                     e = entry;
@@ -689,7 +704,6 @@
         },
         saveNewRiders: function() {
             // upload the new riders.These will have a temporary ID  when uploaded, but post will return first new permanent ID
-            //$.each(list, function (index, rider) {
             list.forEach(function(rider){
                 if (rider.tempID()) {
                     newRiders.push(rider);
@@ -707,14 +721,12 @@
             for (index=0; index < response.length; index+=1) {
                 newID = response[index].ID;
                 // add new IDs to existing riders
-                //$.each(list, function(index,rider) {
                 list.forEach(function (rider) {
                     if (rider !== undefined && rider.ID < 0) {
                         // this was a temp ID, replace it
                         // replace in the event list first, if there is an event to be saved
                         if (eventToBeSaved !== null) {
                             var eventEntries = eventToBeSaved.Entries;
-                            //$.each(eventEntries, function (index, entry) {
                             eventEntries.forEach(function (entry) {
                                 if (entry !== undefined && entry.RiderID === rider.ID) {
                                     // this was a temp ID, replace it
@@ -783,11 +795,7 @@
         riderFromID: function (riderID) {
             return fromID(riderID);
         },
-        //clearList: function () {
-        //    while (list.length > 0) {
-        //        list.pop();
-        //    }
-        //}
+
 
     };
 

@@ -19,7 +19,7 @@
             eventData.push([ev.ID, Clubs.getName(ev.ClubID), Course.getName(ev.CourseID), ttTime.dateTimeString(new Date(ev.Time))]);
         });
         event = null;
-        eventTable = new TTTable('#events', "" , eventData, 200,  null, false);
+        eventTable = new TTTable('#events', "" , eventData, 300,  null, false);
         eventTable.tableDefs.filter = false;
         eventTable.tableDefs.columns = [{ "title": "#" },
               { "title": "Club" },
@@ -71,22 +71,39 @@
     function loadEventAction() {
 
         var clubID, courseID,
-            fromdate, todate, fromtime, totime,
-            datemillisec, days,
+            fromdate, todate, fromdate, todate,
+            fromdatemillisec,
+            todatemillisec,
+            days,
             newEvent;
 
         clubID = Clubs.getID($("#chooseEventClub").text());
         courseID = Course.getID($("#chooseEventCourse").text());
+        //fromdate= new Date(2000, 1);
+        //todate = new Date(2037, 1);
 
-        fromdate = $("#fromDate").val();
-        todate = $("#toDate").val();
-        fromtime = fromdate.Length > 0 ? Date.parse(fromdate) : new Date(2000, 1);
-        totime = todate.Length > 0 ? Date.parse(todate) : new Date(2037, 1);
-        datemillisec = fromtime.valueOf();
-        days = (totime.valueOf() - datemillisec) / (1440 * 60 * 1000);
+        fromdate = $("#btnFromDate").text().split('/');
+        todate = $("#btnToDate").text().split('/');
+        fromdate = new Date(fromdate[2], fromdate[1] - 1, fromdate[0]);
+        todate = new Date(todate[2], todate[1] - 1, todate[0]);
+
+        fromdatemillisec = fromdate.valueOf();
+        if (isNaN(fromdatemillisec)) {
+            fromdate = new Date(2010, 1);
+            $("#btnFromDate").text(ttTime.dateString(fromdate));
+            fromdatemillisec = fromdate.valueOf();
+        }
+        todatemillisec = todate.valueOf();
+        if (isNaN(todatemillisec)) {
+            todate = new Date();
+            todate.setYear(todate.getFullYear() + 1);
+            $("#btnToDate").text(ttTime.dateString(todate));
+            todatemillisec = todate.valueOf();
+        }
+        days = (todate.valueOf() - fromdatemillisec) / (1440 * 60 * 1000);
         days = days.toFixed(0);
         // use extra data field for number of days in search
-        newEvent = new Event(0, courseID, datemillisec, clubID, days);
+        newEvent = new Event(0, courseID, fromdatemillisec, clubID, days);
         TTData.json("LoadEvents", "POST", newEvent, parseEvents, true);
     }
     function addEventAction() {
@@ -114,9 +131,9 @@
     $('#eventSubmit').click(function () {
         addEventAction();
     });
-    $('#eventSearch').click(function () {
-        loadEventAction();
-    });
+    //$('#eventSearch').click(function () {
+    //    loadEventAction();
+    //});
     $('#displayEvent').click(function () {
         if (exists()) {
             event.displayEvent();
@@ -168,7 +185,7 @@
     });
 
 
-    function chooseClub(element) {
+    function chooseClub(newEvent) {
         clubTable = new TTTable('#clubs', "Select Club:", clubsList, 200, null,false);
         clubTable = clubTable.show();
         $('#clubs tbody tr').on('click', function () {
@@ -176,27 +193,38 @@
             var nTds, club;
             nTds = $('td', this);
             club = $(nTds[0]).text();
-            element.text(club);
+            if (newEvent) {
+                $('#chooseNewEventClub').text(club);
+            }
+            else {
+                $('#chooseEventClub').text(club);
+            }
             clubTable.destroy(true);
-
+            loadEventAction();
         });
     }
-    function chooseCourse(element) {
+    function chooseCourse(newEvent) {
         courseTable = new TTTable('#courses', "Select Course:", coursesList, 200,  null,false);
         courseTable = courseTable.show();
         $('#courses tbody tr').on('click', function () {
             var nTds, course;
             nTds = $('td', this);
             course = $(nTds[0]).text();
-            element.text(course);
+            if (newEvent) {
+                $('#chooseNewEventCourse').text(course);
+            }
+            else {
+                $('#chooseEventCourse').text(course);
+            }
             courseTable.destroy(true);
+            loadEventAction();
         });
     }
 
-    $('#chooseNewEventClub').click(function () { chooseClub($('#chooseNewEventClub')); });
-    $('#chooseEventClub').click(function () { chooseClub($('#chooseEventClub')); });
-    $('#chooseNewEventCourse').click(function () { chooseCourse($('#chooseNewEventCourse')); });
-    $('#chooseEventCourse').click(function () { chooseCourse($('#chooseEventCourse')); });
+    $('#chooseNewEventClub').click(function () { chooseClub(true); });
+    $('#chooseEventClub').click(function () { chooseClub(false); });
+    $('#chooseNewEventCourse').click(function () { chooseCourse(true); });
+    $('#chooseEventCourse').click(function () { chooseCourse(false); });
 
     $("#startTime").timepicker({
         timeFormat: 'HH:mm:ss',
@@ -220,14 +248,16 @@
         changeYear: true,
         dateFormat: "dd/mm/yy",
         onSelect: function (result, i) {
-            $("#btnFromDate").text("between " + result);
+            $("#btnFromDate").text(result);
+            loadEventAction();
         }
     });
     $("#toDate").datepicker({
         changeYear: true,
         dateFormat: "dd/mm/yy",
         onSelect: function (result, i) {
-            $("#btnToDate").text("and " + result);
+            $("#btnToDate").text(result);
+            loadEventAction();
         }
     });
 
@@ -259,7 +289,7 @@
                 function () {
                     event = null;
                     ttApp.changePage('loadEventPage');
-
+                    loadEventAction();
                     if (clubTable !== null) {
                         $('#chooseEventClub').text("Club");
                         clubTable.destroy(true);
@@ -276,6 +306,7 @@
         }
         else {
             ttApp.changePage('loadEventPage');
+            loadEventAction();
         }
          
         //$("#eventsTable").show();

@@ -243,14 +243,14 @@ var Event = (function ($) {
             },this);
 
             //TTTable.resultsTableSummary(results, this.details());
-            table = new TTTable("#extraResults", "", results, 300, null, true);
-            table.tableDefs.columns = [
+            var extraTable = new TTTable("#extraResults", "", results, 300, null, true);
+            extraTable.tableDefs.columns = [
                       { "title": "no:" },
                       { "title": "name" },
                       { "title": "club" },
                       { "title": "time" },
                       { "title": "vet+" }];
-            table.show();
+            extraTable.show();
         };
         this.displayEvent = function () {
             var rider,
@@ -353,7 +353,7 @@ var Event = (function ($) {
             table = new TTTable('#times', "Find entry", entrydata, ttApp.tableHeight() - 100, null,false);
             table.tableDefs.columns = [{ "title": "#" }, { "title": "Name" }, { "title": "Club" }, { "title": "Time" }];
             table.show();
-            table.order([[1, 'asc']]);
+            table.order();
             $("#riderTime").timepicker({
                 showSecond: true,
                 timeFormat: 'HH:mm:ss',

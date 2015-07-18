@@ -181,7 +181,8 @@ var Clubs = (function ($) {
             }
         });
         ttApp.changePage("clubsPage");
-        var table = new TTTable('#clubs2', "Select Club:", tableClubs, ttApp.tableHeight(),  null,false);
+        var table = new TTTable('#clubs2', "Select Club:", tableClubs, ttApp.tableHeight(), null, false);
+        table.tableDefs.columns = [{ "title": "Club" }, { "title": "Abbr" }];
         table.show();
     });
 

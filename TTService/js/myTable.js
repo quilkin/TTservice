@@ -3,7 +3,7 @@ var TTTable = (function ($) {
     "use strict";
 
     var table,
-    ttTable = {};
+    //ttTable = {};
     
     ttTable = function (tableID, searchText, array, height, footercallback, allowPrint) {
         var file = "Rider List",
@@ -64,15 +64,12 @@ var TTTable = (function ($) {
                 "aButtons": ["copy", { "sExtends": "pdf", "sTitle": file }]
             };
         }
-        else {
-            this.tableDefs.columnDefs = [
-                { "width": "2%", "targets": 0 }
-            ];
-        }
+
         $(tableID + 'Table').html('<table class="display" id="' + tableID.substring(1) + '"></table>');
 
         this.show = function () {
             table = $(tableID).DataTable(this.tableDefs);
+            table.columns.adjust();
             return table;
         };
         this.settings = function () {
@@ -82,7 +79,7 @@ var TTTable = (function ($) {
             return table.search();
         };
         this.order = function () {
-            table.order();
+            table.order([1, 'asc']).draw();
         }
         this.destroy = function () {
             table.destroy();
