@@ -179,8 +179,12 @@ var Event = (function ($) {
                 }
                 if (finish < ttTime.specialTimes()) {
                     rideTimeString = ttTime.timeStringH1(rideTime);
-                    results.push([entry.Position, entry.Number, rider.Name, ttApp.isMobile() ? Clubs.getAbbr(rider.ClubID) : Clubs.getName(rider.ClubID), rideTimeString, ttTime.timeStringVetStd(entry.VetOnStd)]);
                 }
+                results.push([entry.Position, entry.Number, rider.Name,
+                    ttApp.isMobile() ? Clubs.getAbbr(rider.ClubID) : Clubs.getName(rider.ClubID),
+                    rideTimeString,
+                    ttTime.timeStringVetStd(entry.VetOnStd)]);
+
             }, this);
 
             ttApp.changePage("resultpage");
@@ -193,9 +197,10 @@ var Event = (function ($) {
             //title = Clubs.getName(this.ClubID) + " " + ttTime.dateTimeString(this.Time) + " " + Course.getName(this.CourseID);
             $('#resultsTitle').text(this.details());
 
-            var table = new TTTable('#results', "Select Rider:", results, ttApp.tableHeight(), null, true);
+            var table = new TTTable('#results', "Select Rider:", results, 300, null, true);
             table.tableDefs.filter = false;
-            table.tableDefs.columns = [{ "sTitle": "" },
+            table.tableDefs.columns = [
+                  { "sTitle": "pos" },
                   { "sTitle": "no:" },
                   { "sTitle": "name" },
                   { "sTitle": "club" },
@@ -208,49 +213,92 @@ var Event = (function ($) {
                 nTds = $('td', this);
                 name = $(nTds[2]).text();
                 rider = Riders.riderFromName(name);
-
                 ttApp.changePage("riderDetailsPage");
-
                 rider.displayRider(true);
             });
-            // now do a summary table in clubs order
-
+            // now do a summary table in clubs order, and calculate team prizes
+            // First, compare entries and sort in order of club
+            this.Entries.sort(function (a, b) {
+                var riderA = Riders.riderFromID(a.RiderID),
+                    riderB = Riders.riderFromID(b.RiderID),
+                    clubA = riderA.ClubID,
+                    clubB = riderB.ClubID;
+                return Clubs.getName(clubA).localeCompare(Clubs.getName(clubB));
+            });
             results = [];
-            this.Entries.forEach(function(entry){
-                rider = Riders.riderFromID(entry.RiderID);
-                stdTime = rider.vetStandardTime(this.distance());
+            // now need a revised entry list that only includes riders that have a finish time
+            var finishedEntries = [],
+                club,
+                nextRider,nextClub = 0,
+                timesForClub = [],
+                clubsWith3Entries = [],
+                i, entry, len;
+                
+            for (i = 0; i < this.Entries.length; i += 1) {
+                entry = this.Entries[i];
                 start = entry.Start;
                 finish = entry.Finish;
-                if (stdTime > 0) {
-                    entry.VetOnStd = finish - start - stdTime;
+                rideTime = finish - start;
+                if (finish < ttTime.specialTimes()) {
+                    rider = Riders.riderFromID(entry.RiderID);
+                    club = rider.ClubID;
+                    finishedEntries.push([club, rider.Name, rideTime]);
+                }
+            }
+            len = finishedEntries.length;
+            for (i = 0; i < len; i += 1) {
+                entry = finishedEntries[i];
+                if (i < len-1) {
+                    nextClub = finishedEntries[i + 1][0];
                 }
                 else {
-                    entry.VetOnStd = 0;
+                    nextClub = -1;
                 }
-                rideTime = finish - start;
-                if (finish / 1000 === ttTime.didNotStart() / 1000) {
-                    rideTimeString = "DNS";
-                    entry.VetOnStd = 0;
+                club = finishedEntries[i][0];
+                rider = finishedEntries[i][1];
+                rideTime = finishedEntries[i][2];
+                rideTimeString = ttTime.timeStringH1(rideTime);
+                results.push([
+                    Clubs.getName(club),
+                    rider,
+                    rideTimeString
+                ]);
+                // accumulate all of the club's times
+                timesForClub.push([rider,rideTime]);
+                if (club !== nextClub)   {
+                    // found all finishers for this club. Calculate best 3 times, insert an extra line of results and start next club.
+                    if (timesForClub.length >= 3) {
+                        var clubName = Clubs.getName(club),
+                            riderList = timesForClub[0][0] + ', ' + timesForClub[1][0] + ', ' + timesForClub[2][0],
+                            totalTime = (ttTime.timeStringH1(timesForClub[0][1] + timesForClub[1][1] + timesForClub[2][1])).toString();
+                        timesForClub.sort(function (a, b) { return a[1] - b[1] });
+                        clubsWith3Entries.push([
+                            clubName,riderList,totalTime
+                        ]);
+                    
+                    }
+                    timesForClub = [];
                 }
-                else if (finish / 1000 === ttTime.didNotFinish() / 1000) {
-                    rideTimeString = "DNF";
-                    entry.VetOnStd = 0;
-                }
-                if (finish < ttTime.specialTimes()) {
-                    rideTimeString = ttTime.timeStringH1(rideTime);
-                    results.push([Clubs.getAbbr(rider.ClubID), entry.Number, rider.Name, rideTimeString, ttTime.timeStringVetStd(entry.VetOnStd)]);
-                }
-            },this);
+            }
+            // sort potential winning clubs into accumulative time order
+            clubsWith3Entries.sort(function (a, b) {
+                return a[2].localeCompare(b[2]);
+            });
+            // modify club names with postion and add (up to 9 of) them to main list
+            var club;
+            for (i = 0; i < clubsWith3Entries.length && i < 9; i += 1) {
+                club = clubsWith3Entries[i];
+                club[0] = (i+1) + ": " + club[0];
+                results.push(club);
+            };
 
-            //TTTable.resultsTableSummary(results, this.details());
             var extraTable = new TTTable("#extraResults", "", results, 300, null, true);
             extraTable.tableDefs.columns = [
-                      { "title": "no:" },
-                      { "title": "name" },
-                      { "title": "club" },
-                      { "title": "time" },
-                      { "title": "vet+" }];
+                      { "title": "Results by Club", "orderable": false },
+                      { "title": "", "orderable": false },
+                      { "title": "times" ,  "orderable": false}];
             extraTable.show();
+
         };
         this.displayEvent = function () {
             var rider,
@@ -275,7 +323,6 @@ var Event = (function ($) {
             }
 
             if (ttApp.screenWidth() < 500) {
-                //$.each(this.Entries, function () {
                 this.Entries.forEach(function(entry){
                     rider = Riders.riderFromID(entry.RiderID);
                     if (rider === null) {
@@ -353,7 +400,7 @@ var Event = (function ($) {
             table = new TTTable('#times', "Find entry", entrydata, ttApp.tableHeight() - 100, null,false);
             table.tableDefs.columns = [{ "title": "#" }, { "title": "Name" }, { "title": "Club" }, { "title": "Time" }];
             table.show();
-            table.order();
+            table.order([1, 'asc']);
             $("#riderTime").timepicker({
                 showSecond: true,
                 timeFormat: 'HH:mm:ss',

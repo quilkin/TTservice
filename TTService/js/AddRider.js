@@ -341,7 +341,7 @@
             { "title": "Best 25" }];
 
         table.show();
-        table.order();
+        table.order([1, 'asc']);
         $('#riders tbody tr').on('click', function () {
             nTds = $('td', this);
             riderID = parseInt($(nTds[0]).text(),10);

@@ -6,8 +6,8 @@ var TTTable = (function ($) {
     //ttTable = {};
     
     ttTable = function (tableID, searchText, array, height, footercallback, allowPrint) {
-        var file = "Rider List",
-            event = EventList.currentEvent();
+        var file = "Rider List";
+           // event = EventList.currentEvent();
 
         this.tableDefs = {
             "language": { "sSearch": searchText },
@@ -18,40 +18,41 @@ var TTTable = (function ($) {
             "data": array,
             "footerCallback": footercallback
         };
-        if (tableID === "#results" || tableID === "#entries" || tableID=="#extraResults") {
+        if (tableID === "#results" || tableID === "#entries" || tableID ==="#extraResults") {
             file = EventList.currentEvent().details();
         }
-        if (tableID === "#extraResults") {
-            this.tableDefs.aoColumnDefs = [  { "bVisible": false, "aTargets": [0] } ];
-            this.tableDefs.aaSortingFixed = [[0, 'asc']];
-            this.tableDefs.aaSorting = [[1, 'asc']];
-            this.tableDefs.drawCallback = function (oSettings) {
-                if (oSettings.aiDisplay.length === 0) {
-                    return;
-                }
+        //if (tableID === "#extraResults") {
+        //    this.tableDefs.order = [[0, 'asc'],[2,'asc']];
+        //    this.tableDefs.ColumnDefs = [  { "visible": false, "targets": [0] } ];
+        //    this.tableDefs.orderFixed = [0, 'asc'];
+        //    this.tableDefs.order = [1, 'asc'];
+        //    this.tableDefs.drawCallback = function (oSettings) {
+        //        if (oSettings.aiDisplay.length === 0) {
+        //            return;
+        //        }
 
-                var nTrs = $('#extraResults tbody tr'),
-                    iCol = nTrs[0].getElementsByTagName('td'),
-                    iColspan = iCol.length,
-                    sLastGroup = "",
-                    i;
-                for (i = 0 ; i < nTrs.length ; i++) {
-                    var iDisplayIndex = oSettings._iDisplayStart + i,
-                        sGroup = oSettings.aoData[oSettings.aiDisplay[iDisplayIndex]]._aData[0];
-                    if (sGroup !== sLastGroup) {
-                        var nGroup = document.createElement('tr'),
-                            nCell = document.createElement('td');
-                        //ncell.colSpan = iColspan;
-                        nCell.colSpan = 100;
-                        nCell.className = "group";
-                        nCell.innerHTML = sGroup;
-                        nGroup.appendChild(nCell);
-                        nTrs[i].parentNode.insertBefore(nGroup, nTrs[i]);
-                        sLastGroup = sGroup;
-                    }
-                }
-            };
-        }
+        //        var nTrs = $('#extraResults tbody tr'),
+        //            iCol = nTrs[0].getElementsByTagName('td'),
+        //            iColspan = iCol.length,
+        //            sLastGroup = "",
+        //            i, iDisplayIndex, sGroup;
+        //        for (i = 0 ; i < nTrs.length ; i++) {
+        //            iDisplayIndex = oSettings._iDisplayStart + i;
+        //            sGroup = oSettings.aoData[oSettings.aiDisplay[iDisplayIndex]]._aData[0];
+        //            if (sGroup !== sLastGroup) {
+        //                var nGroup = document.createElement('tr'),
+        //                    nCell = document.createElement('td');
+        //                ncell.colSpan = iColspan;
+        //                nCell.colSpan = 100;
+        //                nCell.className = "group";
+        //                nCell.innerHTML = sGroup;
+        //                nGroup.appendChild(nCell);
+        //                nTrs[i].parentNode.insertBefore(nGroup, nTrs[i]);
+        //                sLastGroup = sGroup;
+        //            }
+        //        }
+        //    };
+        //}
         if (ttApp.isMobile()) {
             allowPrint = false;
         }
@@ -68,8 +69,8 @@ var TTTable = (function ($) {
         $(tableID + 'Table').html('<table class="display" id="' + tableID.substring(1) + '"></table>');
 
         this.show = function () {
-            table = $(tableID).DataTable(this.tableDefs);
-            table.columns.adjust();
+            table = $(tableID).DataTable(this.tableDefs).columns.adjust();
+            //table.columns.adjust();
             return table;
         };
         this.settings = function () {
@@ -78,15 +79,15 @@ var TTTable = (function ($) {
         this.search = function () {
             return table.search();
         };
-        this.order = function () {
-            table.order([1, 'asc']).draw();
-        }
+        this.order = function (ordering) {
+            table.order(ordering).draw();
+        };
         this.destroy = function () {
             table.destroy();
-        }
+        };
         this.clear = function () {
             table.clear();
-        }
+        };
     };
 
 
