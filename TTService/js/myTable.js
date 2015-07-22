@@ -3,14 +3,11 @@ var TTTable = (function ($) {
     "use strict";
 
     var table,
-    //ttTable = {};
-    
     ttTable = function (tableID, searchText, array, height, footercallback, allowPrint) {
         var file = "Rider List";
-           // event = EventList.currentEvent();
 
         this.tableDefs = {
-            "language": { "sSearch": searchText },
+            "language": { "search": searchText },
             "scrollY": height,
             "filter": true,
             "paging": false,
@@ -18,41 +15,10 @@ var TTTable = (function ($) {
             "data": array,
             "footerCallback": footercallback
         };
-        if (tableID === "#results" || tableID === "#entries" || tableID ==="#extraResults") {
-            file = EventList.currentEvent().details();
+        if (tableID === "#results" || tableID === "#entries" || tableID ==="#clubResults") {
+            file = EventList.currentEvent().details() + " " + tableID.substring(1);
         }
-        //if (tableID === "#extraResults") {
-        //    this.tableDefs.order = [[0, 'asc'],[2,'asc']];
-        //    this.tableDefs.ColumnDefs = [  { "visible": false, "targets": [0] } ];
-        //    this.tableDefs.orderFixed = [0, 'asc'];
-        //    this.tableDefs.order = [1, 'asc'];
-        //    this.tableDefs.drawCallback = function (oSettings) {
-        //        if (oSettings.aiDisplay.length === 0) {
-        //            return;
-        //        }
 
-        //        var nTrs = $('#extraResults tbody tr'),
-        //            iCol = nTrs[0].getElementsByTagName('td'),
-        //            iColspan = iCol.length,
-        //            sLastGroup = "",
-        //            i, iDisplayIndex, sGroup;
-        //        for (i = 0 ; i < nTrs.length ; i++) {
-        //            iDisplayIndex = oSettings._iDisplayStart + i;
-        //            sGroup = oSettings.aoData[oSettings.aiDisplay[iDisplayIndex]]._aData[0];
-        //            if (sGroup !== sLastGroup) {
-        //                var nGroup = document.createElement('tr'),
-        //                    nCell = document.createElement('td');
-        //                ncell.colSpan = iColspan;
-        //                nCell.colSpan = 100;
-        //                nCell.className = "group";
-        //                nCell.innerHTML = sGroup;
-        //                nGroup.appendChild(nCell);
-        //                nTrs[i].parentNode.insertBefore(nGroup, nTrs[i]);
-        //                sLastGroup = sGroup;
-        //            }
-        //        }
-        //    };
-        //}
         if (ttApp.isMobile()) {
             allowPrint = false;
         }
@@ -69,8 +35,8 @@ var TTTable = (function ($) {
         $(tableID + 'Table').html('<table class="display" id="' + tableID.substring(1) + '"></table>');
 
         this.show = function () {
-            table = $(tableID).DataTable(this.tableDefs).columns.adjust();
-            //table.columns.adjust();
+            table = $(tableID).DataTable(this.tableDefs);
+            table.columns.adjust().draw();
             return table;
         };
         this.settings = function () {

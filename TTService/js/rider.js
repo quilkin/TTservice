@@ -198,7 +198,7 @@ var TTRider = (function ($) {
 
             $('#name').text(this.Name);
             $('#club').text("Club: " + Clubs.getName(this.ClubID));
-            $('#cat').text("Category: " + this.getCategory());
+            $('#cat').text("Category: " + this.catAbbr());
             if (event) {
                 event.getEntries().every(function(e){
                     if (self.ID === e.RiderID) {

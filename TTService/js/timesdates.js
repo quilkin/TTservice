@@ -10,7 +10,9 @@ var ttTime = (function () {
         },
         dateString = function (time) {
             // toLocaleTimeString() is no good for different platforms
-            return [time.getFullYear(), pad2(time.getMonth() + 1), pad2(time.getDate())].join('-');
+            //return [time.getFullYear(), pad2(time.getMonth() + 1), pad2(time.getDate())].join('-');
+            return [pad2(time.getDate()),pad2(time.getMonth() + 1),time.getFullYear()].join('/');
+
         },
         timeString = function (time) {
             // toLocaleTimeString() is no good for different platforms

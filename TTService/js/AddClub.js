@@ -38,6 +38,7 @@ var Clubs = (function ($) {
     list[0] = new CycleClub(1, '', '');
 
     clubs.parseJson = function (response) {
+        list.length = 0;
         response.forEach(function(club) {
             // make a fast lookup list
             list[club.ID] = club;
@@ -47,13 +48,10 @@ var Clubs = (function ($) {
     clubs.populateList = function (plist) {
         // clear any existing list
         plist.length = 0;
-        //while (plist.length > 0) {
-        //    plist.pop();
-        //}
-        //$.each(list, function (index, club) {
         list.forEach(function(club){
             if (club !== undefined) {
                 plist.push([club.Name]);
+                i += 1;
             }
         });
     };

@@ -197,7 +197,7 @@ var Event = (function ($) {
             //title = Clubs.getName(this.ClubID) + " " + ttTime.dateTimeString(this.Time) + " " + Course.getName(this.CourseID);
             $('#resultsTitle').text(this.details());
 
-            var table = new TTTable('#results', "Select Rider:", results, 300, null, true);
+            var table = new TTTable('#results', "", results, 300, null, true);
             table.tableDefs.filter = false;
             table.tableDefs.columns = [
                   { "sTitle": "pos" },
@@ -292,12 +292,13 @@ var Event = (function ($) {
                 results.push(club);
             };
 
-            var extraTable = new TTTable("#extraResults", "", results, 300, null, true);
-            extraTable.tableDefs.columns = [
+            var clubTable = new TTTable("#clubResults", "", results, 300, null, true);
+            clubTable.tableDefs.columns = [
                       { "title": "Results by Club", "orderable": false },
                       { "title": "", "orderable": false },
-                      { "title": "times" ,  "orderable": false}];
-            extraTable.show();
+                      { "title": "times", "orderable": false }];
+            clubTable.tableDefs.filter = false;
+            clubTable.show();
 
         };
         this.displayEvent = function () {

@@ -186,7 +186,9 @@
 
 
     function chooseClub(newEvent) {
-        clubTable = new TTTable('#clubs', "Select Club:", clubsList, 200, null,false);
+
+        clubTable = new TTTable('#clubs', "Select Club:", clubsList, 200, null, false);
+        clubTable.tableDefs.columns = [{ "title": "Club" }];
         clubTable = clubTable.show();
         $('#clubs tbody tr').on('click', function () {
             // add the club name to the button for reference
@@ -204,7 +206,8 @@
         });
     }
     function chooseCourse(newEvent) {
-        courseTable = new TTTable('#courses', "Select Course:", coursesList, 200,  null,false);
+        courseTable = new TTTable('#courses', "Select Course:", coursesList, 200, null, false);
+        courseTable.tableDefs.columns = [{ "title": "Course" }];
         courseTable = courseTable.show();
         $('#courses tbody tr').on('click', function () {
             var nTds, course;
