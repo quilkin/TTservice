@@ -80,19 +80,15 @@
                 names.push([rider.Name, Clubs.getAbbr(rider.ClubID)]);
             }
         };
-        table = new TTTable('#newRider', "Select Rider:", names, 200, noRidersFound,false);
-        table.show();
-        riderTableSettings = table.settings();
 
         $('#riderClubTable').html("");
         $('#btnNewClub').hide();
 
+        table = new TTTable('#newRider', "Select Rider:", names, 200, noRidersFound, false);
+        riderTableSettings = table.settings();
+        table.show(function (nTds) {
 
-        $('#newRider tbody tr').on('click', function () {
-            var newName,
-                nTds = $('td', this);
-
-            newName = $(nTds[0]).text();
+            var newName = $(nTds[0]).text();
             $('#newRiderTable').html(newName);
             // enable getting back the table (to choose a different rider) by double-clicking the chosen name
             $('#newRiderTable').dblclick(function () { chooseRider(addToEvent); });
@@ -339,17 +335,14 @@
             { "title": "Club", "width": "20%" },
             { "title": "Cat.", "width": "10%" },
             { "title": "Best 25" }];
-
-        table.show();
-        table.order([1, 'asc']);
-        $('#riders tbody tr').on('click', function () {
-            nTds = $('td', this);
+        table.tableDefs.order = [1, 'asc'];
+        table.show(function (nTds) {
             riderID = parseInt($(nTds[0]).text(),10);
-
             ttApp.changePage("riderDetailsPage");
             rider = fromID(riderID);
             rider.displayRider(false);
         });
+        
     });
 
     function TimePopup(result) {

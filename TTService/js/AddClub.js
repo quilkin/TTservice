@@ -127,11 +127,9 @@ var Clubs = (function ($) {
         }
     }
     function clubTable(clubsarray, existingClub) {
-        var table = new TTTable('#riderClub', "Select Club:" , clubsarray, 200, noClubsFound,false);
-        table.show();
+        var table = new TTTable('#riderClub', "Select Club:", clubsarray, 200, noClubsFound, false);
         clubTableSettings = table.settings();
-        $('#riderClub tbody tr').on('click', function () {
-            var nTds = $('td', this);
+        table.show(function (nTds) {
             newClub = $(nTds[0]).text();
             $('#riderClubTable').html(newClub);
             Riders.getNewRider().ClubID = Clubs.getID(newClub);
@@ -181,7 +179,7 @@ var Clubs = (function ($) {
         ttApp.changePage("clubsPage");
         var table = new TTTable('#clubs2', "Select Club:", tableClubs, ttApp.tableHeight(), null, false);
         table.tableDefs.columns = [{ "title": "Club" }, { "title": "Abbr" }];
-        table.show();
+        table.show(null);
     });
 
     clubs.uploadNewClubs = function () {

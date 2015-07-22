@@ -25,15 +25,13 @@
               { "title": "Club" },
               { "title": "Course" },
               { "title": "Date/Time" }];
-        eventTable.show();
+
+        eventTable.show(function (nTds) {
 
         // trying to make first column invisible but that messes up indexing
         //var column = eventTable.column(0);
         //column.visible(false);
-
-        $('#events tbody tr').on('click', function () {
-            var nTds = $('td', this),
-                eventID = parseInt($(nTds[0]).text(),10);
+            var eventID = parseInt($(nTds[0]).text(), 10);
 
             // find the correct event from the list
             events.some(function(ev){
@@ -189,12 +187,8 @@
 
         clubTable = new TTTable('#clubs', "Select Club:", clubsList, 200, null, false);
         clubTable.tableDefs.columns = [{ "title": "Club" }];
-        clubTable = clubTable.show();
-        $('#clubs tbody tr').on('click', function () {
-            // add the club name to the button for reference
-            var nTds, club;
-            nTds = $('td', this);
-            club = $(nTds[0]).text();
+        clubTable = clubTable.show(function(nTDs){
+            var club = $(nTds[0]).text();
             if (newEvent) {
                 $('#chooseNewEventClub').text(club);
             }
@@ -208,11 +202,8 @@
     function chooseCourse(newEvent) {
         courseTable = new TTTable('#courses', "Select Course:", coursesList, 200, null, false);
         courseTable.tableDefs.columns = [{ "title": "Course" }];
-        courseTable = courseTable.show();
-        $('#courses tbody tr').on('click', function () {
-            var nTds, course;
-            nTds = $('td', this);
-            course = $(nTds[0]).text();
+        courseTable = courseTable.show(function(nTDs){
+            var course = $(nTds[0]).text();
             if (newEvent) {
                 $('#chooseNewEventCourse').text(course);
             }

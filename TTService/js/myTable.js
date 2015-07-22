@@ -34,9 +34,17 @@ var TTTable = (function ($) {
 
         $(tableID + 'Table').html('<table class="display" id="' + tableID.substring(1) + '"></table>');
 
-        this.show = function () {
-            table = $(tableID).DataTable(this.tableDefs);
-            table.columns.adjust().draw();
+        this.show = function (onclick) {
+            // onclick is the function (if any) to be run when a row is clicked
+            var defs = this.tableDefs;
+            // workaround delay to allow column headers to be resized. Needs a delay after being created, before being shown
+            setTimeout(function () {
+                table = $(tableID).DataTable(defs);
+                $(tableID + ' tbody tr').on('click', function () {
+                    var nTds = $('td', this);
+                    onclick(nTds);
+                });
+            }, 200);
             return table;
         };
         this.settings = function () {
@@ -44,9 +52,6 @@ var TTTable = (function ($) {
         };
         this.search = function () {
             return table.search();
-        };
-        this.order = function (ordering) {
-            table.order(ordering).draw();
         };
         this.destroy = function () {
             table.destroy();
