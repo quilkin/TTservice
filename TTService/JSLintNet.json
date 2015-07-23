@@ -24,7 +24,9 @@
       "Entry": true,
       "ttTable": true,
       "Event": true,
-      "login": true
+      "login": true,
+      "Course": true,
+      "TTTable": true
     },
     "bitwise": true,
     "plusplus": true,

@@ -27,10 +27,9 @@
               { "title": "Date/Time" }];
 
         eventTable.show(function (nTds) {
-
-        // trying to make first column invisible but that messes up indexing
-        //var column = eventTable.column(0);
-        //column.visible(false);
+            // trying to make first column invisible but that messes up indexing
+            //var column = eventTable.column(0);
+            //column.visible(false);
             var eventID = parseInt($(nTds[0]).text(), 10);
 
             // find the correct event from the list
@@ -52,8 +51,7 @@
                     event.results();
                 }
                 else {
-                    // popup.alert("No results yet, event has not happened");
-                    popup.wait(entries.length + " riders loaded for this (future) event",
+                     popup.wait(entries.length + " riders loaded for this (future) event",
                         function () {
                             ttApp.changePage("home");
                         });
@@ -63,8 +61,7 @@
             true);
         });
     }
-
-
+    
     // choose an event from existing events in database, based on selection of parameters
     function loadEventAction() {
 
@@ -77,8 +74,6 @@
 
         clubID = Clubs.getID($("#chooseEventClub").text());
         courseID = Course.getID($("#chooseEventCourse").text());
-        //fromdate= new Date(2000, 1);
-        //todate = new Date(2037, 1);
 
         fromdate = $("#btnFromDate").text().split('/');
         todate = $("#btnToDate").text().split('/');
@@ -187,7 +182,7 @@
 
         clubTable = new TTTable('#clubs', "Select Club:", clubsList, 200, null, false);
         clubTable.tableDefs.columns = [{ "title": "Club" }];
-        clubTable = clubTable.show(function(nTDs){
+        clubTable = clubTable.show(function(nTds){
             var club = $(nTds[0]).text();
             if (newEvent) {
                 $('#chooseNewEventClub').text(club);
@@ -202,7 +197,7 @@
     function chooseCourse(newEvent) {
         courseTable = new TTTable('#courses', "Select Course:", coursesList, 200, null, false);
         courseTable.tableDefs.columns = [{ "title": "Course" }];
-        courseTable = courseTable.show(function(nTDs){
+        courseTable = courseTable.show(function(nTds){
             var course = $(nTds[0]).text();
             if (newEvent) {
                 $('#chooseNewEventCourse').text(course);
@@ -302,8 +297,6 @@
             ttApp.changePage('loadEventPage');
             loadEventAction();
         }
-         
-        //$("#eventsTable").show();
     });
 
     $('#addEvent').click(function () {
@@ -336,8 +329,6 @@
         else {
             ttApp.changePage('addEventPage');
         }
-        //$("#startDate").hide();
-        //$("#startTime").hide();
     });
 
     return {
@@ -349,7 +340,6 @@
                 return "No event loaded";
             }
             return event.details();
-            //return Clubs.getName(event.ClubID) + ": " + ttTime.dateTimeString(event.Time) + " (" + Course.getName(event.CourseID) + ")";
         }
     };
 
