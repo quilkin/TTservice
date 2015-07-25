@@ -32,7 +32,7 @@
         document.addEventListener('pause', onPause.bind(this), false);
         document.addEventListener('resume', onResume.bind(this), false);
         window.addEventListener('load', function () { FastClick.attach(document.body); }, false);
-        ttApp.receivedEvent('deviceready');
+        //ttApp.receivedEvent('deviceready');
         $.ajaxSetup({ cache: false });
       
         ttTime.log(device.platform + ": " + device.model);
@@ -40,15 +40,18 @@
         // needs doing again
         //bleApp.detectScreenHeight();
 
-        ttApp.SetPlatform(device.platform);
+        ttApp.setPlatform(device.platform);
     }
 
     document.addEventListener('deviceready', onDeviceReady.bind(this), false);
 
-
     $(document).ready(function () {
 
-        ttApp.init();
+        setTimeout(function () {
+            // workaround to allow OnDeviceReady to fire???
+            ttApp.init();
+        },500)
+        
         
         $(document).ajaxStart(function () {
             $('<div class="loader" id="loading"><img id="loading-image" src="images/page-loader.gif" alt="waiting..." /></div>')

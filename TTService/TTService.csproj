@@ -78,6 +78,10 @@
     <Content Include="js\timesdates.js" />
     <Content Include="images\page-loader.gif" />
     <Content Include="res\beep_wav" />
+    <Content Include="res\icons\icon-512.png" />
+    <Content Include="res\icons\icon-feature.png" />
+    <Content Include="res\icons\icon.9.png" />
+    <Content Include="res\icons\icon.png" />
     <Content Include="res\images\Sorting icons.psd" />
     <Content Include="copyfiles.bat" />
     <Content Include="signit.bat" />

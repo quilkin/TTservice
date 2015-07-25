@@ -489,7 +489,7 @@
 
         }
 
-        entry = new Entry(
+        entry = new TTEntry(
             startNumber,
             startTime,
             endTime,

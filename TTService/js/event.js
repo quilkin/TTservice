@@ -22,23 +22,17 @@ var Event = (function ($) {
         this.sortingRequired = false;
 
         // intellisense helper
-        this.Entries[0] = new Entry(0, 0, 0, 0);
+        this.Entries[0] = new TTEntry(0, 0, 0, 0);
 
         this.distance = function (courseID) {
             return Course.getDistance(courseID);
         };
         this.loadEntries = function (entries) {
-            //var self = this,
-            //    entry;
+
             this.Entries.length = 0;
-            //while (this.Entries.length > 0) {
-            //    this.Entries.pop();
-            //}
-            //$.each(entries, function () {
             entries.forEach(function(entry){
                 // convert json list into list of entry objects
-                //entry = new Entry(this.Number, this.Start, this.Finish, this.RiderID);
-                this.Entries.push(new Entry(entry.Number, entry.Start, entry.Finish, entry.RiderID));
+                this.Entries.push(new TTEntry(entry.Number, entry.Start, entry.Finish, entry.RiderID));
             },this);
         };
         this.getEntries = function () {

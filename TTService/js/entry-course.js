@@ -11,26 +11,16 @@
         };
 
     course.parseJson = function (response) {
-        //list = response;
-        //var course;
-        //$.each(list, function (index, e) {
-        //while (list.length > 0) {
-        //    list.pop();
-        //}
+
         list.length = 0;
         response.forEach(function (e) {
             // convert json list into list of course objects
-            //course = new Course(e.ID, e.distance, e.Name);
             list.push(new Course(e.ID, e.distance, e.Name));
         });
     };
     // generate list of courses for a table
     course.populateList = function (plist) {
         plist.length = 0;
-        //while (plist.length > 0) {
-        //    plist.pop();
-        //}
-        //$.each(list, function (index, course) {
         list.forEach(function (course) {
             if (course !== undefined) {
                 plist.push([course.Name]);
@@ -71,7 +61,7 @@
 }());
 
 
-var Entry = (function () {
+var TTEntry = (function () {
     "use strict";
 
     // constructor
