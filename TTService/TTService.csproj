@@ -64,6 +64,7 @@
   <ItemGroup>
     <Content Include="config.xml" />
     <Content Include="copy_csv_xls_pdf.swf" />
+    <Content Include="css\my.css" />
     <Content Include="images\sort_asc.png" />
     <Content Include="images\sort_asc_disabled.png" />
     <Content Include="images\sort_both.png" />
@@ -104,7 +105,6 @@
     <Content Include="css\images\icons-18-white.png" />
     <Content Include="css\images\icons-36-black.png" />
     <Content Include="css\images\icons-36-white.png" />
-    <Content Include="css\index.css" />
     <Content Include="css\jquery-ui-timepicker-addon.css" />
     <Content Include="css\jquery-ui.min.css" />
     <Content Include="css\jquery.dataTables.css" />

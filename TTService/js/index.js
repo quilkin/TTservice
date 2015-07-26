@@ -38,7 +38,6 @@
         ttTime.log(device.platform + ": " + device.model);
         ttApp.setMobile(true);
         // needs doing again
-        //bleApp.detectScreenHeight();
 
         ttApp.setPlatform(device.platform);
     }
@@ -77,6 +76,7 @@
         });
         $('#theday').click(function () { ttApp.changePage('onTheDay'); });
         $('#ridersclubs').click(function () { ttApp.changePage('ridersClubs'); });
+
     });
 
     //Array.prototype.forEach2 = function (a) {
@@ -115,14 +115,11 @@ var ttApp = (function () {
 
     return {
         init: function() {
-            //ismobile = false;
-            //if (navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry)/))
-            //    is_mobile = true;
             //if (ttApp.isMobile())
             //    power = require('powerManagement.js');
 
             // remove this line while debugging!!!!
-           // realTimer = setInterval(function () { UpdateTime() }, 1000);
+            realTimer = setInterval(function () { UpdateTime() }, 1000);
             $.ajaxSetup({ cache: false });
 
             $(document).on("popupafterclose", ".ui-popup", function ()
