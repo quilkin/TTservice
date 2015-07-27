@@ -182,7 +182,7 @@
 
         clubTable = new TTTable('#clubs', "Select Club:", clubsList, 200, null, false);
         clubTable.tableDefs.columns = [{ "title": "Club" }];
-        clubTable = clubTable.show(function(nTds){
+        clubTable.show(function(nTds,table){
             var club = $(nTds[0]).text();
             if (newEvent) {
                 $('#chooseNewEventClub').text(club);
@@ -190,14 +190,14 @@
             else {
                 $('#chooseEventClub').text(club);
             }
-            clubTable.destroy(true);
+            table.destroy(true);
             loadEventAction();
         });
     }
     function chooseCourse(newEvent) {
         courseTable = new TTTable('#courses', "Select Course:", coursesList, 200, null, false);
         courseTable.tableDefs.columns = [{ "title": "Course" }];
-        courseTable = courseTable.show(function(nTds){
+        courseTable = courseTable.show(function(nTds,table){
             var course = $(nTds[0]).text();
             if (newEvent) {
                 $('#chooseNewEventCourse').text(course);
@@ -205,7 +205,7 @@
             else {
                 $('#chooseEventCourse').text(course);
             }
-            courseTable.destroy(true);
+            table.destroy(true);
             loadEventAction();
         });
     }

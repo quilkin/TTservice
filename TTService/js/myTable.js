@@ -42,10 +42,12 @@ var TTTable = (function ($) {
                 table = $(tableID).DataTable(defs);
                 $(tableID + ' tbody tr').on('click', function () {
                     var nTds = $('td', this);
-                    onclick(nTds);
+                    onclick(nTds,table);
+                    //if (tableID === "#clubs" || tableID === "#courses") {
+                    //    table.destroy();
+                    //}
                 });
             }, 200);
-            return table;
         };
         this.settings = function () {
             return table.settings();

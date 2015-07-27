@@ -25,6 +25,23 @@
     <param name="onload" value="true" />
     <param name="android-package" value="org.apache.cordova.device" />
   </feature>
-  <preference name="SplashScreen" value="screen" />
+  <icon src="www/res/icons/icon.png" />
+  <icon src="www/res/icons/android/icon-36-ldpi.png" platform="android" density="ldpi" />
+  <icon src="www/res/icons/android/icon-48-mdpi.png" platform="android" density="mdpi" />
+  <icon src="www/res/icons/android/icon-72-hdpi.png" platform="android" density="hdpi" />
+  <icon src="www/res/icons/android/icon-96-xhdpi.png" platform="android" density="xhdpi" />
+  <!--<platform name="android">
+    <splash src="www/res/splash/default@2x~iphone.png" density="land-hdpi"/>
+    <splash src="www/res/splash/default@2x~iphone.png" density="land-ldpi"/>
+    <splash src="www/res/splash/default@2x~iphone.png" density="land-mdpi"/>
+    <splash src="www/res/splash/default@2x~iphone.png" density="land-xhdpi"/>
+
+    <splash src="www/res/splash/default@2x~iphone.png" density="port-hdpi"/>
+    <splash src="www/res/splash/default@2x~iphone.png" density="port-ldpi"/>
+    <splash src="www/res/splash/default@2x~iphone.png" density="port-mdpi"/>
+    <splash src="www/res/splash/default@2x~iphone.png" density="port-xhdpi"/>
+  </platform>-->
+  <preference name="SplashScreen" value="splash" />
   <preference name="SplashScreenDelay" value="3000" />
+  <access origin="mailto:*" launch-external="yes" />
 </widget>

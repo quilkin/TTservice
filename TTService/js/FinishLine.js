@@ -73,7 +73,7 @@
         finishTimes.forEach(function (t) {
             htmlline = '<div data-role="controlgroup" data-type="horizontal">';
             htmlline += '<p class="ui-btn" id="finished' + t + '">Finished at: ' + ttTime.timeString(t) + '</p>';
-            htmlline += '<p class="ui-btn" id="qydelete' + t + '" data-icon="delete" data-iconpos="notext">delete this timing</p></div>';
+            htmlline += '<p class="ui-btn" id="qydelete' + t + '" data-icon="delete" data-iconpos="notext">undo this time</p></div>';
             $('#fTimes').append(htmlline);
         });
         htmlline = '<div data-role="controlgroup" data-type="horizontal">';
@@ -110,10 +110,11 @@
 
     function getRiderFromGrid(entryNumber) {
         var entry = event.getEntryFromNumber(entryNumber),
-            rider = event.getRiderFromNumber(entryNumber),
+            riderID = event.getRiderFromNumber(entryNumber),
+            rider = Riders.riderFromID(riderID),
             pop;
-        $('#rname').text(rider.Name);
-        $('#rnumber').text(entry.Number);
+        $('#rname').text(entry.Number + ": " + rider.Name);
+        //$('#rnumber').text(entry.Number);
         $('#fTimes').empty();
 
         if (entry.Finish / 1000 < ttTime.noTimeYet() / 1000) {

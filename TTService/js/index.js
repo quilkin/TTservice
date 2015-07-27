@@ -19,6 +19,7 @@
 
 (function () {
     "use strict";
+    var currentPage;
 
     function onPause() {
         // TODO: This application has been suspended. Save application state here.
@@ -27,6 +28,7 @@
     function onResume() {
         // TODO: This application has been reactivated. Restore application state here.
     }
+
     function onDeviceReady() {
         // Handle the Cordova pause and resume events
         document.addEventListener('pause', onPause.bind(this), false);
@@ -40,16 +42,16 @@
         // needs doing again
 
         ttApp.setPlatform(device.platform);
+        //document.addEventListener("backbutton", onBackKeyDown, false);
     }
 
     document.addEventListener('deviceready', onDeviceReady.bind(this), false);
 
     $(document).ready(function () {
-
         setTimeout(function () {
             // workaround to allow OnDeviceReady to fire???
             ttApp.init();
-        },500)
+        },1000)
         
         
         $(document).ajaxStart(function () {
@@ -74,6 +76,7 @@
             $('#eventDetails').text(EventList.currentDetails());
             ttApp.changePage('eventManage');
         });
+        
         $('#theday').click(function () { ttApp.changePage('onTheDay'); });
         $('#ridersclubs').click(function () { ttApp.changePage('ridersClubs'); });
 
@@ -128,24 +131,29 @@ var ttApp = (function () {
             });
 
             login.deviceReady();
+            //if (ismobile)
+            //{
+                $('#manual').click(function () {
+                    window.open('http://timetrials.org.uk/tt-app-help.pdf', '_system');
+                });
+                $('#googlegroup').click(function () {
+                    window.open('http://groups.google.com/forum/embed/?place=forum/timetrials', '_system');
+                });
+
+            //}
+            //else
+            //{
+            //    $('#manual').click(function () {
+            //        window.open('http://timetrials.org.uk/tt-app-help.pdf', '_system');
+            //    });
+            //    $('#googlegroup').click(function () {
+            //        window.open('https://groups.google.com/forum/embed/?place=forum/timetrials', '_system');
+            //    });
+
+            //}
 
         },
 
-        //initMobile: function () {
-        //    //     this.bindEvents();
-        //    ismobile = false;
-        //    myInit();
-
-        //},
-        //initNonMobile: function ()
-        //{
-        //    if (ismobile)
-        //        // already done in deviceready
-        //        return;
-        //    //     this.bindEvents();
-        //    myInit();
-
-        //},
         setPlatform: function (x) { platform = x; },
         getPlatform: function () {
             return (platform === undefined ? '' : platform);

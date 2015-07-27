@@ -24,7 +24,6 @@
     <div id="loginPage" data-role="page">
         <div data-role="header">
             <h1>Time Trial app</h1>
-            <!--                <a href="http://www.timetrials.org.uk" >here</a>-->
         </div>
         <p id="note1" class="notes">
             Cycling Time Trial management.
@@ -33,9 +32,6 @@
         </p>
         <div id="note2" class="notes">
             <i>For more details please sign up below </i>
-            <a id="manual" href="http://timetrials.org.uk/tt-app-help.pdf" target="_blank">Instructions / Help</a>
-            <p />
-            <a id="googlegroup" href="https://groups.google.com/forum/embed/?place=forum/timetrials" target="_blank">(beta version: Google groups forum for comments)</a>
         </div>
         <div data-role="content">
             <form id="loginForm">
@@ -62,7 +58,6 @@
     <div id="signupPage" data-role="page">
         <div data-role="header">
             <h1>Sign up to view results</h1>
-            <!--                <a href="http://www.timetrials.org.uk" >here</a>-->
         </div>
         <div data-role="content">
             <form id="signupForm">
@@ -106,10 +101,12 @@
                 <li id="theday" class="ui-btn ui-btn-icon-right">Event on the day</li>
                 <li id="ridersclubs" class="ui-btn ui-btn-icon-right">Riders & Clubs</li>
             </ul>
-            <div id="note1" class="notes">
-                <a id="manual" href="http://timetrials.org.uk/tt-app-help.pdf" target="_blank">Instructions / Help</a>
+            <div id="help" class="notes">
+                <a id="manual">Instructions</a>
+                <p />
+                <a id="googlegroup"><i>beta version: Google groups forum for comments</i></a>
                 <p/>
-                <a id="googlegroup" href="https://groups.google.com/forum/embed/?place=forum/timetrials" target="_blank">(beta version: Google groups forum for comments)</a>
+                <a href="mailto:admin@timetrials.org.uk">Email</a>
             </div>
         </div>
     </div>
@@ -128,7 +125,7 @@
             </ul>
         </div>
     </div>
-    <div data-role="page" id="onTheDay" data-add-back-btn="false">
+    <div data-role="page" id="onTheDay">
         <div data-role="header"> <a href="#home">Back</a> <h1>'On the Day'</h1>   </div>
         <div data-role="content">
             <div class="realtime">Time</div>
@@ -250,11 +247,7 @@
     </div>
 
     <div data-role="page" data-add-back-btn="false" id="finishLine">
-        <div data-role="header">
-            <a href="#onTheDay">Back</a>
-            <h1>Finish Line</h1>
-
-        </div>
+        <div data-role="header"><a href="#onTheDay">Back</a> <h1>Finish Line</h1>   </div>
         <div class="realtime">...</div>
         <div>
             <a class="bigbutton ui-btn ui-btn-icon-right" id="btnFinish"><p>Finished<br />at....</p></a>
@@ -372,8 +365,8 @@
             <div class="realtime">Time</div>
 
             <div id="riderFinish">
-                <h3 id="rname"></h3>
-                <h1 id="rnumber"></h1>
+                <h2 id="rname"></h2>
+                <!--<h1 id="rnumber"></h1>-->
             </div>
 
             <div id="fTimes"> </div>
