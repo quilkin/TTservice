@@ -40,13 +40,12 @@ var TTTable = (function ($) {
             // workaround delay to allow column headers to be resized. Needs a delay after being created, before being shown
             setTimeout(function () {
                 table = $(tableID).DataTable(defs);
-                $(tableID + ' tbody tr').on('click', function () {
-                    var nTds = $('td', this);
-                    onclick(nTds,table);
-                    //if (tableID === "#clubs" || tableID === "#courses") {
-                    //    table.destroy();
-                    //}
-                });
+                if (onclick !== null) {
+                    $(tableID + ' tbody tr').on('click', function () {
+                        var nTds = $('td', this);
+                        onclick(nTds, table);
+                    });
+                }
             }, 200);
         };
         this.settings = function () {

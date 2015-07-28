@@ -2,9 +2,9 @@
     "use strict";
 
     var list = [],
-        riderBeforeChange,
-        ridersChanged,
         newRider = null,
+        riderBeforeChange = null,
+        ridersChanged = 0,
         riderTableSettings = null,
         editRider = null,
                 // we will be uploading new riders.These will have a temporary ID 
@@ -178,6 +178,10 @@
             $("#checkIn").prop("checked", true);
             //$("#addRiderHelp").text("Add rider's best recent 10 or 25 time (if known)");
         }
+        else if (editRider !== null)
+        {
+            $("#addRiderTitle").text("Edit rider");
+        }
         //else
         //    $("#addRiderHelp").text("Event aleady held: add rider's actual time");
 
@@ -192,10 +196,14 @@
         if (event.pastEvent()) {
                    $("#lblRideTime").show();
                    $("#riderRideTime").show();
+                   $("#dns1").show();
+                   $("#dnf1").show();
         }
         else {
                     $("#lblRideTime").hide();
                     $("#riderRideTime").hide();
+                    $("#dns1").hide();
+                    $("#dnf1").hide();
         }
 
         if (editRider !== null) {
@@ -236,21 +244,22 @@
         }
         else {
             riderBeforeChange = editRider;
-            newRider = editRider;
+            newRider = new TTRider(editRider.ID, editRider.Name, editRider.Age, editRider.Lady, editRider.ClubID, editRider.Email, editRider.Best25); 
             $('#newRiderTable').html(newRider.Name);
         }
 
-        $("#riderRideTime").show();
-        $("#riderRideTime").timepicker({
-            showSecond: true,
-            timeFormat: 'HH:mm:ss',
-            controlType: 'select',
-            stepHour: 1,
-            stepMinute: 1,
-            stepSecond: 1,
-            showButtonPanel: false
-        });
-
+        if (addToEvent) {
+            $("#riderRideTime").show();
+            $("#riderRideTime").timepicker({
+                showSecond: true,
+                timeFormat: 'HH:mm:ss',
+                controlType: 'select',
+                stepHour: 1,
+                stepMinute: 1,
+                stepSecond: 1,
+                showButtonPanel: false
+            });
+        }
         if (event !== null && event.pastEvent()) {
             $("#lblRideTime").text("Result time:");
             //        $("#addRiderHelp").text("Event aleady held: add rider's actual time");
@@ -567,7 +576,6 @@
         var event = EventList.currentEvent(),
             age = parseInt($("#riderAge").val(),10);
        
-
         if (age < 12 && age !== 0) {
             popup.alert("Must enter a valid age (12 or above), or zero if age unknown");
             return;

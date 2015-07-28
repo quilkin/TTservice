@@ -6,7 +6,6 @@
 *  feedback after save to db
 *  popup buttons better touch response
 *  edit rider - edit club
-*  enter (just) times after an event
 *  results: vets, team, women, juniors
 *  re-order start times (if rider missed when entering names)!
 *  'edit rider' does not return correctly
