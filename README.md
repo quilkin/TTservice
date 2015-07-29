@@ -1,10 +1,8 @@
 # TTservice
 Cycling Time Trial Management
 Time Trial Timing & Results app
-Mobile app to run on selection of devices (Android, iPhone, etc) for timing purposes during an
+Mobile app to run on selection of devices (Android, iPhone*, etc) for timing purposes during an
 event
-
-Note: currently part-way through refactoring; these file will not build and run!
 
 • Preloaded with list of rider entries, event start time etc
 
@@ -47,7 +45,10 @@ Later, when sufficient data is in the database, a 'rider's app' could be made av
 
 • Quick access to results online after an event
 
-The mobile app and the PC app have the same interface; it will probably be possible to add all the
-features of the browser app to the mobile version subject to display space.
+The mobile app and the PC app have the same interface.
 Both versions could be 'personalised' by allowing clubs to put their own logo on opening pages.
+
+*ios build not yet available
+Android version (beta) available at https://groups.google.com/forum/#!forum/timetrials
+
 © Chris Fearnley 2015
