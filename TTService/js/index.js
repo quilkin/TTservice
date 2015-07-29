@@ -122,7 +122,7 @@ var ttApp = (function () {
             //    power = require('powerManagement.js');
 
             // remove this line while debugging!!!!
-            realTimer = setInterval(function () { UpdateTime() }, 1000);
+            //realTimer = setInterval(function () { UpdateTime() }, 1000);
             $.ajaxSetup({ cache: false });
 
             $(document).on("popupafterclose", ".ui-popup", function ()
@@ -131,26 +131,13 @@ var ttApp = (function () {
             });
 
             login.deviceReady();
-            //if (ismobile)
-            //{
-                $('#manual').click(function () {
-                    window.open('http://timetrials.org.uk/tt-app-help.pdf', '_system');
-                });
-                $('#googlegroup').click(function () {
-                    window.open('http://groups.google.com/forum/embed/?place=forum/timetrials', '_system');
-                });
 
-            //}
-            //else
-            //{
-            //    $('#manual').click(function () {
-            //        window.open('http://timetrials.org.uk/tt-app-help.pdf', '_system');
-            //    });
-            //    $('#googlegroup').click(function () {
-            //        window.open('https://groups.google.com/forum/embed/?place=forum/timetrials', '_system');
-            //    });
-
-            //}
+            $('#manual').click(function () {
+                window.open('http://timetrials.org.uk/tt-app-help.pdf', '_system');
+            });
+            $('#googlegroup').click(function () {
+                window.open('http://groups.google.com/forum/embed/?place=forum/timetrials', '_system');
+            });
 
         },
 

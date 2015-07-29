@@ -196,10 +196,26 @@ var TTRider = (function ($) {
                 best25string,
                 self = this;
 
-            $('#name').text(this.Name);
-            $('#club').text("Club: " + Clubs.getName(this.ClubID));
-            $('#cat').text("Category: " + this.catAbbr());
-            if (event) {
+            $('#headerDetails').text(this.Name);
+            $('#club').text(Clubs.getName(this.ClubID));
+            $('#cat').text(this.catAbbr());
+            $('#riderID').text(this.ID);
+            $('#time25').text("");
+            if (login.checkRole()) {
+                $('#email').text(this.Email);
+                $('#age').text(this.Age);
+                if (this.hasBest25()) {
+                    best25string = ttTime.timeStringH1(this.Best25 * 1000);
+                    $('#time25').text(best25string);
+                }
+            }
+            else
+            {
+                $('#email').text("");
+                $('#age').text("");
+            }
+
+            if (event !== null && event.ID > 0) {
                 event.getEntries().every(function(e){
                     if (self.ID === e.RiderID) {
                         entry = e;
@@ -208,39 +224,28 @@ var TTRider = (function ($) {
                     return true;
                 });
                 if (entry !== null) {
-                    $('#start').text("Start time:   " + ttTime.timeString(entry.Start));
-                    $('#number').text("Start Number: " + entry.Number);
+                    $('#start').text(ttTime.timeString(entry.Start));
+                    $('#number').text(entry.Number);
                     if (entry.Finish / 1000 < ttTime.noTimeYet() / 1000) {
-                        $('#time').text("Result Time:  " + ttTime.timeString(entry.Finish - entry.Start));
+                        $('#time').text(ttTime.timeString(entry.Finish - entry.Start));
                         distance = event.distance();
                         //var r = new Rider(rider.ID, rider.Name, rider.Age, rider.Category, rider.ClubID,rider.Email,rider.Best25);
                         vetStdTime = this.vetStandardTime(distance);
                         if (vetStdTime !== 0) {
-                            $('#vetstd').text("Vet Std (" + distance + " miles): " + ttTime.TimeString(vetStdTime));
-                            $('#vetonstd').text("Vet on Std:    " + ttTime.timeStringVetStd(entry.VetOnStd));
+                            $('#vetstd').text("(" + distance + " miles) " + ttTime.TimeString(vetStdTime));
+                            $('#vetonstd').text(ttTime.timeStringVetStd(entry.VetOnStd));
                         }
                     }
                 }
-                else {
-                    $('#start').text("No event loaded");
-                }
             }
             else {
-                $('#age').text("Age: " + login.checkRole()? this.Age : "Undisclosed");
-                $('#inevent').text("In event?: " + this.inEvent() ? "yes" : "no");
-                //$('#time10').text(rider.time10);
-                if (this.hasBest25()) {
-                    best25string = ttTime.timeStringH1(this.Best25 * 1000);
-                    $('#time25').text("Best '25' time: " + best25string);
-                }
-                //$('#target').text(rider.target);
-                if (login.checkRole() > 1) {
-                    $('#email').text(this.Email);
-                }
+                $('#number').text("(No event loaded)");
+                $('#start').text("");
+                $('#time').text("");
+                $('#vetstd').text("");
+                $('#vetonstd').text("");
             }
-
         }
-
     };
     $('#dns').click(function () {
         $('#riderTime').val('DNS');

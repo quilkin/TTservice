@@ -19,19 +19,15 @@
             eventData.push([ev.ID, Clubs.getName(ev.ClubID), Course.getName(ev.CourseID), ttTime.dateTimeString(new Date(ev.Time))]);
         });
         event = null;
-        eventTable = new TTTable('#events', "" , eventData, 300,  null, false);
-        eventTable.tableDefs.filter = false;
-        eventTable.tableDefs.columns = [{ "title": "#" },
+        eventTable = new TTTable('#events',
+            [ { "title": "#", "visible":false },
               { "title": "Club" },
               { "title": "Course" },
-              { "title": "Date/Time" }];
-
-        eventTable.show(function (nTds) {
-            // trying to make first column invisible but that messes up indexing
-            //var column = eventTable.column(0);
-            //column.visible(false);
-            var eventID = parseInt($(nTds[0]).text(), 10);
-
+              { "title": "Date/Time" }],
+            "", eventData, 300, null, false);
+        eventTable.tableDefs.filter = false;
+        eventTable.show(function (data) {
+            var eventID = data[0];
             // find the correct event from the list
             events.some(function(ev){
                 if (ev.ID === eventID) {
@@ -180,10 +176,11 @@
 
     function chooseClub(newEvent) {
 
-        clubTable = new TTTable('#clubs', "Select Club:", clubsList, 200, null, false);
-        clubTable.tableDefs.columns = [{ "title": "Club" }];
-        clubTable.show(function(nTds,table){
-            var club = $(nTds[0]).text();
+        clubTable = new TTTable('#clubs',[{ "title": "Club" }], "Select Club:", clubsList, 200, null, false);
+        clubTable.show(function(data,table){
+            //var club = $(nTds[0]).text();
+            var club = data[0];
+
             if (newEvent) {
                 $('#chooseNewEventClub').text(club);
             }
@@ -195,10 +192,9 @@
         });
     }
     function chooseCourse(newEvent) {
-        courseTable = new TTTable('#courses', "Select Course:", coursesList, 200, null, false);
-        courseTable.tableDefs.columns = [{ "title": "Course" }];
-        courseTable = courseTable.show(function(nTds,table){
-            var course = $(nTds[0]).text();
+        courseTable = new TTTable('#courses', [{ "title": "Course" }],"Select Course:", coursesList, 200, null, false);
+        courseTable = courseTable.show(function(data,table){
+            var course = data[0];
             if (newEvent) {
                 $('#chooseNewEventCourse').text(course);
             }

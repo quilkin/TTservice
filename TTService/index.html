@@ -290,15 +290,14 @@
             <div class="ui-block-a"> <label for="riderAge">Age:</label></div>
             <div class="ui-block-b"> <input type="number" id="riderAge" value="0" min="10" max="99" /></div>
         </div>
-        <!--<div class="ui-grid-a">
-            <div class="ui-block-a"><label for="riderClub" id="lblRiderClub">Rider's club:</label></div>
-            <div class="ui-block-b"><input type="text" id="riderClub" /></div>
-        </div>-->
+        <div class="ui-grid-a">
+            <div class="ui-block-a"><label for="riderEditClub" id="lblRiderClub">Rider's club:</label></div>
+            <div class="ui-block-b"><input type="text" id="riderEditClub" /></div>
+        </div>
         <div class="ui-grid-a">
             <div class="ui-block-a"><label for="riderStartNumber" id="lblRiderStart">Rider number:</label></div>
             <div class="ui-block-b"><input type="number" id="riderStartNumber" /></div>
         </div>
-        <!--            <p id="addRiderHelp">help</p>-->
         <div class="ui-grid-a">
             <div class="ui-block-a"><label> <input type="checkbox" id="checkLady" class="custom" />Lady?</label></div>
             <div class="ui-block-b"><label> <input type="checkbox" id="checkIn" class="custom" />InEvent?</label> </div>
@@ -319,36 +318,30 @@
         </div>
         <div class="ui-field-contain">
             <a data-role="button" id="btnAddRider">Add Rider</a>
-            <!--                <a onclick="newRidersDone()"  data-role="button">Finished adding riders</a>-->
         </div>
     </div>
 
     <div data-role="page" id="riderDetailsPage">
         <div data-role="header">
-            <h1>Rider Details</h1>
+            <h1 id="headerDetails">Rider Details</h1>
         </div>
 
         <div data-role="content">
-
-            <div id="riderDetails">
-                <h3 id="name"></h3>
-                <h3 id="number"></h3>
-                <p id="club"></p>
-                <p id="cat"></p>
-
-                <!--                    for details during event-->
-                <p id="start"></p>
-                <p id="time"></p>
-                <p id="vetstd"></p>
-                <p id="vetonstd"></p>
-                <!--                    for details during data collection-->
-                <p id="age"></p>
-                <p id="inevent"></p>
-                <p id="time25"></p>
-                <p id="email"></p>
-
-
-            </div>
+            <table class="rider">
+                <tr><td class="gridL">Club:</td>           <td class="gridR" id="club">...</td>      </tr>
+                <tr><td class="gridL">Category:</td>       <td class="gridR" id="cat">...</td>       </tr>
+                <tr><td class="gridL">Database ID:</td>    <td class="gridR" id="riderID">...</td>   </tr>
+                <tr><td class="gridL">Age:</td>            <td class="gridR" id="age">...</td>       </tr>
+                <tr><td class="gridL">Email:</td>          <td class="gridR" id="email">...</td>     </tr>
+                <tr><td class="gridL">Best '25' time:</td> <td class="gridR" id="time25">...</td>    </tr>
+                <tr><td class="gridL">Vet Std Time:</td>   <td class="gridR" id="vetstd">...</td>    </tr>
+                <tr><td class="gridL"></td>                <td class="gridR"></td>                   </tr>
+                <tr><th>This event:</th></tr>
+                <tr><td class="gridL">Start Number:</td>   <td class="gridR" id="number">...</td>    </tr>
+                <tr><td class="gridL">Start Time:</td>     <td class="gridR" id="start">...</td>     </tr>
+                <tr><td class="gridL">Result Time:</td>    <td class="gridR" id="time">...</td>      </tr>
+                <tr><td class="gridL">Vet 'On Std':</td>   <td class="gridR" id="vetonstd">...</td>  </tr>
+            </table>
         </div>
         <div class="ui-field-contain">
             <a id="editRider" data-role="button">Edit Rider</a>

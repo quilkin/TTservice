@@ -20,6 +20,7 @@
 *   vets results 40-49, 50-59 etc
 *   allow for penalty start times
 *   allow for more than one minute between starts
+*   allow deletion of entries but only if event hasn't happened
 */
 
 var TTData = (function ($) {

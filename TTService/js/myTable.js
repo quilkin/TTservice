@@ -2,11 +2,14 @@
 var TTTable = (function ($) {
     "use strict";
 
-    var table,
-    ttTable = function (tableID, searchText, array, height, footercallback, allowPrint) {
-        var file = "Rider List";
+    
+    var ttTable = function (tableID, columns, searchText, array, height, footercallback, allowPrint) {
+        var table,
+            file = "Rider List",
+            settings;
 
         this.tableDefs = {
+            "columns" : columns,
             "language": { "search": searchText },
             "scrollY": height,
             "filter": true,
@@ -41,15 +44,16 @@ var TTTable = (function ($) {
             setTimeout(function () {
                 table = $(tableID).DataTable(defs);
                 if (onclick !== null) {
-                    $(tableID + ' tbody tr').on('click', function () {
-                        var nTds = $('td', this);
-                        onclick(nTds, table);
+                    $(tableID + ' tbody').on('click', 'tr',function () {
+                        var data = table.row( this ).data();
+                        onclick(data, table);
                     });
                 }
+                settings = table.settings();
             }, 200);
         };
-        this.settings = function () {
-            return table.settings();
+        this.getSettings = function () {
+            return settings;
         };
         this.search = function () {
             return table.search();

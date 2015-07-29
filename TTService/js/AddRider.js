@@ -2,10 +2,11 @@
     "use strict";
 
     var list = [],
+        table,
         newRider = null,
         riderBeforeChange = null,
         ridersChanged = 0,
-        riderTableSettings = null,
+        //riderTableSettings = null,
         editRider = null,
                 // we will be uploading new riders.These will have a temporary ID 
         newRiders = [],
@@ -35,7 +36,8 @@
         if (iStart === iEnd) {
             // check that rider isn't already in event
             var event = EventList.currentEvent(),
-                rider = riderTableSettings.search(),
+                //rider = riderTableSettings.search(),
+                rider = table.getSettings().search(),
                 entry = event.getEntryFromName(rider);
             if (entry !== null) {
                 rider = Riders.riderFromID(entry.RiderID);
@@ -55,78 +57,75 @@
     }
 
     function chooseRider(addToEvent) {
-        var table, index, rider, names = [];
+        var index, rider, names = [];
         for (index = 0; index < list.length; index++) {
             rider = list[index];
             if (rider.Age === null || rider.Name === "" || rider.ClubID === 0) {
                 return true; // continue;
             }
             if (addToEvent === false || rider.inEvent() === 0) {
-                names.push([rider.Name, Clubs.getAbbr(rider.ClubID)]);
+                names.push([rider.ID, rider.Name, Clubs.getAbbr(rider.ClubID)]);
             }
         }
 
         $('#riderClubTable').html("");
         $('#btnNewClub').hide();
 
-        table = new TTTable('#newRider', "Select Rider:", names, 200, noRidersFound, false);
-        riderTableSettings = table.settings();
-        table.tableDefs.columns = [{ "title": "" }, { "title": "" }];
-        table.show(function (nTds) {
+        table = new TTTable('#newRider',
+            [   { "title": "" , "visible":false},
+                { "title": "" },
+                { "title": "" }    ],
+            "Select Rider:", names, 200, noRidersFound, false);
 
-            var newName = $(nTds[0]).text();
-            $('#newRiderTable').html(newName);
+        table.show(function (data) {
+            // place other details in form  from existing rider
+            var rider = fromID(data[0]);
+            $('#newRiderTable').html(rider.Name);
             // enable getting back the table (to choose a different rider) by double-clicking the chosen name
             $('#newRiderTable').dblclick(function () { chooseRider(addToEvent); });
-            // place other details in form  from existing rider
 
-            list.forEach(function(rider){
-                if (rider.Name === newName) {
-                    // save details so we can see if they have been changed
-                    var age = rider.Age,
-                        lady = rider.Lady,
-                        id = rider.ID,
-                        name = rider.Name,
-                        clubID = rider.ClubID,
-                        best25 = rider.Best25,
-                        email = rider.Email,
-                        event;
+            // save details so we can see if they have been changed
+            var age = rider.Age,
+                lady = rider.Lady,
+                id = rider.ID,
+                name = rider.Name,
+                clubID = rider.ClubID,
+                best25 = rider.Best25,
+                email = rider.Email,
+                event;
 
-                    riderBeforeChange = new TTRider(id, name, age, lady,clubID, email, best25);
-                    Clubs.chooseRiderClub(clubID);
-                    event = EventList.currentEvent();
+            riderBeforeChange = new TTRider(id, name, age, lady,clubID, email, best25);
+            Clubs.chooseRiderClub(clubID);
+            event = EventList.currentEvent();
                     
-                    if (event !== null && event.pastEvent() === false) {
-                        $("#dns1").hide();
-                        $("#dnf1").hide();
-                    }
-                    $("#lblRideTime").show();
-                    $("#riderRideTime").show();
+            if (event !== null && event.pastEvent() === false) {
+                $("#dns1").hide();
+                $("#dnf1").hide();
+            }
+            $("#lblRideTime").show();
+            $("#riderRideTime").show();
                     
-                    if (event !== null && event.pastEvent()) {
-                        $("#lblRideTime").text("Result time:");
-                        //        $("#addRiderHelp").text("Event aleady held: add rider's actual time");
-                    }
-                    else {
-                        $("#lblRideTime").text("Recent 10 or 25 time:");
-                        //        $("#addRiderHelp").text("Add rider's best recent 10 or 25 time (if known)");
-                    }
-                    if (rider.hasBest25()) {
-                        $("#riderRideTime").val(ttTime.timeString(best25 * 1000));
-                    }
-                    $("#riderAge").val(age);
-                    $("#riderEmail").val(email);
-                    if (lady) {
-                        $("#checkLady").prop("checked", true);
-                    }
+            if (event !== null && event.pastEvent()) {
+                $("#lblRideTime").text("Result time:");
+                //        $("#addRiderHelp").text("Event aleady held: add rider's actual time");
+            }
+            else {
+                $("#lblRideTime").text("Recent 10 or 25 time:");
+                //        $("#addRiderHelp").text("Add rider's best recent 10 or 25 time (if known)");
+            }
+            if (rider.hasBest25()) {
+                $("#riderRideTime").val(ttTime.timeString(best25 * 1000));
+            }
+            $("#riderAge").val(age);
+            $("#riderEmail").val(email);
+            if (lady) {
+                $("#checkLady").prop("checked", true);
+            }
 
-                    $("#checkIn").prop("checked", true);
-                    $('input:checkbox').checkboxradio('refresh');
-                    newRider = rider;
-                    return false; //break;
-                }
-            });
-        });
+            $("#checkIn").prop("checked", true);
+            $('input:checkbox').checkboxradio('refresh');
+            newRider = rider;
+        })
     }
 
     function updateRiderDetails() {
@@ -150,6 +149,7 @@
         var event = EventList.currentEvent(),
             startNumber,
             age = 10,
+            clubID = 0,
             email = "",
             thistime,
             entry = null;
@@ -208,6 +208,7 @@
 
         if (editRider !== null) {
             age = editRider.Age;
+            clubID = editRider.ClubID;
             email = editRider.Email;
             thistime = editRider.Best25 * 1000;
             if (addToEvent) {
@@ -218,6 +219,7 @@
                 thistime = entry.Finish - entry.Start;
             }
             $("#riderRideTime").val(ttTime.timeString(thistime));
+            $("#riderEditClub").val(Clubs.getName(clubID));
             $('#btnAddRider').text("Save Editing");
             $("#btnNewRider").hide();
             $("#btnAlreadyIn").hide();
@@ -236,6 +238,7 @@
         }
 
         $("#riderAge").val(age);
+
         $("#riderEmail").val(email);
         $("#riderStartNumber").val(startNumber);
 
@@ -260,6 +263,13 @@
                 showButtonPanel: false
             });
         }
+        else {
+
+            // enable changing the club by double-clicking the club name
+            $('#riderEditClub').dblclick(function () {
+                Clubs.clubTable(true);
+            });
+        }
         if (event !== null && event.pastEvent()) {
             $("#lblRideTime").text("Result time:");
             //        $("#addRiderHelp").text("Event aleady held: add rider's actual time");
@@ -271,16 +281,16 @@
     }
 
 
-    function fromName(ridername) {
-        var i, rider;
-        for (i = 0; i < list.length; i++) {
-            rider = list[i];
-            if (ridername === rider.Name) {
-                return rider;
-            }
-        }
-        return null;
-    }
+    //function fromName(ridername) {
+    //    var i, rider;
+    //    for (i = 0; i < list.length; i++) {
+    //        rider = list[i];
+    //        if (ridername === rider.Name) {
+    //            return rider;
+    //        }
+    //    }
+    //    return null;
+    //}
     function fromID(riderID) {
         var i, rider;
         for (i = 0; i < list.length; i++) {
@@ -295,7 +305,6 @@
     $('#displayRiderList').click(function () {
         var table, best25string,
             riderArray = [],
-            riderID,
             rider;
 
         if (list === null) {
@@ -313,21 +322,22 @@
                 best25string = ttTime.timeStringH1(rider.Best25 * 1000);
             }
             riderArray.push([rider.ID, rider.Name, Clubs.getAbbr(rider.ClubID), cat, best25string]);
+            //riderArray.push([rider.Name, Clubs.getAbbr(rider.ClubID), cat, best25string]);
+
         });
 
         ttApp.changePage("ridersPage");
-        table = new TTTable('#riders', "Select Rider:", riderArray, ttApp.tableHeight(),  noRidersFound, true);
-        table.tableDefs.columns = [
-            { "title": "ID", "width": "1%" },
-            { "title": "Name" },
-            { "title": "Club", "width": "20%" },
-            { "title": "Cat.", "width": "10%" },
-            { "title": "Best 25" }];
+        table = new TTTable('#riders',
+            [   { "title": "ID", "width": "1%", "visible":false },
+                { "title": "Name" },
+                { "title": "Club", "width": "20%" },
+                { "title": "Cat.", "width": "10%" },
+                { "title": "Best 25" }    ],
+            "Select Rider:", riderArray, ttApp.tableHeight(), noRidersFound, true);
         table.tableDefs.order = [1, 'asc'];
-        table.show(function (nTds) {
-            riderID = parseInt($(nTds[0]).text(),10);
+        table.show(function (data) {
             ttApp.changePage("riderDetailsPage");
-            rider = fromID(riderID);
+            rider = fromID(data[0]);
             rider.displayRider(false);
         });
         
@@ -376,7 +386,8 @@
 
         if (newRider === null) {
             //newName = riderTableSettings.oPreviousSearch.sSearch;
-            newName = riderTableSettings.search();
+            //newName = riderTableSettings.search();
+            newName = table.getSettings().search();
             newNameParts = newName.split(' ');
             newName = capitalize(newNameParts[0]);
             if (newNameParts[1] !== null && newNameParts[1] !== undefined) {
@@ -424,11 +435,12 @@
         }
         var rider,
             name = $('#name').text(),
-            event = EventList.currentEvent();
-        rider = fromName(name);
+            event = EventList.currentEvent(),
+            riderID = parseInt($('#riderID').text(), 10);
+        rider = fromID(riderID);
         if (rider !== null) {
             editRider = rider;
-            addRider(event.ID > 0);
+            addRider(event !== null && event.ID > 0);
         }
     });
     $('#dns1').click(function () {
@@ -735,9 +747,7 @@
             }
             return -(highest + 1);
         },
-        riderFromName: function (ridername) {
-            return fromName(ridername);
-        },
+
         riderFromID: function (riderID) {
             return fromID(riderID);
         }
