@@ -193,7 +193,7 @@
             $("#checkIn").prop("disabled", false);
 
         }
-        if (event.pastEvent()) {
+        if (event !== null && event.pastEvent()) {
                    $("#lblRideTime").show();
                    $("#riderRideTime").show();
                    $("#dns1").show();
@@ -219,7 +219,7 @@
                 thistime = entry.Finish - entry.Start;
             }
             $("#riderRideTime").val(ttTime.timeString(thistime));
-            $("#riderEditClub").val(Clubs.getName(clubID));
+            //$("#riderEditClub").val(Clubs.getName(clubID));
             $('#btnAddRider').text("Save Editing");
             $("#btnNewRider").hide();
             $("#btnAlreadyIn").hide();
@@ -249,6 +249,7 @@
             riderBeforeChange = editRider;
             newRider = new TTRider(editRider.ID, editRider.Name, editRider.Age, editRider.Lady, editRider.ClubID, editRider.Email, editRider.Best25); 
             $('#newRiderTable').html(newRider.Name);
+            $('#riderClubTable').html(Clubs.getName(editRider.ClubID));
         }
 
         if (addToEvent) {
@@ -266,7 +267,7 @@
         else {
 
             // enable changing the club by double-clicking the club name
-            $('#riderEditClub').dblclick(function () {
+            $('#riderClubTable').dblclick(function () {
                 Clubs.clubTable(true);
             });
         }
@@ -612,6 +613,10 @@
                 popup.confirm('Rider already in list. Update Details?',
                     function() {
                         updateRiderDetails();
+                        if (event === null || event.ID === 0) {
+                            ttApp.changePage("riderDetailsPage");
+                            newRider.displayRider(false);
+                        }
                         addToEvent(event);
                     },
 

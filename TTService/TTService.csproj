@@ -62,7 +62,9 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="config.xml" />
+    <Content Include="config.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="copy_csv_xls_pdf.swf" />
     <Content Include="css\my.css" />
     <Content Include="images\sort_asc.png" />

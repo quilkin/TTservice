@@ -107,6 +107,7 @@ var Clubs = (function ($) {
             newClub = data[0];
             $('#riderClubTable').html(newClub);
             Riders.getNewRider().ClubID = Clubs.getID(newClub);
+            table.destroy();
         });
         //clubTableSettings = table.settings();
     }
