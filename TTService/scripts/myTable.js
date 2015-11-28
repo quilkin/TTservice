@@ -16,6 +16,7 @@ var TTTable = (function ($) {
             "paging": false,
             "scrollCollapse": true,
             "data": array,
+            "info": false,
             "footerCallback": footercallback
         };
         if (tableID === "#results" || tableID === "#entries" || tableID ==="#clubResults") {
@@ -34,6 +35,7 @@ var TTTable = (function ($) {
                 "aButtons": ["copy", { "sExtends": "pdf", "sTitle": file }]
             };
         }
+
 
         $(tableID + 'Table').html('<table class="display" id="' + tableID.substring(1) + '"></table>');
 

@@ -15,7 +15,7 @@
         list.length = 0;
         response.forEach(function (e) {
             // convert json list into list of course objects
-            list.push(new Course(e.ID, e.distance, e.Name));
+            list.push(new Course(e.ID, e.Distance, e.Name));
         });
     };
     // generate list of courses for a table

@@ -20,10 +20,9 @@
         TTData.json("GetClubs", "GET", 0, Clubs.parseJson, true);
         list.length = 0;
         TTData.json("GetRiders", "GET", 0, function (response) {
-
             response.forEach(function(r){
                 // convert json list into list of rider objects
-                list.push(new TTRider(r.ID, r.Name, r.Age, r.Lady, r.ClubID, r.Email, r.Best25));
+                list.push(new TTRider(r.ID, r.Name, r.DoB, r.Lady, r.ClubID, r.Email, r.Best25));
             });
 
         }, true);
@@ -60,7 +59,7 @@
         var index, rider, names = [];
         for (index = 0; index < list.length; index++) {
             rider = list[index];
-            if (rider.Age === null || rider.Name === "" || rider.ClubID === 0) {
+            if (rider.DoB === null || rider.Name === "" || rider.ClubID === 0) {
                 return true; // continue;
             }
             if (addToEvent === false || rider.inEvent() === 0) {
@@ -85,7 +84,7 @@
             $('#newRiderTable').dblclick(function () { chooseRider(addToEvent); });
 
             // save details so we can see if they have been changed
-            var age = rider.Age,
+            var dob = rider.DoB,
                 lady = rider.Lady,
                 id = rider.ID,
                 name = rider.Name,
@@ -94,7 +93,7 @@
                 email = rider.Email,
                 event;
 
-            riderBeforeChange = new TTRider(id, name, age, lady,clubID, email, best25);
+            riderBeforeChange = new TTRider(id, name, dob, lady,clubID, email, best25);
             Clubs.chooseRiderClub(clubID);
             event = EventList.currentEvent();
                     
@@ -116,7 +115,7 @@
             if (rider.hasBest25()) {
                 $("#riderRideTime").val(ttTime.timeString(best25 * 1000));
             }
-            $("#riderAge").val(age);
+            $("#riderAge").val(rider.age());
             $("#riderEmail").val(email);
             if (lady) {
                 $("#checkLady").prop("checked", true);
@@ -207,7 +206,7 @@
         }
 
         if (editRider !== null) {
-            age = editRider.Age;
+            age = editRider.age();
             clubID = editRider.ClubID;
             email = editRider.Email;
             thistime = editRider.Best25 * 1000;
@@ -247,7 +246,7 @@
         }
         else {
             riderBeforeChange = editRider;
-            newRider = new TTRider(editRider.ID, editRider.Name, editRider.Age, editRider.Lady, editRider.ClubID, editRider.Email, editRider.Best25); 
+            newRider = new TTRider(editRider.ID, editRider.Name, editRider.DoB, editRider.Lady, editRider.ClubID, editRider.Email, editRider.Best25); 
             $('#newRiderTable').html(newRider.Name);
             $('#riderClubTable').html(Clubs.getName(editRider.ClubID));
         }
@@ -282,16 +281,6 @@
     }
 
 
-    //function fromName(ridername) {
-    //    var i, rider;
-    //    for (i = 0; i < list.length; i++) {
-    //        rider = list[i];
-    //        if (ridername === rider.Name) {
-    //            return rider;
-    //        }
-    //    }
-    //    return null;
-    //}
     function fromID(riderID) {
         var i, rider;
         for (i = 0; i < list.length; i++) {
@@ -412,7 +401,7 @@
                     // re-enable other controls
                     $("#btnAddRider").show();
                     $("#riderClubTable").prop("disabled", false);
-                    $("#slider-age").prop("disabled", false);
+                   // $("#slider-age").prop("disabled", false);
                     $("#checkLady").prop("disabled", false);
                     $("#btnNewRider").hide();
                     newRider = new TTRider(0, newName, 0, 0, 0, "", 0);
@@ -585,33 +574,12 @@
         }
     }
 
-    $('#btnAddRider').click(function () {
-        var event = EventList.currentEvent(),
-            age = parseInt($("#riderAge").val(),10);
-       
-        if (age < 12 && age !== 0) {
-            popup.alert("Must enter a valid age (12 or above), or zero if age unknown");
-            return;
-        }
-        if (newRider === null) {
-            popup.alert("Error with rider...");
-            return;
-        }
-        newRider.Age= age;
-        if ($("#checkLady").prop("checked")) {
-            newRider.Lady = true;
-        }
-        if (newRider.ClubID === 0) {
-            popup.alert("Must choose a club");
-            return;
-        }
-        newRider.Email = $("#riderEmail").val();
-
+    function prepareToAdd(event) {
         if (riderBeforeChange !== null) {
-            if (riderBeforeChange.Age !== newRider.Age || riderBeforeChange.ClubID !== newRider.ClubID) {
-                 // same name, details have been changed
+            if (riderBeforeChange.DoB !== newRider.DoB || riderBeforeChange.ClubID !== newRider.ClubID) {
+                // same name, details have been changed
                 popup.confirm('Rider already in list. Update Details?',
-                    function() {
+                    function () {
                         updateRiderDetails();
                         if (event === null || event.ID === 0) {
                             ttApp.changePage("riderDetailsPage");
@@ -638,6 +606,63 @@
             ridersChanged = true;
             addToEvent(event);
         }
+    }
+
+    $('#btnAddRider').click(function () {
+        var event = EventList.currentEvent(),
+           agestring,
+           age;
+
+        if ($("#checkLady").prop("checked")) {
+            newRider.Lady = true;
+        }
+        if (newRider.ClubID === 0) {
+            popup.alert("Must choose a club");
+            return;
+        }
+        newRider.Email = $("#riderEmail").val();
+
+        //riderAge might be entered as DofB.
+
+        agestring = $("#riderAge").val();
+        if (agestring.length > 2)
+        {
+            var dob, date, month, year, question;
+            dob = agestring.split('/');
+            date = parseInt(dob[0]);
+            month = parseInt(dob[1]-1);
+            year = parseInt(dob[2]);
+            dob = new Date(year, month, date);
+            question = 'Date of birth: ' + dob.toDateString() + ' OK?',
+            popup.confirm(question,
+                function () {
+                    newRider.DoB = dob;
+                    prepareToAdd(event);
+                },
+                function () {
+                    popup.alert('Invalid date');
+                    return;
+                }
+            );
+        }
+
+        else
+        {
+            age = parseInt($("#riderAge").val(), 10);
+       
+            if (age < 12 && age !== 0) {
+                popup.alert("Must enter a valid age (12 or above), or zero if age unknown");
+                return;
+            }
+            if (newRider === null) {
+                popup.alert("Error with rider...");
+                return;
+            }
+            
+            newRider.setDoB(age);
+            prepareToAdd(event);
+        }
+      
  
     });
 
@@ -707,14 +732,18 @@
         },
         saveChangedRiders: function() {
             // now upload changed riders
-            //$.each(list, function (index, rider) {
+            
             list.forEach(function (rider) {
                 if (rider.changed) {
                     changedRiders.push(rider);
+                    rider.changed = false;
                 }
             });
-            //var event = EventList.currentEvent();
+            
             if (changedRiders.length > 0) {
+                //changedRiders.forEach(function (rider) {
+                //    rider.DoB = new Date(rider.DoB).toJSON();
+                //})
                 TTData.json("SaveChangedRiders", "POST", changedRiders,
                     [function (response) { popup.alert(response); },
                         eventToBeSaved.saveEvent],

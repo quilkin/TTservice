@@ -80,12 +80,13 @@ var TTRider = (function ($) {
 
 
     // constructor
-        rider = function (id, name, age, lady, clubid, email, best25) {
+        rider = function (id, name, dob, lady, clubid, email, best25) {
             var notarget = 86399;               // constant: no target time so leave as 23:59:59 for correct seeding
 
 
             this.Name = name;
-            this.Age = age;
+            this.DoB = dob;
+            //this.Age = age;
             this.Lady = lady;
             this.ClubID = clubid;
             this.Best25 = best25 > 0 ? best25 : notarget;
@@ -106,7 +107,7 @@ var TTRider = (function ($) {
             //this.getBest25 = function () { return best25; };
             this.getCategory = function () {
                 var cat, age;
-                age = this.Age,
+                age = this.age(),
                     cat = Categories.Senior;
                 if (age < 16) {
                     cat = Categories.Juvenile;
@@ -146,20 +147,33 @@ var TTRider = (function ($) {
             //this.setAge = function (value) { age = value; };
             //this.setEmail = function (value) { email = value; };
             //this.setClubID = function (value) { clubid = value; };
-
+            this.age = function () {
+                var a, diff, now,age;
+                now = new Date().valueOf() ;
+                //diff = Math.abs(now - this.DoB);
+                diff = now - this.DoB;
+                age = diff / 31536000000; // (1000 * 3600 * 24 * 365);
+                return Math.floor(age);
+            }
+            this.setDoB = function (age) {
+                // don't know exact DoB, guess from current age plus 6 months
+                var now = new Date();
+                var years = new Date(age, 6, 0);
+                this.DoB = now - age * 31536000000 - 31536000000/2;
+            }
         };
 
     // public (shared across instances)
     rider.prototype = {
         vetStandardTime: function (distance) {
             var time,
-                ageOver40 = this.Age - 40;
+                ageOver40 = this.age() - 40;
             if (this.Category === Categories.LadyVet) {
                 ageOver40 += 8; // eight years difference on standard times
             }
             if (ageOver40 >= 0) {
-                if (ageOver40 > vetStandard.Length) {
-                    time = vetStandard[vetStandard.Length - 1];
+                if (ageOver40 > vetStandard.length) {
+                    time = vetStandard[vetStandard.length - 1];
                 }
                 else {
                     time = vetStandard[ageOver40];
@@ -203,7 +217,7 @@ var TTRider = (function ($) {
             $('#time25').text("");
             if (login.checkRole()) {
                 $('#email').text(this.Email);
-                $('#age').text(this.Age);
+                $('#age').text(this.age());
                 if (this.hasBest25()) {
                     best25string = ttTime.timeStringH1(this.Best25 * 1000);
                     $('#time25').text(best25string);

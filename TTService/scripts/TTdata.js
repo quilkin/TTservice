@@ -11,6 +11,7 @@
 *  'edit rider' does not return correctly
 *  don't allow duplicate logins
 •	Allow creation of new courses
+*   Add gpx files to courses
 •	Redefine rider list in Surname order, not given name order.
 •	Manual sorting of start list order
 •	Allow emails to be sent from organiser’s email address
@@ -20,7 +21,7 @@
 *   vets results 40-49, 50-59 etc
 *   allow for penalty start times
 *   allow for more than one minute between starts
-*   allow deletion of entries but only if event hasn't happened
+*   allow deletion of entries if event hasn't yet happened
 */
 
 var TTData = (function ($) {
@@ -30,8 +31,8 @@ var TTData = (function ($) {
 
     function urlBase() {
         if (ttApp.isMobile()) {
-            return "http://www.timetrials.org.uk/Service1.svc/";
-            // return "http://quilkin.azurewebsites.net/Service1.svc/"
+          //return "http://www.timetrials.org.uk/Service1.svc/";
+           return "http://localhost:60080/Service1.svc/"
         }
 
         //return "http://www.timetrials.org.uk/Service1.svc/";

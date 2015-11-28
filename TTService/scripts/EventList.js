@@ -39,8 +39,9 @@
                 popup.alert("Error finding correct event");
                 return false;
             }
+
             // now need to ask server for all its entries for this event
-            TTData.json('LoadEntries', "POST", eventID, function (entries) {
+            TTData.json('LoadEntries', "POST", event, function (entries) {
                 event.loadEntries(entries);
                 // popup.alert(entries.length + " riders loaded for this event");
                 if (event.pastEvent()) {

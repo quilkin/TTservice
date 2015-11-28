@@ -17,8 +17,8 @@ namespace TTService
         public int ID { get; set; }
         [DataMember]
         public string Name { get; set; }
-        [DataMember]
-        public int Age { get; set; }
+        
+        
         [DataMember]
         public bool Lady { get; set; }
         [DataMember]
@@ -29,15 +29,14 @@ namespace TTService
         public string Email { get; set; }
         [DataMember]
         public int Best25 { get; set; }
+        [DataMember]
+        // store as ticks to facilitate JSON handling
+        public long DoB { get; set; }
 
+        //public Categories Category { get; set; }
+        //  redundant now we are using DoB
+        public int Age { get; set; }
 
-        public Categories Category { get; set; }
-        public DateTime DOB { get; set; }
-        //public TimeSpan time10;
-        //public TimeSpan time25;
-        //public TimeSpan timeAggregate;
-
-        //public TimeSpan vetStandard;
         public bool inEvent;
         public string email;
 
@@ -50,21 +49,21 @@ namespace TTService
             Name = "new rider";
             Age = 40;
         }
-        public void UpdateCategory()
-        {
-            if (Age < 16)
-                Category = Categories.Juvenile;
-            else if (Age < 18)
-                Category = Categories.Junior;
-            else if (Age >= 40)
-            {
-                //if (Category == Categories.Lady || Category == Categories.LadyVet)
-                if (Lady)
-                    Category = Categories.LadyVet;
-                else
-                    Category = Categories.Vet;
-            }
-        }
+        //public void UpdateCategory()
+        //{
+        //    if (Age < 16)
+        //        Category = Categories.Juvenile;
+        //    else if (Age < 18)
+        //        Category = Categories.Junior;
+        //    else if (Age >= 40)
+        //    {
+        //        //if (Category == Categories.Lady || Category == Categories.LadyVet)
+        //        if (Lady)
+        //            Category = Categories.LadyVet;
+        //        else
+        //            Category = Categories.Vet;
+        //    }
+        //}
         //public Rider(int id, string name, Categories cat, DateTime dob, string club)
         //{
         //    ID = id;
@@ -77,17 +76,19 @@ namespace TTService
         //    UpdateCategory();
 
         //}
-        public Rider(int id, string name, int age, bool lady,int clubID, int best25, string email)
+        public Rider(int id, string name, long dob, bool lady,int clubID, int best25, string email)
         {
             ID = id;
             Name = name;
-            Age = age;
+           // DateTime DoB = new DateTime(dob);
+           // Age = (DateTime.Now.Year - DoB.Year);
             Lady = lady;
             Best25 = best25;
             Email = email;
-            DOB = DateTime.Now.AddYears(-age);
-            ClubID= clubID;
-            UpdateCategory();
+            //DOB = DateTime.Now.AddYears(-age);
+            DoB = dob;
+            ClubID = clubID;
+            //UpdateCategory();
         }
 
         //public void FindAggregate()

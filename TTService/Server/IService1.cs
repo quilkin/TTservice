@@ -46,7 +46,7 @@ namespace TTService
 
         [OperationContract]
         [WebInvoke(Method = "POST", UriTemplate = "/LoadEntries", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        IEnumerable<Entry> LoadEntries(int eventID);
+        IEnumerable<Entry> LoadEntries(Event ev);
 
         [OperationContract]
         [WebInvoke(Method = "POST", UriTemplate = "/SeedEntries", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]

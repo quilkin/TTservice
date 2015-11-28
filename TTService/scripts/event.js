@@ -153,7 +153,8 @@ var Event = (function ($) {
                 pos += 1;
                 entry.Position = pos;
                 rider = Riders.riderFromID(entry.RiderID);
-                stdTime = rider.vetStandardTime(this.distance());
+                var distance = this.distance(this.CourseID);
+                stdTime = rider.vetStandardTime(distance);
                 start = entry.Start;
                 finish = entry.Finish;
 

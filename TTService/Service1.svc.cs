@@ -101,7 +101,7 @@ namespace TTService
                 Trace.WriteLine(ex.Message);
 
             }
-            string query = "SELECT riders.id, riders.name, riders.clubID, riders.age, riders.lady, riders.best25, riders.email "
+            string query = "SELECT riders.id, riders.name, riders.clubID, riders.dob, riders.lady, riders.best25, riders.email "
                             + "FROM riders ORDER BY riders.name";
             using (SqlDataAdapter riderAdapter = new SqlDataAdapter(query, ttConnection))
             {
@@ -109,6 +109,8 @@ namespace TTService
                 riderAdapter.Fill(dataRiders);
                 // ToDo: not efficient to convert table to  List<Rider> in order to provide the data
                 int length = dataRiders.Rows.Count;
+                // need to convert to javascript timebase
+                DateTime jsbase = new DateTime(1970, 1, 1);
                 for (int row = 0; row < length; row++)
                 {
                     try
@@ -120,7 +122,9 @@ namespace TTService
                             email = (string)dr["email"];
                         //int cat = (int)dr["cat"];
                         //riders.Add(new Rider(id, (string)dr["name"], (Rider.Categories)cat, (int)dr["age"], (int)dr["clubID"], (int)dr["best25"], email));
-                        riders.Add(new Rider(id, (string)dr["name"], (int)dr["age"], (bool)dr["lady"],(int)dr["clubID"], (int)dr["best25"], email));
+                        DateTime dob = (DateTime)dr["dob"];
+
+                        riders.Add(new Rider(id, (string)dr["name"], (long)((dob.Ticks-jsbase.Ticks)/10000), (bool)dr["lady"],(int)dr["clubID"], (int)dr["best25"], email));
 
                     }
                     catch (Exception ex)
@@ -485,7 +489,12 @@ namespace TTService
             ttConnection.Close();
             return events;
         }
-        public IEnumerable<Entry> LoadEntries(int eventID)
+        //public IEnumerable<Entry> Test(Event ev)
+        //{
+        //    string query = string.Format("SELECT * FROM entries where EventId='{0}'", ev.ID);
+        //    return null;
+        //}
+        public IEnumerable<Entry> LoadEntries(Event ev)
         {
             try
             {
@@ -496,7 +505,7 @@ namespace TTService
             {
                 Trace.WriteLine(ex.Message);
             }
-            string query = string.Format("SELECT * FROM entries where EventId='{0}'", eventID);
+            string query = string.Format("SELECT * FROM entries where EventId='{0}'", ev.ID);
             using (SqlDataAdapter entryAdapter = new SqlDataAdapter(query, ttConnection))
             {
                 dataEntries = new DataTable();
@@ -583,19 +592,21 @@ namespace TTService
 
             try
             {
+                long jsbaseticks = new DateTime(1970, 1, 1).Ticks;
                 foreach (Rider r in riders)
                 {
-                    DateTime DOB = DateTime.Now.AddYears(-r.Age);
+                    //DateTime DOB = DateTime.Now.AddYears(-r.Age);
                     if (r.Best25 < 45 * 60)
                         // assume this is a '10' time not a '25' time
                         r.Best25 = r.Best25 + r.Best25 + r.Best25 / 2;
 
-                    string query = string.Format("insert into riders (name, clubID, age, lady,dob, best25,email) values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}')\n\r",
-                        r.Name, r.ClubID, r.Age, r.Lady, TimeString(DOB),r.Best25, r.Email);
+                    DateTime dob = new DateTime(r.DoB * 10000 + jsbaseticks);
+                    string query = string.Format("insert into riders (name, clubID, lady,dob, best25,email) values ('{0}','{1}','{2}','{3}','{4}','{5}')\n\r",
+                        r.Name, r.ClubID,  r.Lady, TimeString(dob),r.Best25, r.Email);
                     //if (newID == 0)
                     {
                         query += "DECLARE @NewRiderID Int\n\r SET @NewRiderID = SCOPE_IDENTITY()\n\r";
-                        query += "SELECT riders.id, riders.name, riders.clubID, riders.age, riders.lady, riders.best25, riders.email "
+                        query += "SELECT riders.id, riders.name, riders.clubID, riders.dob, riders.lady, riders.best25, riders.email "
                                 + "FROM riders where riders.id = @NewRiderID";
                         using (SqlDataAdapter riderAdapter = new SqlDataAdapter(query, ttConnection))
                         {
@@ -605,19 +616,12 @@ namespace TTService
                             {
                                 DataRow dr = dataRiders.Rows[0];
                                 newID = (int)dr["id"];
-                                Rider newRider = new Rider(newID, r.Name, r.Age, r.Lady, r.ClubID, r.Best25, r.Email);
+                                Rider newRider = new Rider(newID, r.Name, r.DoB, r.Lady, r.ClubID, r.Best25, r.Email);
                                 newRiders.Add(newRider);
                             }
                         }
                     }
-                    //else
-                    //{
-                    //    using (System.Data.SqlClient.SqlCommand command = new SqlCommand(query, ttConnection))
-                    //    {
-                    //        command.ExecuteNonQuery();
-                    //    }
 
-                    //}
                 }
 
                 ttConnection.Close();
@@ -647,14 +651,16 @@ namespace TTService
             }
             try
             {
+                long jsbaseticks = new DateTime(1970, 1, 1).Ticks;
                 foreach (Rider r in riders)
                 {
                     if (r.Best25 < 45 * 60)
                         // assume this is a '10' time not a '25' time
                         r.Best25 = r.Best25 + r.Best25 + r.Best25 / 2;
-                    DateTime DOB = DateTime.Now.AddYears(-r.Age);
-                    string query = string.Format("update riders set name='{0}', clubID='{1}', age='{2}', lady='{3}',dob='{4}', best25='{5}', email='{6}'",
-                        r.Name, r.ClubID, r.Age, r.Lady,TimeString(DOB), r.Best25, r.Email);
+                    // DateTime DOB = DateTime.Now.AddYears(-r.Age);
+                    DateTime dob = new DateTime(r.DoB*10000 + jsbaseticks);
+                    string query = string.Format("update riders set name='{0}', clubID='{1}', lady='{2}',dob='{3}', best25='{4}', email='{5}'",
+                        r.Name, r.ClubID,  r.Lady,TimeString(dob), r.Best25, r.Email);
                     query += string.Format("where id='{0}'\n\r", r.ID);
 
                     using (System.Data.SqlClient.SqlCommand command = new SqlCommand(query, ttConnection))
