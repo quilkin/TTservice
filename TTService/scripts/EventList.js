@@ -43,16 +43,18 @@
             // now need to ask server for all its entries for this event
             TTData.json('LoadEntries', "POST", event, function (entries) {
                 event.loadEntries(entries);
+                ttApp.enableEventLinks(true);
                 // popup.alert(entries.length + " riders loaded for this event");
                 if (event.pastEvent()) {
                     event.results();
                 }
                 else {
-                     popup.wait(entries.length + " riders loaded for this (future) event",
-                        function () {
-                            ttApp.changePage("home");
-                        });
+                     //popup.wait(entries.length + " riders loaded for this (future) event",
+                     //   function () {
+                     //       ttApp.changePage("home");
+                     //   });
                     ttApp.changePage("home");
+
                 }
              },
             true);
@@ -302,7 +304,7 @@
         }
         Course.populateList(coursesList);
         Clubs.populateList(clubsList);
-
+        ttApp.enableEventLinks(true);
         $("#addEventTables").append('<p id="coursesTable"/> <p id="clubsTable"/>');
         $("#btnEventTime").text("08:00:00");
 

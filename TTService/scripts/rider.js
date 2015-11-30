@@ -202,6 +202,8 @@ var TTRider = (function ($) {
             }
             return 0;
         },
+
+
         displayRider: function (event) {
             var entry = null,
                 event = EventList.currentEvent(),
@@ -268,6 +270,7 @@ var TTRider = (function ($) {
     $('#dnf').click(function () {
         $('#riderTime').val('DNF');
     });
+
     return rider;
 }(jQuery));
 

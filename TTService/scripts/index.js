@@ -51,7 +51,7 @@
         setTimeout(function () {
             // workaround to allow OnDeviceReady to fire???
             ttApp.init();
-        },1000)
+        }, 1000);
         
         
         $(document).ajaxStart(function () {
@@ -71,14 +71,16 @@
         document.body.style.backgroundColor = "#FFD700";
 
         $('#getRiderData').click(function () {   Riders.getRiderData();    });
-        $('#saveRiderData').click(function () {  Riders.saveRiderData(null);   });
-        $('#manage').click(function () {
-            $('#eventDetails').text(EventList.currentDetails());
-            ttApp.changePage('eventManage');
-        });
+        $('#saveRiderData').click(function () { Riders.saveRiderData(null); });
+
+        //$('#addEvRider').prop('disabled', true).addClass('ui-disabled');
+        //$('#manage').click(function () {
+        //    $('#eventDetails').text(EventList.currentDetails());
+        //    ttApp.changePage('eventManage');
+        //});
         
-        $('#theday').click(function () { ttApp.changePage('onTheDay'); });
-        $('#ridersclubs').click(function () { ttApp.changePage('ridersClubs'); });
+        //$('#theday').click(function () { ttApp.changePage('onTheDay'); });
+        //$('#ridersclubs').click(function () { ttApp.changePage('ridersClubs'); });
 
     });
 
@@ -103,6 +105,74 @@ var ttApp = (function () {
         var d = new Date();
         $(".realtime").text(ttTime.timeString(d));
 
+
+        var activePage = $.mobile.activePage.attr('id');
+        var event = EventList.currentEvent();
+        
+        if (activePage === 'startLinePage' && event != null)
+        {
+            var nextRider,
+                timeToGo,
+                millisecToGo = event.getTime().valueOf() - d.valueOf(),
+                numRiders = event.Entries.length;
+
+            timeToGo = new Date(millisecToGo);
+            //if (millisecToGo > 0) {
+            //    $("#nextRider").html('Event starts in...');
+            //}
+            //else
+            {
+                //nextRider = timeToGo.getMinutes() + timeToGo.getHours() * 60;
+                nextRider = - Math.floor(timeToGo.valueOf() / 60000);
+                nextRider = - Math.floor(nextRider % numRiders);      // testing only!!
+                if (nextRider <= numRiders) {
+                    var entry = event.getEntryFromNumber(nextRider);
+                    if (entry !== null) {
+                        var riderID = entry.RiderID;
+                        var rider = Riders.riderFromID(riderID);
+                        $("#nextRider").html('Next rider: ' + nextRider + ': ' + rider.Name);
+                    }
+                    else {
+                        $("#nextRider").html('Next rider: unknown');
+}
+                }
+                else {
+                    $("#nextRider").html('No more riders for this event');
+
+                }
+                var secs = timeToGo.getSeconds();
+                if (secs === 30) {
+                    if (ismobile) {
+                        var beep = new Media("/android_asset/www/res/beep_mp3.mp3");
+                        beep.play();
+                    }
+                    else {
+                        $("#finish")[0].play();
+                    }
+                }
+                else if (secs === 0) {
+                    if (ismobile) {
+                        var beep = new Media("/android_asset/www/res/censor-beep-4.mp3");
+                        beep.play();
+                    }
+                    else {
+                        $("#start4")[0].play();
+                    }
+                }
+                else if (secs <= 5 || secs === 10) {
+                    if (ismobile) {
+                        var beep = new Media("/android_asset/www/res/censor-beep-01.mp3");
+                        beep.play();
+                    }
+                    else {
+                        $("#start1")[0].play();
+                    }
+                }
+                    
+            }
+            $("#nextRiderTime").html(ttTime.timeString(timeToGo));
+
+        }
         if (ismobile) {
             // extend sleep timeout to 5 minutes
             ++screenTimeout;
@@ -115,6 +185,12 @@ var ttApp = (function () {
         }
     }
 
+    function enableLink(link, enable) {
+        if (enable)
+            $(link).prop('disabled', true).removeClass('ui-disabled');
+        else
+            $(link).prop('disabled', true).addClass('ui-disabled');
+    };
 
     return {
         init: function() {
@@ -122,7 +198,7 @@ var ttApp = (function () {
             //    power = require('powerManagement.js');
 
             // remove this line while debugging!!!!
-            //realTimer = setInterval(function () { UpdateTime() }, 1000);
+            realTimer = setInterval(function () { UpdateTime() }, 1000);
             $.ajaxSetup({ cache: false });
 
             $(document).on("popupafterclose", ".ui-popup", function ()
@@ -138,7 +214,7 @@ var ttApp = (function () {
             $('#googlegroup').click(function () {
                 window.open('http://groups.google.com/forum/embed/?place=forum/timetrials', '_system');
             });
-
+            this.enableEventLinks(false);
         },
 
         setPlatform: function (x) { platform = x; },
@@ -172,8 +248,8 @@ var ttApp = (function () {
                 return $(window).width();
             }
         },
-        setEvent: function (value) { event = value; },
-        currentEvent: function() { return event;},
+        //setEvent: function (value) { event = value; },
+        //currentEvent: function() { return event;},
         // Update DOM on a Received Event
         receivedEvent: function(id) {
             var parentElement = document.getElementById(id);
@@ -185,14 +261,19 @@ var ttApp = (function () {
 
         },
         changePage: function (page) {
-            //if (popup.prototype.count() > 0)
-            //{
-            //    return;
-            //}
-            //$.mobile.changePage("#" + page);
-            //ttApp.changePage("" + page);
-            //$("body").pagecontainer("change", "#" + page, { transition: "slide" });
             $("body").pagecontainer("change", "#" + page);
+        },
+        enableEventLinks: function(enable) {
+            return;
+            enableLink('#addEvRider', enable);
+            enableLink('#saveEvent1', enable);
+            enableLink('#saveEvent2', enable);
+            enableLink('#displayEvent', enable);
+            enableLink('#sortEvent', enable);
+            enableLink('#updateEventTimes', enable);
+            enableLink('#startLine', enable);
+            enableLink('#finLine', enable);
+            enableLink('#showResults', enable);
         },
         resetScreenTimeout: function () { screenTimeout = 0;}
     }

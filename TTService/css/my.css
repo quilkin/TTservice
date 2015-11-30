@@ -7,6 +7,20 @@
                 font-family:Arial;
                 font-stretch:extra-condensed;
             }
+            .nextrider
+            {
+                text-align: center;
+                font-size: 250%;  
+                font-family:Arial;
+                font-stretch:extra-condensed;
+            }
+            .nextridertime
+            {
+                text-align: center;
+                font-size: 500%;  
+                font-family:Arial;
+                font-stretch:extra-condensed;
+            }
             .bigbutton
             {
                 height: 80px;
@@ -47,3 +61,4 @@
                 padding-top: 10px;
                 padding-left: 15px;
             }
+            .ui-link {margin-left: 35px;}

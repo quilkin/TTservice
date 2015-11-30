@@ -6,7 +6,6 @@
 *  feedback after save to db
 *  popup buttons better touch response
 *  edit rider - edit club
-*  results: vets, team, women, juniors
 *  re-order start times (if rider missed when entering names)!
 *  'edit rider' does not return correctly
 *  don't allow duplicate logins
@@ -15,10 +14,8 @@
 •	Redefine rider list in Surname order, not given name order.
 •	Manual sorting of start list order
 •	Allow emails to be sent from organiser’s email address
-•	Create results tables for vets, women, juniors etc
-•	Sort out birthdates and ages so that ages are automatically updated in subsequent years
+•	Create results tables for women, juniors etc
 *   update vet's table
-*   vets results 40-49, 50-59 etc
 *   allow for penalty start times
 *   allow for more than one minute between starts
 *   allow deletion of entries if event hasn't yet happened

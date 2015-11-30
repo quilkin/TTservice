@@ -94,22 +94,41 @@
 
     <div data-role="page" id="home">
         <div data-role="content">
-            <div class="realtime">Time</div>
+            <!--<div class="realtime">Time</div>-->
             <ul data-role="listview" data-inset="true">
-                <li id="loadEvent" class="ui-btn ui-btn-icon-right">Find an event</li>
-                <li id="manage" class="ui-btn ui-btn-icon-right">Event Management</li>
-                <li id="theday" class="ui-btn ui-btn-icon-right">Event on the day</li>
-                <li id="ridersclubs" class="ui-btn ui-btn-icon-right">Riders & Clubs</li>
+                <li class="ui-li ui-li-divider ui-bar-b" role="heading" data-role="list-divider">Events</li>
+                    <li id="loadEvent" class="ui-btn ui-btn-icon-right">Find an event</li>
+                    <li id="addEvent" class="ui-btn ui-btn-icon-right">Create new event</li>
+                <li class="ui-li ui-li-divider ui-bar-b" role="heading" data-role="list-divider">Manage</li>
+                    <li id="addEvRider" class="ui-btn ui-btn-icon-right">Add riders to event</li>
+                    <li id="saveEvent1" class="ui-btn ui-btn-icon-right">Save event</li>
+                    <li id="displayEvent" class="ui-btn ui-btn-icon-right">Check Entry List</li>
+                    <li id="sortEvent" class="ui-btn ui-btn-icon-right">Sort (seed) Entry List</li>
+                    <li id="updateEventTimes" class="ui-btn ui-btn-icon-right">Update event times</li>
+                <!-- <li id="manage" class="ui-btn ui-btn-icon-right">Event Management</li> -->
+                <li class="ui-li ui-li-divider ui-bar-b" role="heading" data-role="list-divider">On The Day</li>
+                    <li id="startLine" class="ui-btn ui-btn-icon-right">Start Line Control</li>
+                    <li id="finLine" class="ui-btn ui-btn-icon-right">Finish Line Control</li>
+                    <li id="showResults" class="ui-btn ui-btn-icon-right">Results Page</li>
+                    <li id="saveEvent2" class="ui-btn ui-btn-icon-right">Save event</li>
+                <!-- <li id="theday" class="ui-btn ui-btn-icon-right">Event on the day</li>-->
+                <li class="ui-li ui-li-divider ui-bar-b" role="heading" data-role="list-divider">Riders/Clubs/Courses</li>
+                    <li id="getRiderData" class="ui-btn ui-btn-icon-right">Re-load Rider & Club data</li>
+                    <li id="displayRiderList" class="ui-btn ui-btn-icon-right">Rider List</li>
+                    <li id="displayClubList" class="ui-btn ui-btn-icon-right">Club List</li>
+                    <li id="saveRiderData" class="ui-btn ui-btn-icon-right">Save Rider & Club data</li>
+                <!-- <li id="ridersclubs" class="ui-btn ui-btn-icon-right">Riders & Clubs</li>-->
             </ul>
             <div id="help" class="notes">
                 <a id="manual">Instructions</a>
-                <p />
+                <p></p>
                 <a id="googlegroup"><i>beta version: Google groups forum for comments</i></a>
-                <p/>
+                <p></p>
                 <a href="mailto:admin@timetrials.org.uk">Email</a>
             </div>
         </div>
     </div>
+    <!--
     <div data-role="page" id="eventManage">
         <div data-role="header">   <h1>event Management</h1>   </div>
         <div data-role="content">
@@ -149,7 +168,7 @@
             </ul>
         </div>
     </div>
-
+        -->
 
     <div data-role="page" id="addEventPage">
         <div data-role="header">
@@ -159,7 +178,7 @@
             <a data-role="button" data-mini="true" id="chooseNewEventClub">Choose club for event</a>
             <a data-role="button" data-mini="true" id="chooseNewEventCourse">Choose course for event</a>
         </div>
-        <p id="addEventTables" style="text-align:center;" />
+        <p id="addEventTables" style="text-align:center;"></p>
         <div>
             <input id="startDate" type="hidden" />
             <a data-role="button" data-mini="true" id="btnStartDate">Date of event</a>
@@ -180,12 +199,12 @@
         <div class="ui-grid-a">
             <div class="ui-block-a">  <label for="chooseEventClub" style="float:right">Select event by club:</label>     </div>
             <div class="ui-block-b">   <a data-role="button" data-mini="true" id="chooseEventClub">Club</a>   </div>
-            <p id="loadEventTables" style="text-align:center;" />
+            <p id="loadEventTables" style="text-align:center;"></p>
         </div>
         <div class="ui-grid-a">
             <div class="ui-block-a">  <label for="chooseEventCourse" style="float:right">Select event by course:</label>     </div>
             <div class="ui-block-b">   <a data-role="button" data-mini="true" id="chooseEventCourse">Course</a>  </div>
-            <p id="loadEventTables" style="text-align:center;" />
+            <p id="loadEventTables" style="text-align:center;"></p>
         </div>
         <div class="ui-grid-a">
             <div class="ui-block-a">  <label for="fromDate" style="float:right">Event date after:</label>     </div>
@@ -233,6 +252,7 @@
         </div>
 
         <p id="resultsTable" style="font-family:Verdana;font-size:20px;">No event loaded</p>
+        <p id="vetResultsTable" style="font-family:Verdana;font-size:20px;">No event loaded</p>
         <a id="btnEmailResults" class="ui-btn ui-btn-icon-right">Email Result Sheet</a>
         <p id="clubResultsTable" style="font-family:Verdana;font-size:20px;">No event loaded</p>
 
@@ -243,7 +263,13 @@
             <h1>Start Line</h1>
         </div>
         <div class="realtime">Time</div>
-        <a data-role="button" id="btnSyncStart">Sync Start Time</a>
+        <!--<a data-role="button" id="btnSyncStart">Sync Start Time</a>-->
+        <a id="btnSyncStart" class="ui-btn ui-btn-icon-right">Sync Start Time</a>
+        <p class="nextrider" id="nextRider">Next rider: </p>
+        <!--<a id="btnNextRider" class="ui-btn ui-btn-icon-right">1</a>-->
+        <div class="nextridertime" id="nextRiderTime">00:60</div>
+        <audio src="res/censor-beep-01.mp3" id="start1"></audio>
+        <audio src="res/censor-beep-4.mp3" id="start4"></audio>
     </div>
 
     <div data-role="page" data-add-back-btn="false" id="finishLine">
