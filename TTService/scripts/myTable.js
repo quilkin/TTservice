@@ -12,7 +12,7 @@ var TTTable = (function ($) {
             "columns" : columns,
             "language": { "search": searchText },
             "scrollY": height,
-            "filter": true,
+            "filter": (searchText==="") ? false:true,
             "paging": false,
             "scrollCollapse": true,
             "data": array,
@@ -36,8 +36,11 @@ var TTTable = (function ($) {
             };
         }
 
-
-        $(tableID + 'Table').html('<table class="display" id="' + tableID.substring(1) + '"></table>');
+        if (tableID.indexOf("triple") >= 0) {
+            $(tableID + 'Table').html('<table class="compact" id="' + tableID.substring(1) + '"></table>');
+        }
+        else
+            $(tableID + 'Table').html('<table class="display" id="' + tableID.substring(1) + '"></table>');
 
         this.show = function (onclick) {
             // onclick is the function (if any) to be run when a row is clicked

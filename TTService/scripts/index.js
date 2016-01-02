@@ -273,7 +273,8 @@ var ttApp = (function () {
             enableLink('#updateEventTimes', enable);
             enableLink('#startLine', enable);
             enableLink('#finLine', enable);
-            enableLink('#showResults', enable);
+            enableLink('#showResultsList', enable);
+            enableLink('#showResultsBoard', enable);
         },
         resetScreenTimeout: function () { screenTimeout = 0;}
     }

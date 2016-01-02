@@ -14,11 +14,12 @@
 •	Redefine rider list in Surname order, not given name order.
 •	Manual sorting of start list order
 •	Allow emails to be sent from organiser’s email address
-•	Create results tables for women, juniors etc
+•	Create results tables for women, juniors
 *   update vet's table
 *   allow for penalty start times
 *   allow for more than one minute between starts
 *   allow deletion of entries if event hasn't yet happened
+*   summary results board (for projector)
 */
 
 var TTData = (function ($) {
@@ -37,7 +38,7 @@ var TTData = (function ($) {
 
     }
     function webRequestFailed(handle, status, error) {
-        popup.alert("Error ajax request: " + error);
+        popup.alert("Web Error: " + error);
         $("#submitButton").removeAttr("disabled");
     }
 

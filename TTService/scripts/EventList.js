@@ -172,10 +172,12 @@
     $('#saveRiderTime').click(function () {
         event.saveRiderTime();
     });
-    $('#showResults').click(function () {
+    $('#showResultsList').click(function () {
         event.results();
     });
-
+    $('#showResultsBoard').click(function () {
+        event.resultsBoard();
+    });
 
     function chooseClub(newEvent) {
 

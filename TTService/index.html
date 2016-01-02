@@ -109,7 +109,8 @@
                 <li class="ui-li ui-li-divider ui-bar-b" role="heading" data-role="list-divider">On The Day</li>
                     <li id="startLine" class="ui-btn ui-btn-icon-right">Start Line Control</li>
                     <li id="finLine" class="ui-btn ui-btn-icon-right">Finish Line Control</li>
-                    <li id="showResults" class="ui-btn ui-btn-icon-right">Results Page</li>
+                    <li id="showResultsList" class="ui-btn ui-btn-icon-right">Results Listing</li>
+                    <li id="showResultsBoard" class="ui-btn ui-btn-icon-right">Results Board</li>
                     <li id="saveEvent2" class="ui-btn ui-btn-icon-right">Save event</li>
                 <!-- <li id="theday" class="ui-btn ui-btn-icon-right">Event on the day</li>-->
                 <li class="ui-li ui-li-divider ui-bar-b" role="heading" data-role="list-divider">Riders/Clubs/Courses</li>
@@ -284,6 +285,17 @@
         <audio src="res/beep_mp3.mp3" id="finish"></audio>
     </div>
 
+    <div data-role="page"  id="resultsboard">
+        <div data-role="header">
+            <h1 id="resultsboardTitle">Results</h1>
+        </div>
+        <div data-role="content">
+            <div class="ui-grid-c" id="tableArray">
+                <div class="ui-block-a"><p id="triple1Table"></div>
+                <div class="ui-block-b"><p id="triple2Table"></div>
+                <div class="ui-block-c"><p id="triple3Table"></div>
+            </div>
+    </div>
 
     <div data-role="page" id="ridersPage">
         <div data-role="header">
