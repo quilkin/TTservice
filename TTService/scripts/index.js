@@ -248,8 +248,7 @@ var ttApp = (function () {
                 return $(window).width();
             }
         },
-        //setEvent: function (value) { event = value; },
-        //currentEvent: function() { return event;},
+
         // Update DOM on a Received Event
         receivedEvent: function(id) {
             var parentElement = document.getElementById(id);
@@ -261,6 +260,15 @@ var ttApp = (function () {
 
         },
         changePage: function (page) {
+            var event = EventList.currentEvent();
+            // stop updates of results board, if any
+            if (event != null && event.ID > 0)
+            {
+                if (event.displayTimer != null) {
+                    clearInterval(event.displayTimer);
+                    event.displayTimer = null;
+                }
+            }
             $("body").pagecontainer("change", "#" + page);
         },
         enableEventLinks: function(enable) {

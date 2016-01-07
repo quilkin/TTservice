@@ -13,6 +13,7 @@ var Event = (function ($) {
         this.ID = ID;
         this.OddData = extraData;
         this.Synched = false;
+        this.displayTimer = null;
         this.clearEntries = function () {
             this.Entries.length = 0;
             //while (this.Entries.length > 0) {
@@ -131,82 +132,93 @@ var Event = (function ($) {
                 return;
             }
 
-            // compares entries and sorts in order of start number, lowest first
-            this.Entries.sort(function (a, b) {
+            ttApp.changePage("resultsboard");
+
+            var thisEvent = this,
+
+                rideTime,
+                rideTimeString,
+                rider,
+                rows = this.Entries.length / 3 + 1,
+                height = $(window).height() - 100,
+                row,
+                col,
+                htmlline;
+
+            // set a timer to refresh the results every 60 seconds
+            this.displayTimer = setInterval(function () {
+                
+                // get new results from web
+                TTData.json('LoadEntries', "POST", thisEvent, function (entries) { thisEvent.loadEntries(entries); }, true);
+                // compares entries and sorts in order of start number, lowest first
+                thisEvent.Entries.sort(function (a, b) {
                     return a.Number - b.Number;
-            });
-            // make a set of three tables in columns
-            var row = 0,
-            col = 0,
-            htmlline,
-            array1 = [], array2 = [], array3 = [],
-            table1, table2, table3,
-            rideTime,
-            rideTimeString,
-            rider,
-            entries = this.Entries.length,
-            rows = entries / 3 + 1,
-            height = $(window).height() - 100;
-
-
-            this.Entries.every(function (entry, index) {
-                if (row >= rows) {
-                    row = 0; ++col;
-                }
-                rider = Riders.riderFromID(entry.RiderID);
-                if (entry.Finish / 1000 < ttTime.noTimeYet() / 1000) {
-                    // rider has finished event,
-
-                    rideTime = entry.Finish - entry.Start;
-                    if (entry.Finish / 1000 === ttTime.didNotStart() / 1000) {
-                        rideTimeString = "DNS";
+                });
+                // make a set of three tables in columns
+                var entries = thisEvent.Entries;
+                var array1 = [], array2 = [], array3 = [],
+                    table1, table2, table3;
+                row = 0;
+                col = 0;
+                entries.every(function (entry, index) {
+                    if (row >= rows) {
+                        row = 0; ++col;
                     }
-                    else if (entry.Finish / 1000 === ttTime.didNotFinish() / 1000) {
-                        rideTimeString = "DNF";
-                    }
-                    else if (entry.Finish >= ttTime.specialTimes()) {
-                        rideTimeString = "???";
+                    rider = Riders.riderFromID(entry.RiderID);
+                    if (entry.Finish / 1000 < ttTime.noTimeYet() / 1000) {
+                        // rider has finished event,
+
+                        rideTime = entry.Finish - entry.Start;
+                        if (entry.Finish / 1000 === ttTime.didNotStart() / 1000) {
+                            rideTimeString = "DNS";
+                        }
+                        else if (entry.Finish / 1000 === ttTime.didNotFinish() / 1000) {
+                            rideTimeString = "DNF";
+                        }
+                        else if (entry.Finish >= ttTime.specialTimes()) {
+                            rideTimeString = "???";
+                        }
+                        else {
+                            rideTimeString = ttTime.timeStringH1(rideTime);
+                        }
+
                     }
                     else {
-                        rideTimeString = ttTime.timeStringH1(rideTime);
+                        rideTimeString = "waiting";
                     }
+                    switch (col) {
+                        case 0: array1.push([entry.Number, rider.Name, rideTimeString]); break;
+                        case 1: array2.push([entry.Number, rider.Name, rideTimeString]); break;
+                        case 2: array3.push([entry.Number, rider.Name, rideTimeString]); break;
+                    }
+                    ++row;
+                    return true;
+                });
+                table1 = new TTTable('#triple1', 
+                    [{ "title": "","width": "10%" },
+                        { "title": "" },
+                        { "title": "", "width": "10%" }],
+                    "", array1, height, null, false);
+                table1.show(null);
 
-                }
-                else {
-                    rideTimeString = "waiting";
-                }
-                switch (col) {
-                    case 0: array1.push([entry.Number, rider.Name, rideTimeString]); break;
-                    case 1: array2.push([entry.Number, rider.Name, rideTimeString]); break;
-                    case 2: array3.push([entry.Number, rider.Name, rideTimeString]); break;
-                }
-                ++row;
-                return true;
-            });
-            table1 = new TTTable('#triple1', 
-                [{ "title": "","width": "10%" },
-                    { "title": "" },
-                    { "title": "", "width": "10%" }],
-                "", array1, height, null, false);
-            table1.show(null);
+                table2 = new TTTable('#triple2', 
+                    [{ "title": "", "width": "10%" },
+                        { "title": "" },
+                        { "title": "", "width": "10%" }],
+                    "", array2, height, null, false);
+                table2.show(null);
 
-            table2 = new TTTable('#triple2', 
-                [{ "title": "", "width": "10%" },
-                    { "title": "" },
-                    { "title": "", "width": "10%" }],
-                "", array2, height, null, false);
-            table2.show(null);
+                table3 = new TTTable('#triple3',
+                    [{ "title": "", "width": "10%" },
+                        { "title": "" },
+                        { "title": "", "width": "10%" }],
+                    "", array3, height, null, false);
+                table3.show(null);
 
-            table3 = new TTTable('#triple3',
-                [{ "title": "", "width": "10%" },
-                    { "title": "" },
-                    { "title": "", "width": "10%" }],
-                "", array3, height, null, false);
-            table3.show(null);
+                $('#tableArray').trigger('create');
+                }, 10000);
 
-            $('#tableArray').trigger('create');
- 
-            ttApp.changePage("resultsboard");
+
         }
         this.results = function () {
             if (this.Entries.length < 1) {
