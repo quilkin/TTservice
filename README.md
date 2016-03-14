@@ -1,4 +1,5 @@
 Cycling Time Trial Management Time Trial Timing & Results app
+
 Mobile app to run on selection of devices (Android, iPhone*, etc) for timing purposes during an event
 
 • Preloaded with list of rider entries, event start time etc
