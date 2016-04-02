@@ -108,22 +108,31 @@ var ttApp = (function () {
 
         var activePage = $.mobile.activePage.attr('id');
         var event = EventList.currentEvent();
+
         
         if (activePage === 'startLinePage' && event != null)
         {
+            var eventTime = event.getTime();
             var nextRider,
                 timeToGo,
-                millisecToGo = event.getTime().valueOf() - d.valueOf(),
+                millisecToGo = eventTime - d.valueOf(),
                 numRiders = event.Entries.length;
 
             timeToGo = new Date(millisecToGo);
-            //if (millisecToGo > 0) {
-            //    $("#nextRider").html('Event starts in...');
-            //}
-            //else
+
+            if (millisecToGo > 0) {
+                $("#nextRider").html('Event starts in...');
+                $("#nextRiderTime").html(ttTime.timeString(timeToGo));
+            }
+            else
             {
-                //nextRider = timeToGo.getMinutes() + timeToGo.getHours() * 60;
-                nextRider = - Math.floor(timeToGo.valueOf() / 60000);
+                millisecToGo = -millisecToGo;
+                //nextRider = -Math.floor(timeToGo.valueOf() / 60000);
+                nextRider = Math.floor((millisecToGo) / 60000)+1; // first rider at 1 min past start time 
+                millisecToGo = millisecToGo % 60000;
+                millisecToGo = 60000 - millisecToGo;
+                timeToGo = new Date(millisecToGo);
+
                 //nextRider = - Math.floor(nextRider % numRiders);      // testing only!!
                 if (nextRider <= numRiders) {
                     var entry = event.getEntryFromNumber(nextRider);
@@ -177,9 +186,9 @@ var ttApp = (function () {
                         $("#start1")[0].play();
                     }
                 }
-                    
+                $("#nextRiderTime").html(ttTime.timeString(timeToGo));
             }
-            $("#nextRiderTime").html(ttTime.timeString(timeToGo));
+ 
 
         }
         if (ismobile) {

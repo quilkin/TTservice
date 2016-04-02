@@ -673,6 +673,10 @@ var Event = (function ($) {
             ttApp.changePage("startLinePage");
         };
         this.syncStart = function () {
+            if (this.Synched) {
+                popup.alert("Cannot re-sync unless app is restarted");
+                return;
+            }
             // adjust start time to match another stopwatch
             var d = new Date(),
             // timediff will be positive if event started 'late'
@@ -684,8 +688,10 @@ var Event = (function ($) {
             this.Entries.forEach(function(entry){
                 entry.Start += timediff;
             });
+            // cannot sync start time again 
+            this.sync();
             $("#finish")[0].play();
-            ttApp.changePage("onTheDay");
+            ttApp.changePage("home");
         };
         this.sortEntries = function () {
             // compares entries and sorts in order of start, but with those already finished shifted to the end

@@ -79,7 +79,7 @@
         htmlline = '<div data-role="controlgroup" data-type="horizontal">';
         htmlline += '<p class="ui-btn" id="cancelFinished">Cancel</p></div>';
         $('#fTimes').append(htmlline);
-        $("#fTimes").on('click', '#cancelFinished', function () { cancelFinished(); });
+        $("#fTimes").off('click').on('click', '#cancelFinished', function () { cancelFinished(); });
         $('#fTimes div p')
             .off('click')
             .on('click', function () {
