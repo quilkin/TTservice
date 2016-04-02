@@ -56,8 +56,7 @@
                     ttApp.changePage("home");
 
                 }
-             },
-            true);
+             });
         });
     }
     
@@ -96,7 +95,7 @@
         days = days.toFixed(0);
         // use extra data field for number of days in search
         newEvent = new Event(0, courseID, fromdatemillisec, clubID, days);
-        TTData.json("LoadEvents", "POST", newEvent, parseEvents, true);
+        TTData.json("LoadEvents", "POST", newEvent, parseEvents);
     }
     function addEventAction() {
         var datetime,

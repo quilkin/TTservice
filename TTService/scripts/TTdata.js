@@ -29,12 +29,12 @@ var TTData = (function ($) {
 
     function urlBase() {
         if (ttApp.isMobile()) {
-          //return "http://www.timetrials.org.uk/Service1.svc/";
-           return "http://localhost:60080/Service1.svc/"
+          return "http://www.timetrials.org.uk/Service1.svc/";
+           //return "http://localhost:60080/Service1.svc/"
         }
 
-        //return "http://www.timetrials.org.uk/Service1.svc/";
-        return "http://localhost:60080/Service1.svc/";
+        return "http://www.timetrials.org.uk/Service1.svc/";
+        //return "http://localhost:60080/Service1.svc/";
 
     }
     function webRequestFailed(handle, status, error) {
@@ -42,7 +42,7 @@ var TTData = (function ($) {
         $("#submitButton").removeAttr("disabled");
     }
 
-    TTData.json = function (url, type, data, successfunc, async) {
+    TTData.json = function (url, type, data, successfunc) {
         var dataJson = JSON.stringify(data),
             thisurl = urlBase() + url;
         $.ajax({
@@ -51,7 +51,7 @@ var TTData = (function ($) {
             url: thisurl,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
-            async: async,
+            async: true,
             success: successfunc,
             error: webRequestFailed
         });

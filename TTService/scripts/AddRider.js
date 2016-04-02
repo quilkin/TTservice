@@ -17,16 +17,15 @@
     list[0] = new TTRider(1,'',0);
 
     function getRiderData2() {
-        TTData.json("GetClubs", "GET", 0, Clubs.parseJson, true);
+        TTData.json("GetClubs", "GET", 0, Clubs.parseJson);
         list.length = 0;
         TTData.json("GetRiders", "GET", 0, function (response) {
             response.forEach(function(r){
                 // convert json list into list of rider objects
                 list.push(new TTRider(r.ID, r.Name, r.DoB, r.Lady, r.ClubID, r.Email, r.Best25));
             });
-
-        }, true);
-        TTData.json("GetCourses", "GET", 0, Course.parseJson, true);
+        });
+        TTData.json("GetCourses", "GET", 0, Course.parseJson);
         ridersChanged = false;
     }
 
@@ -576,7 +575,8 @@
 
     function prepareToAdd(event) {
         if (riderBeforeChange !== null) {
-            if (riderBeforeChange.DoB !== newRider.DoB || riderBeforeChange.ClubID !== newRider.ClubID) {
+            var dobDiff = Math.abs(riderBeforeChange.DoB - newRider.DoB) / 31536000000;
+            if (dobDiff > 0.5 || riderBeforeChange.ClubID !== newRider.ClubID) {
                 // same name, details have been changed
                 popup.confirm('Rider already in list. Update Details?',
                     function () {
@@ -669,8 +669,8 @@
     return {
         getRiderData: function(){
                 if (ridersChanged) {
-                    popup.Confirm('This will remove changes to any riders you have added or updated - are you sure?',
-                    GetRiderData2,
+                    popup.confirm('This will remove changes to any riders you have added or updated - are you sure?',
+                    getRiderData2,
                     null);
                 }
             getRiderData2();
@@ -698,7 +698,7 @@
                 }
             });
             if (newRiders.length > 0) {
-                TTData.json("SaveNewRiders", "POST", newRiders, [Riders.newRidersResponse, Riders.saveChangedRiders], true);
+                TTData.json("SaveNewRiders", "POST", newRiders, [Riders.newRidersResponse, Riders.saveChangedRiders]);
             }
             else {
                 Riders.saveChangedRiders();
@@ -739,21 +739,24 @@
                     rider.changed = false;
                 }
             });
-            
             if (changedRiders.length > 0) {
                 //changedRiders.forEach(function (rider) {
                 //    rider.DoB = new Date(rider.DoB).toJSON();
                 //})
+                //TTData.json("SaveChangedRiders", "POST", changedRiders,
+                //    [function (response) { popup.alert(response); },
+                //        eventToBeSaved.saveEvent],
+                //           true);
                 TTData.json("SaveChangedRiders", "POST", changedRiders,
-                    [function (response) { popup.alert(response); },
-                        eventToBeSaved.saveEvent],
-                            true);
+                    function (response) { popup.alert(response); }       );  // ToDo:  why won't this work any more by putting saveEvent() into callback from SaveChangedRiders? 
+                                    //    it used to work - nothing appears to have changed!!!
+                //eventToBeSaved.saveEvent();
             }
-            else {
+            //else {
                 if (eventToBeSaved !== null) {
                     eventToBeSaved.saveEvent();
                 }
-            }
+            //}
         },
         updateClubIDs: function(oldID, newID) {
             //$.each(list, function (index, rider) {

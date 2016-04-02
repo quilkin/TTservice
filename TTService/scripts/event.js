@@ -149,7 +149,7 @@ var Event = (function ($) {
             this.displayTimer = setInterval(function () {
                 
                 // get new results from web
-                TTData.json('LoadEntries', "POST", thisEvent, function (entries) { thisEvent.loadEntries(entries); }, true);
+                TTData.json('LoadEntries', "POST", thisEvent, function (entries) { thisEvent.loadEntries(entries); });
                 // compares entries and sorts in order of start number, lowest first
                 thisEvent.Entries.sort(function (a, b) {
                     return a.Number - b.Number;
@@ -639,13 +639,13 @@ var Event = (function ($) {
                         }
                         self.sortingRequired = false;
                         self.displayEvent();
-                    }, true);
-                }, true);
+                    });
+                });
             }
             else {
                 TTData.json("SaveEvent", "POST", this, function (response) {
                     popup.alert(response);
-                }, true);
+                });
             }
         };
         this.emailStart = function () {

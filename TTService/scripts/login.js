@@ -37,7 +37,7 @@ var login = (function ($) {
                         popup.alert("Invalid username or password");
                     }
                     $("#submitButton").removeAttr("disabled");
-                }, true);
+                });
 
         } else {
             popup.alert("You must enter a username and password");
@@ -94,7 +94,7 @@ var login = (function ($) {
 
                     //window.addEventListener("batterystatus", onBatteryStatus, false);
                 }
-            },true);
+            });
 
         } else {
             popup.alert("You must enter a username, password and valid email address");

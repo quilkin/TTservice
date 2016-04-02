@@ -189,7 +189,7 @@ var Clubs = (function ($) {
             }
         });
         if (newClubs.length > 0) {
-            TTData.json("SaveNewClubs", "POST", newClubs, [clubsResponse,Riders.saveNewRiders], true);
+            TTData.json("SaveNewClubs", "POST", newClubs, [clubsResponse,Riders.saveNewRiders]);
             // riders will be saved *after* clubs have been saved
         }
         else {
