@@ -15,6 +15,7 @@ xcopy "C:\Users\Chris\Documents\Visual Studio 2012\Projects\TTService\TTService\
 :: xcopy "C:\Users\Chris\Documents\Visual Studio 2012\Projects\TTService\TTService\res\*.*" "C:\Users\Chris\Documents\phonegap-android\projects\assets\www\res" /d /y /s
 
 xcopy "C:\Users\chris\Documents\GitHub\TTService\TTService\js\*.*" "C:\Users\Chris\Documents\cordova\timetrial\www\js" /d /y
+xcopy "C:\Users\chris\Documents\GitHub\TTService\TTService\scripts\*.*" "C:\Users\Chris\Documents\cordova\timetrial\www\scripts" /d /y
 xcopy "C:\Users\Chris\Documents\GitHub\TTService\TTService\css\*.*" "C:\Users\Chris\Documents\cordova\timetrial\www\css" /d /y /s
 xcopy "C:\Users\Chris\Documents\GitHub\TTService\TTService\index.html" "C:\Users\Chris\Documents\cordova\timetrial\www" /d /y
 xcopy "C:\Users\Chris\Documents\GitHub\TTService\TTService\res\*.*" "C:\Users\Chris\Documents\cordova\timetrial\www\res" /d /y /s
@@ -23,5 +24,5 @@ xcopy "C:\Users\Chris\Documents\GitHub\TTService\TTService\config.xml" "C:\Users
 xcopy "C:\Users\Chris\Documents\GitHub\TTService\TTService\signit.bat" "C:\Users\Chris\Documents\cordova\timetrial" /y
 pause
 cd C:\Users\chris\Documents\cordova\timetrial
-cordova run android
+:: cordova run android
 

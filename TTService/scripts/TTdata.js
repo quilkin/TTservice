@@ -33,8 +33,8 @@ var TTData = (function ($) {
            //return "http://localhost:60080/Service1.svc/"
         }
 
-        return "http://www.timetrials.org.uk/Service1.svc/";
-        //return "http://localhost:60080/Service1.svc/";
+        //return "http://www.timetrials.org.uk/Service1.svc/";
+        return "http://localhost:60080/Service1.svc/";
 
     }
     function webRequestFailed(handle, status, error) {

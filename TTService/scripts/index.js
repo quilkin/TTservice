@@ -124,7 +124,7 @@ var ttApp = (function () {
             {
                 //nextRider = timeToGo.getMinutes() + timeToGo.getHours() * 60;
                 nextRider = - Math.floor(timeToGo.valueOf() / 60000);
-                nextRider = - Math.floor(nextRider % numRiders);      // testing only!!
+                //nextRider = - Math.floor(nextRider % numRiders);      // testing only!!
                 if (nextRider <= numRiders) {
                     var entry = event.getEntryFromNumber(nextRider);
                     if (entry !== null) {
@@ -133,9 +133,18 @@ var ttApp = (function () {
                         $("#nextRider").html('Next rider: ' + nextRider + ': ' + rider.Name);
                     }
                     else {
-                        $("#nextRider").html('Next rider: unknown');
-}
+                        var entry = event.getEntryFromNumber(1);
+                        if (entry !== null) {
+                            var riderID = entry.RiderID;
+                            var rider = Riders.riderFromID(riderID);
+                            $("#nextRider").html('Next rider: ' + 1 + ': ' + rider.Name);
+                        }
+                        else {
+                            $("#nextRider").html('Next rider: unknown');
+                        }
+                    }
                 }
+
                 else {
                     $("#nextRider").html('No more riders for this event');
 
