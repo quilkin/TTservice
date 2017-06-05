@@ -37,6 +37,9 @@
         // back to finish more riders
         displayFinishTimes();
         ttApp.changePage("finishLine");
+        // and redraw grid of rider numbers
+        event.sortEntries();
+        createButtonGrid(0);
     }
     function queryDeleteFinishTime(ftime) {
         popup.confirm("Are you sure you want to skip this timing?",
@@ -49,9 +52,9 @@
         entry.Finish = ftime;
         // remove this time from stored list of finish times
         deleteFinishTime(ftime);
-        // and redraw grid of rider numbers
-        event.sortEntries();
-        createButtonGrid(0);
+        //// and redraw grid of rider numbers
+        //event.sortEntries();
+        //createButtonGrid(0);
     }
 
     function cancelFinished() {

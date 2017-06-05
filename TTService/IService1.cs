@@ -48,6 +48,10 @@ namespace TTService
         [WebInvoke(Method = "POST", UriTemplate = "/LoadEntries", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         IEnumerable<Entry> LoadEntries(Event ev);
 
+        //[OperationContract]
+        //[WebInvoke(Method = "POST", UriTemplate = "/Test", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        //IEnumerable<Entry> Test(Event ev);
+
         [OperationContract]
         [WebInvoke(Method = "POST", UriTemplate = "/SeedEntries", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         IEnumerable<Entry> SeedEntries(Event ev);
@@ -71,10 +75,6 @@ namespace TTService
         [OperationContract]
         [WebInvoke(Method = "POST", UriTemplate = "/EmailResultSheet", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         string EmailResultSheet(int eventid);
-
-        [OperationContract]
-        [WebInvoke(Method = "POST", UriTemplate = "/SaveLocation", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        string SaveLocation(Location loc);
     }
 
 }

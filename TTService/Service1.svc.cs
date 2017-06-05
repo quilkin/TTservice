@@ -876,5 +876,137 @@ namespace TTService
             else
                 return ("All emails sent OK");
         }
+
+
+        // this belongs to WebMap service but need a non-SSL endpoint.....
+
+        public string SaveLocation(Location loc)
+        {
+         //   LogEntry log = new LogEntry(getIP(), "SaveLocation", new JavaScriptSerializer().Serialize(loc));
+
+            // Only save a new location if it is different enough from pevious ones, 
+            //  except that the last two locations always stored so that we can see how long we have been stopped for
+
+            int successRows = 0;
+            string query = string.Format("SELECT TOP 2 lat, lon, dt, id FROM locations  where owner = {0}  order by id desc", loc.Owner);
+            string result = "";
+            try
+            {
+                ttConnection = new SqlConnection(connection);
+                ttConnection.Open();
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine(ex.Message);
+                return ex.Message;
+
+            }
+
+            // get latest two entries
+            using (SqlDataAdapter loginAdapter = new SqlDataAdapter(query, ttConnection))
+            {
+                dataLogins = new DataTable();
+                loginAdapter.Fill(dataLogins);
+
+                if (dataLogins.Rows.Count >= 2)
+                {
+                    DataRow dr = dataLogins.Rows[0];
+                    double latitude1 = Convert.ToDouble(dr["lat"]);
+                    double longitude1 = Convert.ToDouble(dr["lon"]);
+                    DateTime time1 = (DateTime)dr["dt"];
+                    int id = (int)dr["id"];
+
+                    dr = dataLogins.Rows[1];
+                    double latitude2 = Convert.ToDouble(dr["lat"]);
+                    double longitude2 = Convert.ToDouble(dr["lon"]);
+                    DateTime time2 = (DateTime)dr["dt"];
+
+
+                    double diffLat = Math.Abs(latitude1 - latitude2);
+                    double diffLon = Math.Abs(longitude1 - longitude2);
+                    double distance = Math.Sqrt(Math.Abs(diffLat * diffLat + diffLon * diffLon));
+                    if (distance < 0.001)
+                    {
+                        // last two entries were same location. See if this is different now.
+                        latitude2 = loc.Latitude;
+                        longitude2 = loc.Longitude;
+                        diffLat = Math.Abs(latitude1 - latitude2);
+                        diffLon = Math.Abs(longitude1 - longitude2);
+                        distance = Math.Sqrt(Math.Abs(diffLat * diffLat + diffLon * diffLon));
+                        if (distance < 0.001)
+                        {
+                            // Still not moved much. Don't add new location, just update time for last one
+                            string T = TimeString(DateTime.Now);
+                            query = string.Format("update locations set dt = '{0}' where id= {1}", T, id);
+
+                            try
+                            {
+                                using (System.Data.SqlClient.SqlCommand command = new SqlCommand(query, ttConnection))
+                                {
+                                    successRows = command.ExecuteNonQuery();
+                                }
+                                if (successRows == 1)
+                                    result = string.Format("Time updated for user {0} at {1}", loc.Owner, DateTime.Now);
+                                else
+                                    result = string.Format("Database error: update not saved");
+                            }
+                            catch (Exception ex)
+                            {
+                                Trace.WriteLine(ex.Message);
+                               // log.Error = ex.Message;
+                                result = ex.Message;
+                            }
+                            finally
+                            {
+                               // log.Result = result;
+                               // log.Save(mapConnection);
+                                ttConnection.Close();
+
+                            }
+                            return result;
+                        }
+                    }
+                }
+
+            }
+            // new position, add a new entry
+            try
+            {
+                string T = TimeString(DateTime.Now);
+
+                query = string.Format("insert into locations (lat,lon,dt,owner) values ('{0}','{1}','{2}',{3})",
+                        loc.Latitude, loc.Longitude, T, loc.Owner);
+
+
+                using (SqlCommand command = new SqlCommand(query, ttConnection))
+                {
+                    successRows = command.ExecuteNonQuery();
+                }
+                if (successRows == 1)
+                    result = string.Format("Location {0} {1} saved OK at {2} for {3}", loc.Latitude, loc.Longitude, DateTime.Now, loc.Owner);
+                else
+                    result = string.Format("Database error: Location not saved");
+
+            }
+
+            catch (Exception ex)
+            {
+
+                Trace.WriteLine(ex.Message);
+                //log.Error = ex.Message;
+                //return ex.Message;
+            }
+
+
+            finally
+            {
+                //log.Result = result;
+                //log.Save(mapConnection);
+                ttConnection.Close();
+            }
+            return result;
+
+        }
+
     }
 }

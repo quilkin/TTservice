@@ -19,7 +19,7 @@
 *   allow for penalty start times
 *   allow for more than one minute between starts
 *   allow deletion of entries if event hasn't yet happened
-*   summary results board (for projector)
+*   'oops, rider hasn't finished' - doesn't work
 */
 
 var TTData = (function ($) {
